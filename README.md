@@ -1,4 +1,4 @@
-# Dreem Teem SE101 Project: Bootleg Smarthome
+# Dreem Teem SE101 Project: HomeNode
 *This is the Github Repo for our group's final project in SE101.*
 *Zac Waite, George Shao, Stephen Gong, Hargun Mujral, Michael Dennisov*
 
