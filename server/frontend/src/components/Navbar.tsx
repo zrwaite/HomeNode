@@ -48,7 +48,6 @@ function Navbar() {
         alignItems="start"
         rounded="lg"
         _hover={{ bg: hbg }}
-        
       >
         <chakra.svg
           flexShrink={0}
@@ -158,7 +157,6 @@ function Navbar() {
         <Stack direction={{ base: "row" }} spacing={{ base: 6, sm: 10 }}>
           <Box display="flow-root">
             <Link
-              
               m={-3}
               p={3}
               display="flex"
@@ -198,7 +196,6 @@ function Navbar() {
 
           <Box display="flow-root">
             <Link
-              
               m={-3}
               p={3}
               display="flex"
@@ -255,24 +252,18 @@ function Navbar() {
         justifySelf="self-start"
         onClick={mobileNav.onClose}
       />
-      <Button w="full" variant="ghost"  leftIcon={<AiFillHome />}>
+      <Button w="full" variant="ghost" leftIcon={<AiFillHome />}>
         Dashboard
       </Button>
       <Button
         w="full"
         variant="solid"
         colorScheme="brand"
-        
         leftIcon={<AiOutlineInbox />}
       >
         Inbox
       </Button>
-      <Button
-        w="full"
-        variant="ghost"
-        
-        leftIcon={<BsFillCameraVideoFill />}
-      >
+      <Button w="full" variant="ghost" leftIcon={<BsFillCameraVideoFill />}>
         Videos
       </Button>
     </VStack>
