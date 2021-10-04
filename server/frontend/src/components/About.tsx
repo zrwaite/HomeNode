@@ -18,6 +18,7 @@ function About() {
         <AboutCard
           name="Zac Waite"
           role_emoji={MdHeadset}
+          image="https://thispersondoesnotexist.com/image"
           emoji_color="white"
           role_description="Role"
           description="[Placeholder description] Full Stack maker & UI / UX Designer , love hip hop music Author of
@@ -28,6 +29,7 @@ function About() {
         <AboutCard
           name="George Shao"
           role_emoji={HiOutlineSparkles}
+          image="https://thispersondoesnotexist.com/image"
           emoji_color="yellow"
           role_description="Frontend Developer"
           description="Hackathon Fanatic & 2x VC Grantee."
@@ -37,6 +39,7 @@ function About() {
         <AboutCard
           name="Steven Gong"
           role_emoji={MdHeadset}
+          image="https://thispersondoesnotexist.com/image"
           emoji_color="white"
           role_description="Role"
           description="[Placeholder description] Full Stack maker & UI / UX Designer , love hip hop music Author of
@@ -47,6 +50,7 @@ function About() {
         <AboutCard
           name="Hargun Mujral"
           role_emoji={MdHeadset}
+          image="https://thispersondoesnotexist.com/image"
           emoji_color="white"
           role_description="Role"
           description="[Placeholder description] Full Stack maker & UI / UX Designer , love hip hop music Author of
@@ -57,6 +61,7 @@ function About() {
         <AboutCard
           name="Michael Dennisov"
           role_emoji={MdHeadset}
+          image="https://thispersondoesnotexist.com/image"
           emoji_color="white"
           role_description="Role"
           description="[Placeholder description] Full Stack maker & UI / UX Designer , love hip hop music Author of

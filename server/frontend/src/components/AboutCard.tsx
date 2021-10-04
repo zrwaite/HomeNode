@@ -26,7 +26,7 @@ const AboutCard = (props: any) => {
         h={56}
         fit="cover"
         objectPosition="center"
-        src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80"
+        src={props.image}
         alt="avatar"
       />
 
