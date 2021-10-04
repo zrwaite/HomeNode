@@ -1,0 +1,41 @@
+{
+	"name": "Barry's Intrusion detection",
+	"username": "barryhawkener@gmail.com",
+	"current_data": {
+		"timestamp":12392938490,
+		"power": "on",
+		"intrusion_detected": false
+	},
+	"daily_data" : [
+		{
+			"timestamp": 12392938490,
+			"detection": "small noise level increase"
+		}, 
+		{
+			"timestamp": 12392939490,
+			"detection": "slight motion possible"
+		},
+		{
+			"timestamp": 12392940500,
+			"detection": "small noise level increase"
+		}
+	],
+	"past_data": [
+		{
+			"date": "10/03/2021",
+			"intrusion_detections": false
+		},
+		{
+			"date": "10/02/2021",
+			"intrusion_detections": false
+		},
+		{
+			"date": "10/01/2021",
+			"intrusion_detections": true
+		},
+		{
+			"date": "09/30/2021",
+			"intrusion_detections": false
+		}
+	]
+}	

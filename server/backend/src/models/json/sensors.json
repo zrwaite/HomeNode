@@ -1,0 +1,56 @@
+{
+	"name": "Barry's Sensors",
+	"username": "barryhawkener@gmail.com",
+	"current_data": {
+		"timestamp":12392938490,
+		"temperature": "20",
+		"humidity": "50%",
+		"light_level": "40%"
+	},
+	"daily_data" : [
+		{
+			"timestamp": 12392938490,
+			"temperature": 20,
+			"humidity": 20,
+			"light_level": 20
+		}, 
+		{
+			"timestamp": 12392939490,
+			"temperature": 22
+		},
+		{
+			"timestamp": 12392940500,
+			"light_level": 50
+		},
+		{
+			"timestamp": 12392942000,
+			"humidity": 30
+		}		
+	],
+	"past_data": [
+		{
+			"date": "10/03/2021",
+			"average_temperature": 21,
+			"average_humidity": 35,
+			"average_light_level": 20
+		},
+		{
+			"date": "10/02/2021",
+			"average_temperature": 24,
+			"average_humidity": 45,
+			"average_light_level": 30
+		},
+		{
+			"date": "10/01/2021",
+			"average_temperature": 18,
+			"average_humidity": 30,
+			"average_light_level": 20
+		},
+		{
+			"date": "09/30/2021",
+			"average_temperature": 19,
+			"average_humidity": 25,
+			"average_light_level": 25
+		}
+	]
+}	
