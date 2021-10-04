@@ -23,11 +23,10 @@ import getFile from './route/files.route';
 // api
 app.use("/api/sensors", sensorsRoute);
 
-
 app.get("/files", getFile); 
 
-app.get("/callback", (req, res) => {
-    let result = new response(200, [], {"page": "callback"});
+app.get("/test", (req, res) => {
+    let result = new response(200, [], {"page": "test"});
     res.status(result.status).json(result); //Return 200 result
 });
 
