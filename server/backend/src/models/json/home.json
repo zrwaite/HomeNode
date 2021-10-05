@@ -1,0 +1,27 @@
+{
+	"name": "Example Home",
+	"username": "barryhawkener@gmail.com",
+	"modules" : [
+		{
+			"type": "sensors",
+			"module_id": "1oiuhf98239hij:" 
+		},
+		{
+			"type": "intruder",
+			"module_id":"slakjhsf98289"
+		},
+		{
+			"type": "plant",
+			"module_id": "209385934hfhjk"
+		}
+	],
+	"alerts": [
+		{
+			"title": "Temperature very high",
+			"moduleid": "1oiuhf98239hij",
+			"info": "Current Temperature: 35 degrees. Quite high.",
+			"timestamp": "23454324567",
+			"read": true
+		}
+	]
+}	
