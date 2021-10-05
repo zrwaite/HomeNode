@@ -1,11 +1,12 @@
 {
 	"name": "Barry's Sensors",
 	"username": "barryhawkener@gmail.com",
+	"home_id" : "isdahjk893kbj",
 	"current_data": {
 		"timestamp":12392938490,
-		"temperature": "20",
-		"humidity": "50%",
-		"light_level": "40%"
+		"temperature": 20,
+		"humidity": 50,
+		"light_level": 40
 	},
 	"daily_data" : [
 		{

@@ -44,9 +44,25 @@ const sensorsSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    current_data: sensorsUpdateSchema,
-    daily_data: [sensorsUpdateSchema],
-    past_data: [sensorsDailySchema],
+    home_id: {
+        type: String,
+        required: true,
+    },  
+    current_data: {
+        type: sensorsUpdateSchema,
+        required: false,
+        default: {},
+    },
+    daily_data: {
+        type: [sensorsUpdateSchema],
+        required: false,
+        default: [],
+    },
+    past_data: {
+        type: [sensorsDailySchema],
+        required: false,
+        default: [],
+    },
 }, { timestamps: true});
 
 export default mongoose.model('Sensors', sensorsSchema); //Export data formatting
