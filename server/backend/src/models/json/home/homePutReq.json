@@ -1,0 +1,18 @@
+{
+    "id": "615bd1fc329a7345d730d419",
+    "modules" : [
+		{
+			"type": "sensors",
+			"module_id": "1oiuhf98239hij:" 
+		}
+	],
+	"notifications": [
+		{
+			"title": "Temperature very high",
+			"module_id": "1oiuhf98239hij",
+			"info": "Current Temperature: 35 degrees. Quite high.",
+			"timestamp": "23454324567",
+			"read": false
+		}
+	]
+}
