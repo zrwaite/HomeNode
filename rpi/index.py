@@ -1,4 +1,5 @@
 import requests
+import json
 
 SERVER_ADDRESS = "159.89.119.204"
 GET_DIRECTORY = "/get" #TODO: Discuss with Zac
@@ -7,6 +8,12 @@ HOME_URL = "/api/home"
 SENSORS_URL = "/api/sensors"
 INTRUDERS_URL = "/api/intruders"
 USER_URL = "/api/user"
+
+def parse_to_json(python_object):
+  return json.dumps(python_object) 
+
+def unparse_to_json(json_string):
+  return json.loads(json_data)
 
 def post_data(json_data):
   response = requests.post(SERVER_ADDRESS, data=json_data)
