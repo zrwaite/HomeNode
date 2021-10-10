@@ -1,5 +1,8 @@
 {
     "id": "615bd1fc329a7345d730d419",
+	"username": [
+		"barryhawkener2@gmail.com"
+	],
     "modules" : [
 		{
 			"type": "sensors",

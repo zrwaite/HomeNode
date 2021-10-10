@@ -1,6 +1,8 @@
 {
 	"name": "Example Home",
-	"username": "barryhawkener@gmail.com",
+	"users": [
+		"barryhawkener@gmail.com"
+	],
 	"modules" : [
 		{
 			"type": "sensors",
