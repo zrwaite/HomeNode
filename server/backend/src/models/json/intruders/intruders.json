@@ -2,11 +2,12 @@
 	"_id": "g7684wjhgbjh",
 	"name": "Barry's Intrusion detection",
 	"home_id": "isdahjk893kbj",
+	"on": true,
+	"powered": true,
 	"current_data": {
 		"timestamp":12392938490,
-		"on": true,
-		"powered": true,
-		"intrusion_detected": false
+		"detection": "nothing to see here",
+		"alert_level": 0
 	},
 	"daily_data" : [
 		{
