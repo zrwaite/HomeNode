@@ -8,7 +8,7 @@ function About() {
   return (
     <div>
       <Flex
-        bg={useColorModeValue("#F9FAFB", "gray.600")}
+        bg={useColorModeValue("white", "gray.800")}
         px={50}
         py={50}
         w="full"

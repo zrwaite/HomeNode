@@ -1,23 +1,27 @@
 {
 	"name": "Barry's Intrusion detection",
-	"username": "barryhawkener@gmail.com",
+	"home_id": "isdahjk893kbj",
 	"current_data": {
 		"timestamp":12392938490,
-		"power": "on",
+		"on": true,
+		"powered": true,
 		"intrusion_detected": false
 	},
 	"daily_data" : [
 		{
 			"timestamp": 12392938490,
-			"detection": "small noise level increase"
+			"detection": "small noise level increase",
+			"alert_level": 2
 		}, 
 		{
 			"timestamp": 12392939490,
-			"detection": "slight motion possible"
+			"detection": "slight motion possible",
+			"alert_level": 3
 		},
 		{
 			"timestamp": 12392940500,
-			"detection": "small noise level increase"
+			"detection": "small noise level increase",
+			"alert_level": 2
 		}
 	],
 	"past_data": [

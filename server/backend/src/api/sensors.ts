@@ -1,12 +1,14 @@
-import {Request, Response, NextFunction} from 'express';
+import {Request, Response, NextFunction} from 'express'; //Typescript types
+import { StringifyOptions } from 'querystring';
 import response from '../models/response'; //Created pre-formatted uniform response
-import Sensors from '../models/sensors';
+import Sensors from '../models/sensors'; //Schema for mongodb
 
-interface sensorsGetQuery {
+interface sensorsGetQuery { //Url query interface for get request
     id?: string;
     username?: string;
+    home_id?: string;
 }
-interface sensorsPostBody {
+interface sensorsPostBody { //Body query interface for post request
     name: string;
     username: string;
     home_id: string;
@@ -14,49 +16,60 @@ interface sensorsPostBody {
     daily_data: object[];
     past_data: object[];
 }
-interface sensorsPutBody {
+interface sensorsPutBody { //Body query interface for put request
     temperature?: number;
     humidity?: number;
     light_level?: number;
 }
 
-const buildGetQuery = (req : any) =>{
+const buildGetQuery = (req : any) =>{ //Create the get request
     let exists = false;
-    let list = [req.query.id, req.query.username];
-    list.forEach((param)=>{if(param !== undefined) exists=true;})
-    let query: sensorsGetQuery = {
-        id: req.query.id,
-        username: req.query.username
-    };
+    let query: sensorsGetQuery = {};
+    if (req.query.id !== undefined) {
+        query.id = req.query.id;
+        exists = true;
+    } else if (req.query.username !== undefined) {
+        query.username = req.query.username;
+        exists = true;
+    } else if (req.query.home_id !== undefined) {
+        query.home_id = req.query.home_id;
+        exists = true;
+    }
     return {exists: exists, query: query}
 }
-const buildPostBody = (req: any) => {
+const buildPostBody = (req: any) => { //Create the post request
     let exists = true;
-    let list = [req.body.name, req.body.username, req.body.home_id, req.body.current_data, req.body.daily_data, req.body.past_data];
+    let list = [req.body.name, req.body.username, req.body.home_id, req.body.current_data];
     list.forEach((param)=>{if(param === undefined) exists=false;})
     let body: sensorsPostBody = {
         name: req.body.name,
         username: req.body.username,
         home_id: req.body.home_id,
         current_data: req.body.current_data,
-        daily_data: req.body.daily_data,
-        past_data: req.body.past_data
+        daily_data: [],
+        past_data: []
     };
     return {exists: exists, body: body}
 }
-const buildPutBody = (req: any) =>{
+const buildPutBody = (req: any) =>{ //Create the put request for the daily data array
     let exists = false;
     let id = req.body.id;
-    let list = [req.body.id, req.body.temperature, req.body.humidity, req.body.light_level];
-    list.forEach((param)=>{if(param !== undefined) exists=true;})
-    let body: sensorsPutBody = {
-        temperature: req.body.temperature,
-        humidity: req.body.humidity,
-        light_level: req.body.light_level
-    };
+    let body: sensorsPutBody = {};
+    if (req.body.temperature !== undefined) {
+        body.temperature = req.body.temperature;
+        exists = true;
+    }
+    if (req.body.humidity !== undefined) {
+        body.humidity = req.body.humidity;
+        exists = true;
+    }
+    if (req.body.light_level !== undefined) {
+        body.light_level = req.body.light_level;
+        exists = true;
+    }
     return {exists: exists, id: id, body: body}
 }
-const getResult = (sensors: any, result: response) =>{
+const getResult = (sensors: any, result: response) =>{ //Create the returned result of a get request
     if (result.errors.length>0){return result;} 
     if (sensors !== undefined && sensors !== null && sensors.length !== 0) {
         result.status = 200;
@@ -71,16 +84,16 @@ const getResult = (sensors: any, result: response) =>{
 /* register controller */
 export default class sensorsController {
     static async apiGetSensors(req:Request, res: Response, next: NextFunction) {
-        let result = new response();
-        let sensors;
+        let result = new response(); //Create new standardized response
+        let sensors; 
         let {exists, query} = buildGetQuery(req);
         if (query.id){ //Find by id
             try{sensors = await Sensors.findById(query.id);} 
-            catch (e: any) {result.errors.push("Query error");}
+            catch (e: any) {result.errors.push("Query error", e);}
         } 
         else if (exists) { //Find by other queries
             try{sensors = await Sensors.find(query);} 
-            catch (e: any) {result.errors.push("Query error");}
+            catch (e: any) {result.errors.push("Query error", e);}
         } 
         else {result.errors.push("No queries. Include id or username.");}
         result = getResult(sensors, result);
@@ -117,7 +130,7 @@ export default class sensorsController {
         let sensors;
         if (exists){
             try {  //findByIdAndUpdate(id, update)
-                sensors = await Sensors.findByIdAndUpdate(id, {$push: {daily_data: body}}); //Saves branch to mongodb
+                sensors = await Sensors.findByIdAndUpdate(id, {$push: {daily_data: body}, current_data: body}); //Saves branch to mongodb
                 result.status = 201;
                 result.response = sensors;
                 result.success = true;

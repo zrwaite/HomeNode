@@ -2,12 +2,13 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./src/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
-    "dev": "nodemon --exec ts-node backend/src/index.ts",
-    "start": "ts-node-dev --respawn backend/src/index.ts"
+    "dev": "nodemon --exec ts-node src/index.ts",
+    "dev2": "ts-node-dev --respawn src/index.ts",
+    "start": "tsc && node src/index.js"
   },
   "keywords": [],
   "author": "",
@@ -18,7 +19,8 @@
     "express": "^4.17.1",
     "express-jwt": "^6.1.0",
     "mongoose": "^6.0.8",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "tsc": "^2.0.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.12",

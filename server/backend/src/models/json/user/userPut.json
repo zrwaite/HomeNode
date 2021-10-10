@@ -1,0 +1,14 @@
+{
+	"id": "615bd1fc329a7345d730d419",
+	"homes": [
+		{
+			"name": "Example Home",
+			"home_id": "1287hga8dbhj9",
+			"default": true
+		}
+	],
+	"settings": {
+		"dark_mode": true,
+		"email_notifications": true
+	}	
+}	

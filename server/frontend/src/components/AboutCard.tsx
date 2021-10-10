@@ -16,7 +16,7 @@ const AboutCard = (props: any) => {
     <Box
       w="sm"
       mx="6"
-      bg={useColorModeValue("white", "gray.800")}
+      bg={useColorModeValue("white", "gray.700")}
       shadow="lg"
       rounded="lg"
       overflow="hidden"

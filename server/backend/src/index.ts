@@ -6,7 +6,7 @@ import app from './server';
 env.config();
 const port = process.env.PORT || 2000;
 
-// Conenct to MongoDB
+// Connect to MongoDB
 mongoose.connect(
     `${process.env.MONGO_URL}`,
 ).catch((err: any) =>{
