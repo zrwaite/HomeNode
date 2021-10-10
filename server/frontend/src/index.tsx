@@ -11,11 +11,11 @@ import { colors } from "./colors";
 const theme = extendTheme({ colors });
 
 ReactDOM.render(
-  <React.StrictMode>
+  <React>
     <ChakraProvider theme={theme}>
       <App />
     </ChakraProvider>
-  </React.StrictMode>,
+  </React>,
   document.getElementById("root")
 );
 
