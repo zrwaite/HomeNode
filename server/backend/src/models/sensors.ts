@@ -40,10 +40,6 @@ const sensorsSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    username: {
-        type: String,
-        required: true,
-    },
     home_id: {
         type: String,
         required: true,

@@ -1,5 +1,4 @@
 import {Request, Response, NextFunction} from 'express'; //Typescript types
-import { StringifyOptions } from 'querystring';
 import response from '../models/response'; //Created pre-formatted uniform response
 import Sensors from '../models/sensors'; //Schema for mongodb
 
@@ -10,7 +9,6 @@ interface sensorsGetQuery { //Url query interface for get request
 }
 interface sensorsPostBody { //Body query interface for post request
     name: string;
-    username: string;
     home_id: string;
     current_data: object;
     daily_data: object[];
@@ -43,7 +41,6 @@ const buildPostBody = (req: any) => { //Create the post request
     list.forEach((param)=>{if(param === undefined) exists=false;})
     let body: sensorsPostBody = {
         name: req.body.name,
-        username: req.body.username,
         home_id: req.body.home_id,
         current_data: req.body.current_data,
         daily_data: [],
@@ -53,7 +50,6 @@ const buildPostBody = (req: any) => { //Create the post request
 }
 const buildPutBody = (req: any) =>{ //Create the put request for the daily data array
     let exists = false;
-    let id = req.body.id;
     let body: sensorsPutBody = {};
     if (req.body.temperature !== undefined) {
         body.temperature = req.body.temperature;
@@ -67,6 +63,7 @@ const buildPutBody = (req: any) =>{ //Create the put request for the daily data 
         body.light_level = req.body.light_level;
         exists = true;
     }
+    let id = req.body.id;
     return {exists: exists, id: id, body: body}
 }
 const getResult = (sensors: any, result: response) =>{ //Create the returned result of a get request
