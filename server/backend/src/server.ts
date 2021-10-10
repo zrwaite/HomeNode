@@ -14,14 +14,21 @@ env.config();
 // utilities
 app.use(cors()); 
 app.use(express.json()); 
-app.use(express.static(path.resolve(__dirname, '../../frontend/build')));
+app.use(express.static(path.resolve(__dirname, '../'))); //production
+//app.use(express.static(path.resolve(__dirname, '../../frontend/build'))); //development
 
 // routes
-import sensorsRoute from './route/sensors.route';
 import getFile from './route/files.route';
+import sensorsRoute from './route/sensors.route';
+// import intrudersRoute from './route/intruders.route';
+// import homeRoute from './route/home.route';
+// import userRoute from './route/user.route';
 
 // api
 app.use("/api/sensors", sensorsRoute);
+// app.use("/api/intruders", intrudersRoute);
+// app.use("/api/home", homeRoute);
+// app.use("/api/user", userRoute);
 
 app.get("/files", getFile); 
 
@@ -31,7 +38,8 @@ app.get("/test", (req, res) => {
 });
 
 app.get('*', (req: express.Request, res: express.Response) => {
-    res.sendFile(path.resolve(__dirname, '../../frontend/build', 'index.html'));
+    //res.sendFile(path.resolve(__dirname, '../../frontend/build', 'index.html')); //development
+    res.sendFile(path.resolve(__dirname, '../../', 'index.html')); //production
     //console.log(path.resolve(__dirname, '../../Frontend/build', 'index.html'));
 });
 
