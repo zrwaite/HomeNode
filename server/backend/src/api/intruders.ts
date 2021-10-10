@@ -1,28 +1,26 @@
 import {Request, Response, NextFunction} from 'express'; //Typescript types
 import response from '../models/response'; //Created pre-formatted uniform response
-import Sensors from '../models/sensors'; //Schema for mongodb
-
-interface sensorsGetQuery { //Url query interface for get request
+import Intruders from '../models/intruders'; //Schema for mongodb
+interface intrudersGetQuery { //Url query interface for get request
     id?: string;
     username?: string;
     home_id?: string;
 }
-interface sensorsPostBody { //Body query interface for post request
+interface intrudersPostBody { //Body query interface for post request
     name: string;
+    username: string;
     home_id: string;
     current_data: object;
     daily_data: object[];
     past_data: object[];
 }
-interface sensorsPutBody { //Body query interface for put request
-    temperature?: number;
-    humidity?: number;
-    light_level?: number;
+interface intrudersPutBody { //Body query interface for put request
+    detection?: string;
+    alert_level?: number;
 }
-
 const buildGetQuery = (req : any) =>{ //Create the get request
     let exists = false;
-    let query: sensorsGetQuery = {};
+    let query: intrudersGetQuery = {};
     if (req.query.id !== undefined) {
         query.id = req.query.id;
         exists = true;
@@ -39,8 +37,9 @@ const buildPostBody = (req: any) => { //Create the post request
     let exists = true;
     let list = [req.body.name, req.body.username, req.body.home_id, req.body.current_data];
     list.forEach((param)=>{if(param === undefined) exists=false;})
-    let body: sensorsPostBody = {
+    let body: intrudersPostBody = {
         name: req.body.name,
+        username: req.body.username,
         home_id: req.body.home_id,
         current_data: req.body.current_data,
         daily_data: [],
@@ -50,63 +49,59 @@ const buildPostBody = (req: any) => { //Create the post request
 }
 const buildPutBody = (req: any) =>{ //Create the put request for the daily data array
     let exists = false;
-    let body: sensorsPutBody = {};
-    if (req.body.temperature !== undefined) {
-        body.temperature = req.body.temperature;
-        exists = true;
-    }
-    if (req.body.humidity !== undefined) {
-        body.humidity = req.body.humidity;
-        exists = true;
-    }
-    if (req.body.light_level !== undefined) {
-        body.light_level = req.body.light_level;
-        exists = true;
-    }
+    let body: intrudersPutBody = {};
     let id = req.body.id;
+    if (req.body.detection !== undefined) {
+        body.detection = req.body.detection;
+        exists = true;
+    }
+    if (req.body.alert_level !== undefined) {
+        body.alert_level = req.body.alert_level;
+        exists = true;
+    }
     return {exists: exists, id: id, body: body}
 }
-const getResult = (sensors: any, result: response) =>{ //Create the returned result of a get request
+const getResult = (intruders: any, result: response) =>{ //Create the returned result of a get request
     if (result.errors.length>0){return result;} 
-    if (sensors !== undefined && sensors !== null && sensors.length !== 0) {
+    if (intruders !== undefined && intruders !== null && intruders.length !== 0) {
         result.status = 200;
         result.success = true;
-        result.response = {"sensors": sensors};
+        result.response = {"intruders": intruders};
     } else{
         result.status = 404;
-        result.errors.push('Sensors not found');
+        result.errors.push('Intruders data not found');
     }
     return result;
 }
 /* register controller */
-export default class sensorsController {
-    static async apiGetSensors(req:Request, res: Response, next: NextFunction) {
+export default class intrudersController {
+    static async apiGetIntruders(req:Request, res: Response, next: NextFunction) {
         let result = new response(); //Create new standardized response
-        let sensors; 
+        let intruders; 
         let {exists, query} = buildGetQuery(req);
         if (query.id){ //Find by id
-            try{sensors = await Sensors.findById(query.id);} 
+            try{intruders = await Intruders.findById(query.id);} 
             catch (e: any) {result.errors.push("Query error", e);}
         } 
         else if (exists) { //Find by other queries
-            try{sensors = await Sensors.find(query);} 
+            try{intruders = await Intruders.find(query);} 
             catch (e: any) {result.errors.push("Query error", e);}
         } 
         else {result.errors.push("No queries. Include id or username.");}
-        result = getResult(sensors, result);
+        result = getResult(intruders, result);
         res.status(result.status).json(result); //Return whatever result remains
     }
-    static async apiPostSensors(req:Request, res: Response, next: NextFunction) {
+    static async apiPostIntruders(req:Request, res: Response, next: NextFunction) {
         let result = new response();
         let {exists, body} = buildPostBody(req);
-        let newSensors;
+        let newIntruders;
         if (exists){
             try { 
-                newSensors = new Sensors(body);
+                newIntruders = new Intruders(body);
                 try {
-                    await newSensors.save(); //Saves branch to mongodb
+                    await newIntruders.save(); //Saves branch to mongodb
                     result.status = 201;
-                    result.response = newSensors;
+                    result.response = newIntruders;
                     result.success = true;
                 } catch (e: any){
                     result.errors.push("Error adding to database", e);
@@ -117,19 +112,19 @@ export default class sensorsController {
             }
         } else {
             console.log(body);
-            result.errors.push("Body error. Make sure to include name, username, home_id, current_data, daily_data, past_data");
+            result.errors.push("Body error. Make sure to include name, home_id, current_data, daily_data, past_data");
         }
         res.status(result.status).json(result);
     }
-    static async apiPutSensors(req:Request, res: Response, next: NextFunction) {
+    static async apiPutIntruders(req:Request, res: Response, next: NextFunction) {
         let result = new response();
         let {exists, id, body} = buildPutBody(req);
-        let sensors;
+        let intruders;
         if (exists){
             try {  //findByIdAndUpdate(id, update)
-                sensors = await Sensors.findByIdAndUpdate(id, {$push: {daily_data: body}, current_data: body}); //Saves branch to mongodb
+                intruders = await Intruders.findByIdAndUpdate(id, {$push: {daily_data: body}, current_data: body}); //Saves branch to mongodb
                 result.status = 201;
-                result.response = sensors;
+                result.response = intruders;
                 result.success = true;
             }
             catch (e: any) {
