@@ -1,0 +1,9 @@
+version: '3'
+services: 
+  backend: 
+    env_file: "./backend/.env"
+    build: ./
+    image: "zrwaite/smarthomeserver"
+    ports: 
+      - "80:80"
+    
