@@ -67,5 +67,5 @@ bool tolerant(int current_average, int data){
 }
 
 int deltaTime(int currentTime){
-  return millis() - currentTime;
+  return (millis() - currentTime) / 100;
 }
