@@ -118,7 +118,7 @@ export default class intrudersController {
         let intruders;
         if (exists){
             try {  //findByIdAndUpdate(id, update)
-                intruders = await Intruders.findByIdAndUpdate(id, {$push: {daily_data: body}, current_data: body}); //Saves branch to mongodb
+                intruders = await Intruders.findByIdAndUpdate(id, {$push: {daily_data: body}, current_data: body}, {new:true}); //Saves branch to mongodb
                 result.status = 201;
                 result.response = intruders;
                 result.success = true;
