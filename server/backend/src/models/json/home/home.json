@@ -18,6 +18,9 @@
 			"module_id": "209385934hfhjk"
 		}
 	],
+	"settings": {
+		"intrusion_detection": true
+	},
 	"notifications": [
 		{
 			"title": "Temperature very high",
