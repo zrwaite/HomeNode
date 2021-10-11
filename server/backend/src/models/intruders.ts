@@ -29,7 +29,7 @@ const intrudersSchema = new mongoose.Schema({
         required: true,
     },
     home_id: {
-        type: String,
+        type: mongoose.Types.ObjectId,
         required: true,
     },  
     current_data: {

@@ -13,10 +13,10 @@ const homeModulesSchema = new mongoose.Schema({
         required: true,
     },
     module_id : {
-        type: String,
+        type: mongoose.Types.ObjectId,
         required: false,
     },
-}, {timestamps: true});
+}, {timestamps: false});
 
 const homeNotificationsSchema = new mongoose.Schema({
     title: {
@@ -24,7 +24,7 @@ const homeNotificationsSchema = new mongoose.Schema({
         required: true,
     },
     module_id : {
-        type: String,
+        type: mongoose.Types.ObjectId,
         required: true,
     },
     info : {
