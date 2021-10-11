@@ -13,9 +13,7 @@
 		{
 			"title": "Temperature very high",
 			"module_id": "1oiuhf98239hij",
-			"info": "Current Temperature: 35 degrees. Quite high.",
-			"timestamp": "23454324567",
-			"read": false
+			"info": "Current Temperature: 35 degrees. Quite high."
 		}
 	]
 }
