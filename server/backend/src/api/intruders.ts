@@ -3,7 +3,6 @@ import response from '../models/response'; //Created pre-formatted uniform respo
 import Intruders from '../models/intruders'; //Schema for mongodb
 interface intrudersGetQuery { //Url query interface for get request
     id?: string;
-    username?: string;
     home_id?: string;
 }
 interface intrudersPostBody { //Body query interface for post request
@@ -23,9 +22,6 @@ const buildGetQuery = (req : any) =>{ //Create the get request
     let query: intrudersGetQuery = {};
     if (req.query.id !== undefined) {
         query.id = req.query.id;
-        exists = true;
-    } else if (req.query.username !== undefined) {
-        query.username = req.query.username;
         exists = true;
     } else if (req.query.home_id !== undefined) {
         query.home_id = req.query.home_id;
