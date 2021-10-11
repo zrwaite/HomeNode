@@ -10,8 +10,15 @@ void setup() {
 
   //We will enter each datapoint into an array, and for the sake of demonstration,
   //We will call a random number generator
+Serial.println(abs(-12));
+
+}
+
+void loop() {
+
   float storage[DATAPOINTS];
   float counter = 0;
+  int currentTime = millis();
 
   for (int i = 0; i < DATAPOINTS; i++){
     storage[i] = generate(1);
@@ -22,10 +29,9 @@ void setup() {
   float average = counter / DATAPOINTS;
   Serial.println("AVERAGE:");
   Serial.println(average);
+  delay(6000);
 
-}
-
-void loop() {
+  Serial.println(deltaTime(currentTime));
 //use the sensor every 6 seconds and store temperature / humidity as a datapoint
 //once there are 10 datapoints, compute average
 
@@ -52,4 +58,15 @@ float generate(int num){
   float randNumber = random(100);
   delay(100);
   return randNumber / 15.00 + 200.00 / 8.00;
+}
+
+bool tolerant(int current_average, int data){
+  if (abs(data - current_average) < TOLERANCE){
+    return true;
+  }
+  return false;
+}
+
+int deltaTime(int currentTime){
+  return millis() - currentTime;
 }
