@@ -10,7 +10,6 @@ void setup() {
 
   //We will enter each datapoint into an array, and for the sake of demonstration,
   //We will call a random number generator
-Serial.println(abs(-12));
 
 }
 
