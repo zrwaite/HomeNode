@@ -23,8 +23,8 @@ interface homeSettings {
     intrusion_detection?: boolean;
 }
 interface homeModule {
-    type?: string;
-    module_id?: string;
+    type: string;
+    module_id: string;
 }
 
 const buildGetQuery = (req : any) =>{ //Create the get request
@@ -139,30 +139,35 @@ export default class homeController {
             case "user":
                 try {
                     home = await Home.findByIdAndUpdate(id, {$addToSet: {users: body.user}}, {new:true}); //Saves branch to mongodb
-                    result.status = 201; result.response = home; result.success = true;
-                    console.log(home);
                 } catch (e:any) {result.errors.push("Error creating user request", e);}
                 break;
             case "intrusion_detection":
                 try {
                     home = await Home.findByIdAndUpdate(id, {"settings.intrusion_detection": body.settings?.intrusion_detection}, {new:true}); //Saves branch to mongodb
-                    result.status = 201; result.response = home; result.success = true;
                 } catch (e:any) {result.errors.push("Error creating settings request", e);}
                 break;
             case "module":
                 try {
                     home = await Home.findOneAndUpdate({_id: id, 'modules.module_id': {$ne: body.module?.module_id}}, {$addToSet: {modules: body.module}}, {new:true}); //Saves branch to mongodb
-                    result.status = 201; result.response = home; result.success = true;
                 } catch (e:any) {result.errors.push("Error creating module request", e);}
                 break;
             case "notification":
                 try {
                     home = await Home.findByIdAndUpdate(id, {$push: {notifications: body.notification}},{new:true}); //Saves branch to mongodb
-                    result.status = 201; result.response = home; result.success = true;
                 } catch (e:any) {result.errors.push("Error creating notification request", e);}
                 break;
             default:
                 result.errors.push("Body error. Make sure to include id and user, settings, module, or notification");
+        }
+        if (home && result.errors.length === 0) {
+            result.status = 201; 
+            result.response = home; 
+            result.success = true;
+        } else {
+            result.status = 404; 
+            result.success = false;
+            result.errors.push("Home not found, or trying to add duplicate value");
+            result.response = {};
         }
         res.status(result.status).json(result);
     }
