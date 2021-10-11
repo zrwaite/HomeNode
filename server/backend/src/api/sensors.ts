@@ -4,7 +4,6 @@ import Sensors from '../models/sensors'; //Schema for mongodb
 
 interface sensorsGetQuery { //Url query interface for get request
     id?: string;
-    username?: string;
     home_id?: string;
 }
 interface sensorsPostBody { //Body query interface for post request
@@ -25,9 +24,6 @@ const buildGetQuery = (req : any) =>{ //Create the get request
     let query: sensorsGetQuery = {};
     if (req.query.id !== undefined) {
         query.id = req.query.id;
-        exists = true;
-    } else if (req.query.username !== undefined) {
-        query.username = req.query.username;
         exists = true;
     } else if (req.query.home_id !== undefined) {
         query.home_id = req.query.home_id;
@@ -92,7 +88,7 @@ export default class sensorsController {
             try{sensors = await Sensors.find(query);} 
             catch (e: any) {result.errors.push("Query error", e);}
         } 
-        else {result.errors.push("No queries. Include id or username.");}
+        else {result.errors.push("No queries. Include id or home_id.");}
         result = getResult(sensors, result);
         res.status(result.status).json(result); //Return whatever result remains
     }
@@ -127,7 +123,7 @@ export default class sensorsController {
         let sensors;
         if (exists){
             try {  //findByIdAndUpdate(id, update)
-                sensors = await Sensors.findByIdAndUpdate(id, {$push: {daily_data: body}, current_data: body}); //Saves branch to mongodb
+                sensors = await Sensors.findByIdAndUpdate(id, {$push: {daily_data: body}, current_data: body}, {new:true}); //Saves branch to mongodb
                 result.status = 201;
                 result.response = sensors;
                 result.success = true;
