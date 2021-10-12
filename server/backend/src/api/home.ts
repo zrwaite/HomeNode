@@ -77,15 +77,15 @@ const buildPutBody = (req: any) =>{ //Create the put request for the daily data 
     }
     return {type: type, id: id, body: body}
 }
-const getResult = (sensors: any, result: response) =>{ //Create the returned result of a get request
+const getResult = (home: any, result: response) =>{ //Create the returned result of a get request
     if (result.errors.length>0){return result;} 
-    if (sensors !== undefined && sensors !== null && sensors.length !== 0) {
+    if (home !== undefined && home !== null && home.length !== 0) {
         result.status = 200;
         result.success = true;
-        result.response = {"sensors": sensors};
+        result.response = {"home": home};
     } else{
         result.status = 404;
-        result.errors.push('Sensors not found');
+        result.errors.push('home not found');
     }
     return result;
 }
