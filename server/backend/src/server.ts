@@ -22,13 +22,13 @@ import getFile from './route/files.route';
 import sensorsRoute from './route/sensors.route';
 import intrudersRoute from './route/intruders.route';
 import homeRoute from './route/home.route';
-// import userRoute from './route/user.route';
+import userRoute from './route/user.route';
 
 // api
 app.use("/api/sensors", sensorsRoute);
 app.use("/api/intruders", intrudersRoute);
 app.use("/api/home", homeRoute);
-// app.use("/api/user", userRoute);
+app.use("/api/user", userRoute);
 
 app.get("/files", getFile); 
 
