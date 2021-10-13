@@ -1,5 +1,6 @@
 import {Request, Response, NextFunction} from 'express'; //Typescript types
 import response from '../models/response'; //Created pre-formatted uniform response
+import getResult from './modules/getResult'; //Creates formmated response
 import User from '../models/user'; //Schema for mongodb
 import homeCtrl from '../api/home'; //Used for internally referenced home request
 
@@ -69,18 +70,6 @@ const buildPutBody = (req: any) =>{ //Create the put request for the daily data 
     }
     return {type: type, id: id, body: body}
 }
-const getResult = (user: any, result: response) =>{ //Create the returned result of a get request
-    if (result.errors.length>0){return result;}  //You can reduce copied code here future zac, learn from my incompetence
-    if (user !== undefined && user !== null && user.length !== 0) {
-        result.status = 200;
-        result.success = true;
-        result.response = {"user": user};
-    } else{
-        result.status = 404;
-        result.errors.push('user not found');
-    }
-    return result;
-}
 /* register controller */
 export default class userController {
     static async apiGetUser(req:Request, res: Response, next: NextFunction) {
@@ -96,7 +85,7 @@ export default class userController {
             catch (e: any) {result.errors.push("Query error", e);}
         } 
         else {result.errors.push("No queries. Include id or username.");}
-        result = getResult(user, result);
+        result = getResult(user, 'user', result);
         res.status(result.status).json(result); //Return whatever result remains
     }
     static async apiPostUser(req:Request, res: Response, next: NextFunction) {
@@ -153,7 +142,7 @@ export default class userController {
         } else {
             result.status = 404; 
             result.success = false;
-            result.errors.push("User not found, or trying to add duplicate value");
+            result.errors.push("User not found, or trying to add duplicate value, or review other errors");
             result.response = {};
         }
         res.status(result.status).json(result);

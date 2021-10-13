@@ -1,5 +1,6 @@
 import {Request, Response, NextFunction} from 'express'; //Typescript types
 import response from '../models/response'; //Created pre-formatted uniform response
+import getResult from './modules/getResult'; //Creates formatted response
 import Intruders from '../models/intruders'; //Schema for mongodb
 interface intrudersGetQuery { //Url query interface for get request
     id?: string;
@@ -57,18 +58,7 @@ const buildPutBody = (req: any) =>{ //Create the put request for the daily data 
     }
     return {exists: exists, id: id, body: body}
 }
-const getResult = (intruders: any, result: response) =>{ //Create the returned result of a get request
-    if (result.errors.length>0){return result;} 
-    if (intruders !== undefined && intruders !== null && intruders.length !== 0) {
-        result.status = 200;
-        result.success = true;
-        result.response = {"intruders": intruders};
-    } else{
-        result.status = 404;
-        result.errors.push('Intruders data not found');
-    }
-    return result;
-}
+
 /* register controller */
 export default class intrudersController {
     static async apiGetIntruders(req:Request, res: Response, next: NextFunction) {
@@ -84,7 +74,7 @@ export default class intrudersController {
             catch (e: any) {result.errors.push("Query error", e);}
         } 
         else {result.errors.push("No queries. Include id or username.");}
-        result = getResult(intruders, result);
+        result = getResult(intruders, 'intruders', result);
         res.status(result.status).json(result); //Return whatever result remains
     }
     static async apiPostIntruders(req:Request, res: Response, next: NextFunction) {
