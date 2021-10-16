@@ -33,7 +33,7 @@ app.use("/api/user", userRoute);
 app.get("/files", getFile); 
 
 app.get("/test", (req, res) => {
-    let result = new response(200, [], {"page": "test"});
+    let result = new response(200, [], {"page": "test"}, true);
     res.status(result.status).json(result); //Return 200 result
 });
 

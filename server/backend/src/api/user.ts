@@ -98,11 +98,13 @@ export default class userController {
                 newUser = new User(body);
                 try {
                     await newUser.save(); //Saves branch to mongodb
-                    const homeResult:response = await axios.put('/api/home', {
+                    const homeData:any = await axios.put('/api/home', {
                         "id": "61649dca5ff56e9a75f3572b",
                         "user": "barryhawkener2@gmail.com"
                     });
+                    let homeResult:any = homeData.data;
                     if(homeResult){
+                        console.log(homeResult);
                         result.success = homeResult.success;
                         result.errors.push(...homeResult.errors);
                         result.status = homeResult.status;

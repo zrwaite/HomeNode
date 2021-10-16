@@ -16,6 +16,7 @@ const userSchema = new mongoose.Schema({
     username: {
         type: String,
         required: true,
+        unique: true,
     },
     name: {
         type: String,
@@ -23,7 +24,7 @@ const userSchema = new mongoose.Schema({
     },
     home_id: {
         type: mongoose.Types.ObjectId,
-        required: true,  
+        required: true,
     },
     settings: {
         type: userSettingsSchema,
