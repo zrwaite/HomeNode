@@ -1,5 +1,6 @@
 import {Request, Response, NextFunction} from 'express'; //Typescript types
 import response from '../models/response'; //Created pre-formatted uniform response
+import getResult from './modules/getResult';
 import Home from '../models/home'; //Schema for mongodb
 
 interface homeGetQuery { //Url query interface for get request
@@ -77,18 +78,6 @@ const buildPutBody = (req: any) =>{ //Create the put request for the daily data 
     }
     return {type: type, id: id, body: body}
 }
-const getResult = (sensors: any, result: response) =>{ //Create the returned result of a get request
-    if (result.errors.length>0){return result;} 
-    if (sensors !== undefined && sensors !== null && sensors.length !== 0) {
-        result.status = 200;
-        result.success = true;
-        result.response = {"sensors": sensors};
-    } else{
-        result.status = 404;
-        result.errors.push('Sensors not found');
-    }
-    return result;
-}
 /* register controller */
 export default class homeController {
     static async apiGetHome(req:Request, res: Response, next: NextFunction) {
@@ -104,7 +93,7 @@ export default class homeController {
             catch (e: any) {result.errors.push("Query error", e);}
         } 
         else {result.errors.push("No queries. Include id or username.");}
-        result = getResult(home, result);
+        result = getResult(home, 'home', result);
         res.status(result.status).json(result); //Return whatever result remains
     }
     static async apiPostHome(req:Request, res: Response, next: NextFunction) {

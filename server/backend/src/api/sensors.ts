@@ -1,5 +1,6 @@
 import {Request, Response, NextFunction} from 'express'; //Typescript types
 import response from '../models/response'; //Created pre-formatted uniform response
+import getResult from './modules/getResult'; //Creates standard response
 import Sensors from '../models/sensors'; //Schema for mongodb
 
 interface sensorsGetQuery { //Url query interface for get request
@@ -62,19 +63,8 @@ const buildPutBody = (req: any) =>{ //Create the put request for the daily data 
     let id = req.body.id;
     return {exists: exists, id: id, body: body}
 }
-const getResult = (sensors: any, result: response) =>{ //Create the returned result of a get request
-    if (result.errors.length>0){return result;} 
-    if (sensors !== undefined && sensors !== null && sensors.length !== 0) {
-        result.status = 200;
-        result.success = true;
-        result.response = {"sensors": sensors};
-    } else{
-        result.status = 404;
-        result.errors.push('Sensors not found');
-    }
-    return result;
-}
-/* register controller */
+
+/* sensors controller */
 export default class sensorsController {
     static async apiGetSensors(req:Request, res: Response, next: NextFunction) {
         let result = new response(); //Create new standardized response
@@ -89,7 +79,7 @@ export default class sensorsController {
             catch (e: any) {result.errors.push("Query error", e);}
         } 
         else {result.errors.push("No queries. Include id or home_id.");}
-        result = getResult(sensors, result);
+        result = getResult(sensors, 'sensors', result);
         res.status(result.status).json(result); //Return whatever result remains
     }
     static async apiPostSensors(req:Request, res: Response, next: NextFunction) {

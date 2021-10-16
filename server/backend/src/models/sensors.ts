@@ -43,6 +43,7 @@ const sensorsSchema = new mongoose.Schema({
     home_id: {
         type: mongoose.Types.ObjectId,
         required: true,
+        unique: true,
     },  
     current_data: {
         type: sensorsUpdateSchema,
