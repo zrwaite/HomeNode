@@ -8,19 +8,21 @@
     "build": "tsc",
     "dev": "nodemon --exec ts-node src/index.ts",
     "dev2": "ts-node-dev --respawn src/index.ts",
-    "start": "tsc && node src/index.js"
+    "start": "ls && cd backend && tsc && node src/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.23.0",
     "cors": "^2.8.5",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
     "express-jwt": "^6.1.0",
     "mongoose": "^6.0.8",
     "path": "^0.12.7",
-    "tsc": "^2.0.3"
+    "tsc": "^2.0.3",
+    "typescript": "^4.4.4"
   },
   "devDependencies": {
     "@types/cors": "^2.8.12",
@@ -29,7 +31,6 @@
     "@types/node": "^16.10.1",
     "nodemon": "^2.0.13",
     "ts-node": "^10.2.1",
-    "ts-node-dev": "^1.1.8",
-    "typescript": "^4.4.3"
+    "ts-node-dev": "^1.1.8"
   }
 }
