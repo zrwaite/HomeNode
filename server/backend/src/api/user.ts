@@ -3,6 +3,7 @@ import response from '../models/response'; //Created pre-formatted uniform respo
 import getResult from './modules/getResult'; //Creates formmated response
 import User from '../models/user'; //Schema for mongodb
 import homeCtrl from '../api/home'; //Used for internally referenced home request
+import axios from 'axios';
 
 interface userGetQuery { //Url query interface for get request
     id?: string;
@@ -97,9 +98,21 @@ export default class userController {
                 newUser = new User(body);
                 try {
                     await newUser.save(); //Saves branch to mongodb
-                    result.status = 201;
-                    result.response = newUser;
-                    result.success = true;
+                    const homeResult:response = await axios.put('/api/home', {
+                        "id": "61649dca5ff56e9a75f3572b",
+                        "user": "barryhawkener2@gmail.com"
+                    });
+                    if(homeResult){
+                        result.success = homeResult.success;
+                        result.errors.push(...homeResult.errors);
+                        result.status = homeResult.status;
+                        result.response = {userResult: newUser, homeResult: homeResult.response};
+                    } else {
+                        result.success = false;
+                        result.errors.push("Error adding user to home");
+                        result.status = 400;
+                        result.response = {userResult: newUser}
+                    }
                 } catch (e: any){
                     result.errors.push("Error adding to database", e);
                 }
