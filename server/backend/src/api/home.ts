@@ -137,7 +137,7 @@ export default class homeController {
                 break;
             case "module":
                 try {
-                    home = await Home.findOneAndUpdate({_id: id, 'modules.module_id': {$ne: body.module?.module_id}}, {$addToSet: {modules: body.module}}, {new:true}); //Saves branch to mongodb
+                    home = await Home.findOneAndUpdate({"_id": id, 'modules.module_id': {$ne: body.module?.module_id}}, {$addToSet: {modules: body.module}}, {new:true}); //Saves branch to mongodb
                 } catch (e:any) {result.errors.push("Error creating module request", e);}
                 break;
             case "notification":

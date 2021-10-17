@@ -14,8 +14,11 @@ env.config();
 // utilities
 app.use(cors()); 
 app.use(express.json()); 
-app.use(express.static(path.resolve(__dirname, '../'))); //production
-//app.use(express.static(path.resolve(__dirname, '../../frontend/build'))); //development
+if (process.env.MONGO_URL=="dev"){
+    app.use(express.static(path.resolve(__dirname, '../../frontend/build'))); //development
+} else {
+    app.use(express.static(path.resolve(__dirname, '../../frontend/build'))); //production
+}
 
 // routes
 import getFile from './route/files.route';
@@ -38,8 +41,11 @@ app.get("/test", (req, res) => {
 });
 
 app.get('*', (req: express.Request, res: express.Response) => {
-    //res.sendFile(path.resolve(__dirname, '../../frontend/build', 'index.html')); //development
-    res.sendFile(path.resolve(__dirname, '../../', 'index.html')); //production
+    if(process.env.MONGO_URL=="dev"){
+        res.sendFile(path.resolve(__dirname, '../../frontend/build', 'index.html')); //development
+    } else {
+        res.sendFile(path.resolve(__dirname, '../../frontend/build', 'index.html')); //production
+    }
     //console.log(path.resolve(__dirname, '../../Frontend/build', 'index.html'));
 });
 
