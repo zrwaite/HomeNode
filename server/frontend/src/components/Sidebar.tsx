@@ -98,11 +98,11 @@ function Sidebar() {
         aria-label="Main Navigation"
       >
         <NavItem icon={MdHome}>Home</NavItem>
-        <NavItem icon={FaRss}>Articles</NavItem>
+        {/* <NavItem icon={FaRss}>Status</NavItem>
         <NavItem icon={HiCollection}>Collections</NavItem>
-        <NavItem icon={FaClipboardCheck}>Checklists</NavItem>
+        <NavItem icon={FaClipboardCheck}>Checklists</NavItem> */}
         <NavItem icon={HiCode} onClick={integrations.onToggle}>
-          Modules
+          Module Wiki
           <Icon
             as={MdKeyboardArrowRight}
             ml="auto"
@@ -120,7 +120,7 @@ function Sidebar() {
             Sensor 3
           </NavItem>
         </Collapse>
-        <NavItem icon={AiFillGift}>Changelog</NavItem>
+        {/* <NavItem icon={AiFillGift}>Changelog</NavItem> */}
         <NavItem icon={BsGearFill}>Settings</NavItem>
       </Flex>
     </Box>
