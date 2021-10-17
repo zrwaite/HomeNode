@@ -185,7 +185,7 @@ export default class userController {
 					//prettier-ignore
 					user = await User.findOneAndUpdate({queryType: query}, {"settings.email_notifications":body.settings?.email_notifications,},{new: true}); //Saves branch to mongodb
 				} catch (e: any) {
-					result.errors.push("Error creating settings email notifications request",e);
+					result.errors.push("Error creating settings email notifications request", e);
 				}
 				break;
 			default:
