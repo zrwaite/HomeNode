@@ -18,6 +18,7 @@ import {
   VStack,
   CloseButton,
   useColorMode,
+  Text
 } from "@chakra-ui/react";
 
 import { IoIosArrowDown } from "react-icons/io";
@@ -231,55 +232,65 @@ function Navbar() {
     </>
   );
 
-  const MobileNavContent = (
-    <VStack
-      pos="absolute"
-      top={0}
-      left={0}
-      right={0}
-      display={mobileNav.isOpen ? "flex" : "none"}
-      flexDirection="column"
-      p={2}
-      pb={4}
-      m={2}
-      bg={bg}
-      spacing={3}
-      rounded="sm"
-      shadow="sm"
-    >
-      <CloseButton
-        aria-label="Close menu"
-        justifySelf="self-start"
-        onClick={mobileNav.onClose}
-      />
-      <Button w="full" variant="ghost" leftIcon={<AiFillHome />}>
-        Dashboard
-      </Button>
-      <Button
-        w="full"
-        variant="solid"
-        colorScheme="brand"
-        leftIcon={<AiOutlineInbox />}
-      >
-        Inbox
-      </Button>
-      <Button w="full" variant="ghost" leftIcon={<BsFillCameraVideoFill />}>
-        Videos
-      </Button>
-    </VStack>
-  );
+  // const MobileNavContent = (
+  //   <VStack
+  //     pos="absolute"
+  //     top={0}
+  //     left={0}
+  //     right={0}
+  //     display={mobileNav.isOpen ? "flex" : "none"}
+  //     flexDirection="column"
+  //     p={2}
+  //     pb={4}
+  //     m={2}
+  //     bg={bg}
+  //     spacing={3}
+  //     rounded="sm"
+  //     shadow="sm"
+  //   >
+  //     <CloseButton
+  //       aria-label="Close menu"
+  //       justifySelf="self-start"
+  //       onClick={mobileNav.onClose}
+  //     />
+  //     <Button w="full" variant="ghost" leftIcon={<AiFillHome />}>
+  //       Dashboard
+  //     </Button>
+  //     <Button
+  //       w="full"
+  //       variant="solid"
+  //       colorScheme="brand"
+  //       leftIcon={<AiOutlineInbox />}
+  //     >
+  //       Inbox
+  //     </Button>
+  //     <Button w="full" variant="ghost" leftIcon={<BsFillCameraVideoFill />}>
+  //       Videos
+  //     </Button>
+  //   </VStack>
+  // );
 
   return (
     <>
-      <chakra.header h="full" bg={bg} w="full" px={{ base: 2, sm: 4 }} py={4}>
+      <chakra.header h="full" bg={bg} w="full" px={{ base: 4, sm: 4 }} py={4}>
         <Flex alignItems="center" justifyContent="space-between" mx="auto">
           <Link display="flex" alignItems="center" href="/">
-            <Logo />
+            <Flex align="center">
+              <Logo />
+              <Text
+                fontSize="2xl"
+                ml="2"
+                color={useColorModeValue("brand.500", "white")}
+                fontWeight="semibold"
+              >
+                HomeNode
+              </Text>
+            </Flex>
           </Link>
           <Box display={{ base: "none", md: "inline-flex" }}>
             <HStack spacing={1}>
               <Box role="group">
-                <Button
+                {/* <Button
                   bg={bg}
                   color="gray.500"
                   alignItems="center"
@@ -289,7 +300,7 @@ function Navbar() {
                   rightIcon={<IoIosArrowDown />}
                 >
                   Features
-                </Button>
+                </Button> */}
                 <Box
                   pos="absolute"
                   left={0}
@@ -300,7 +311,7 @@ function Navbar() {
                   {Features}
                 </Box>
               </Box>
-              <Button
+              {/* <Button
                 bg={bg}
                 color="gray.500"
                 display="inline-flex"
@@ -321,17 +332,17 @@ function Navbar() {
                 _focus={{ boxShadow: "none" }}
               >
                 Pricing
-              </Button>
+              </Button> */}
             </HStack>
           </Box>
           <Spacer />
           <Box display="flex" alignItems="center">
             <HStack spacing={1}>
-              <Button colorScheme="brand" variant="ghost" size="sm">
+              {/* <Button colorScheme="brand" variant="ghost" size="sm">
                 Sign in
-              </Button>
+              </Button> */}
               <Button colorScheme="brand" variant="solid" size="sm">
-                Sign up
+                Sign in
               </Button>
             </HStack>
             <IconButton
@@ -344,7 +355,7 @@ function Navbar() {
               onClick={toggleMode}
               icon={<SwitchIcon />}
             />
-            <IconButton
+            {/* <IconButton
               display={{ base: "flex", md: "none" }}
               aria-label="Open menu"
               fontSize="20px"
@@ -352,11 +363,11 @@ function Navbar() {
               variant="ghost"
               icon={<AiOutlineMenu />}
               onClick={mobileNav.onOpen}
-            />
+            /> */}
           </Box>
         </Flex>
 
-        {MobileNavContent}
+        {/* {MobileNavContent} */}
       </chakra.header>
     </>
   );
