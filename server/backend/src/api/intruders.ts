@@ -2,6 +2,7 @@ import {Request, Response, NextFunction} from "express"; //Typescript types
 import response from "../models/response"; //Created pre-formatted uniform response
 import getResult from "./modules/getResult"; //Creates formatted response
 import Intruders from "../models/intruders"; //Schema for mongodb
+import axios from "axios";
 interface intrudersGetQuery {
 	//Url query interface for get request
 	id?: string;
@@ -102,9 +103,29 @@ export default class intrudersController {
 				newIntruders = new Intruders(body);
 				try {
 					await newIntruders.save(); //Saves branch to mongodb
-					result.status = 201;
-					result.response = newIntruders;
-					result.success = true;
+					const homeData: any = await axios.put("/api/home", {
+						id: body.home_id,
+						module : {
+							type: 'intruders',
+							module_id: newIntruders._id 
+						}
+					});
+					let homeResult: any = homeData.data;
+					if (homeResult) {
+						console.log(homeResult);
+						result.success = homeResult.success;
+						result.errors.push(...homeResult.errors);
+						result.status = homeResult.status;
+						result.response = {
+							intruderResult: newIntruders,
+							homeResult: homeResult.response,
+						};
+					} else {
+						result.success = false;
+						result.errors.push("Error adding user to home");
+						result.status = 400;
+						result.response = {intruderResult: newIntruders};
+					}
 				} catch (e: any) {
 					result.errors.push("Error adding to database", e);
 				}

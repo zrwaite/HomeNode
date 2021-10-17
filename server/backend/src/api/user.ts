@@ -125,8 +125,8 @@ export default class userController {
 				try {
 					await newUser.save(); //Saves branch to mongodb
 					const homeData: any = await axios.put("/api/home", {
-						id: "61649dca5ff56e9a75f3572b",
-						user: "barryhawkener2@gmail.com",
+						id: body.home_id,
+						user: body.username
 					});
 					let homeResult: any = homeData.data;
 					if (homeResult) {

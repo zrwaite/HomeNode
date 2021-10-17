@@ -2,6 +2,7 @@ import {Request, Response, NextFunction} from "express"; //Typescript types
 import response from "../models/response"; //Created pre-formatted uniform response
 import getResult from "./modules/getResult"; //Creates standard response
 import Sensors from "../models/sensors"; //Schema for mongodb
+import axios from "axios";
 
 interface sensorsGetQuery {
 	//Url query interface for get request
@@ -39,7 +40,7 @@ const buildGetQuery = (req: any) => {
 const buildPostBody = (req: any) => {
 	//Create the post request
 	let exists = true;
-	let list = [req.body.name, req.body.username, req.body.home_id, req.body.current_data];
+	let list = [req.body.name, req.body.home_id, req.body.current_data];
 	list.forEach((param) => {
 		if (param === undefined) exists = false;
 	});
@@ -107,11 +108,31 @@ export default class sensorsController {
 				newSensors = new Sensors(body);
 				try {
 					await newSensors.save(); //Saves branch to mongodb
-					result.status = 201;
-					result.response = newSensors;
-					result.success = true;
+					const homeData: any = await axios.put("/api/home", {
+						id: body.home_id,
+						module : {
+							type: 'sensors',
+							module_id: newSensors._id 
+						}
+					});
+					let homeResult: any = homeData.data;
+					if (homeResult) {
+						console.log(homeResult);
+						result.success = homeResult.success;
+						result.errors.push(...homeResult.errors);
+						result.status = homeResult.status;
+						result.response = {
+							sensorResult: newSensors,
+							homeResult: homeResult.response,
+						};
+					} else {
+						result.success = false;
+						result.errors.push("Error adding user to home");
+						result.status = 400;
+						result.response = {sensorResult: newSensors};
+					}
 				} catch (e: any) {
-					result.errors.push("Error adding to database", e);
+					result.errors.push("Error adding to database. Duplicate data probably", e);
 				}
 			} catch (e: any) {
 				result.errors.push("Error creating request", e);
