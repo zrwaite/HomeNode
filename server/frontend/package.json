@@ -1,6 +1,6 @@
 {
   "name": "frontend",
-  "homepage": "/server/frontend/build",
+  "homepage": "/frontend/build",
   "version": "0.1.0",
   "private": true,
   "dependencies": {

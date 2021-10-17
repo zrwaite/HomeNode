@@ -14,11 +14,8 @@ env.config();
 // utilities
 app.use(cors());
 app.use(express.json());
-if (process.env.MONGO_URL == "dev") {
-	app.use(express.static(path.resolve(__dirname, "../../frontend/build"))); //development
-} else {
-	app.use(express.static(path.resolve(__dirname, "../../frontend/build"))); //production
-}
+app.use(express.static(path.resolve(__dirname, "../../frontend/build"))); //development
+
 
 // routes
 import getFile from "./route/files.route";
@@ -33,19 +30,20 @@ app.use("/api/intruders", intrudersRoute);
 app.use("/api/home", homeRoute);
 app.use("/api/user", userRoute);
 
-app.get("/files", getFile);
-
 app.get("/test", (req, res) => {
 	let result = new response(200, [], {page: "test"}, true);
 	res.status(result.status).json(result); //Return 200 result
 });
 
-app.get("*", (req: express.Request, res: express.Response) => {
-	if (process.env.MONGO_URL == "dev") {
-		res.sendFile(path.resolve(__dirname, "../../frontend/build", "index.html")); //development
-	} else {
-		res.sendFile(path.resolve(__dirname, "../../frontend/build", "index.html")); //production
-	}
+app.get("/backend/*", (req, res) => {
+	let result = new response(403, [], {response: "nice try buddy"});
+	res.status(result.status).json(result); //Return 200 result
+});
+
+app.get("/*", getFile);
+
+app.get("/", (req: express.Request, res: express.Response) => {
+	res.sendFile(path.resolve(__dirname, "../../frontend/build", "index.html")); //production
 });
 
 export default app; //Export server for use in index.js
