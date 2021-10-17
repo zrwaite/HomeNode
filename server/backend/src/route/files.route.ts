@@ -2,7 +2,7 @@ import {Request, Response, NextFunction} from "express";
 import path from "path";
 import fs from "fs";
 
-const folderPath = path.join(__dirname, "..", "..", "files");
+const folderPath = path.join(__dirname, "../../../");
 
 const getFile = (req: Request, res: Response) => {
 	if (req.url !== "/" && fs.existsSync(folderPath + req.url)) {
