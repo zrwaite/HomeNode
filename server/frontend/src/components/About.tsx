@@ -14,6 +14,7 @@ function About() {
         w="full"
         alignItems="center"
         justifyContent="center"
+        flexWrap="wrap"
       >
         <AboutCard
           name="Zac Waite"
