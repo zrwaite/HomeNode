@@ -25,7 +25,7 @@ import { IoIosArrowDown } from "react-icons/io";
 import { AiFillHome, AiOutlineInbox, AiOutlineMenu } from "react-icons/ai";
 import { BsFillCameraVideoFill } from "react-icons/bs";
 import { FaMoon, FaSun } from "react-icons/fa";
-import { Logo } from "@choc-ui/logo";
+import logo from "../assets/logo.svg";
 
 function Navbar() {
   const bg = useColorModeValue("white", "gray.800");
@@ -276,7 +276,7 @@ function Navbar() {
         <Flex alignItems="center" justifyContent="space-between" mx="auto">
           <Link display="flex" alignItems="center" href="/">
             <Flex align="center">
-              <Logo />
+              <img src={logo} alt="logo" width="48" height="48"/>
               <Text
                 fontSize="2xl"
                 ml="2"
