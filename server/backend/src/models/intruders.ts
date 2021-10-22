@@ -29,9 +29,10 @@ const intrudersSchema = new mongoose.Schema({
         required: true,
     },
     home_id: {
-        type: String,
+        type: mongoose.Types.ObjectId,
         required: true,
-    },  
+        unique: true,
+    },
     current_data: {
         type: intrudersUpdateSchema,
         required: false,
