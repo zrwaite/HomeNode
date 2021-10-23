@@ -22,7 +22,7 @@ import { FiMenu, FiSearch } from "react-icons/fi";
 import { HiCode, HiCollection } from "react-icons/hi";
 import { MdHome, MdKeyboardArrowRight } from "react-icons/md";
 import React from "react";
-import { Logo } from "@choc-ui/logo";
+import logo from "../assets/logo.svg"
 
 function Sidebar() {
   const sidebar = useDisclosure();
@@ -80,7 +80,7 @@ function Sidebar() {
       {...props}
     >
       <Flex px="4" py="5" align="center">
-        <Logo />
+        <img src={logo} alt="logo" width="48" height="48"/>
         <Text
           fontSize="2xl"
           ml="2"
