@@ -1,5 +1,5 @@
-import React from "react";
-import Sidebar from "../components/Sidebar";
+import React, { useContext } from "react";
+import Sidebar from "../components/dashboard/Sidebar";
 
 function Dashboard() {
   return (
