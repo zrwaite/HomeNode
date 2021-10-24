@@ -26,8 +26,11 @@ import logo from "../../assets/logo.svg";
 
 import UserContext from "../../User";
 import Home from "../../pages/dashboard/Home";
-import ModuleWiki from "../../pages/dashboard/ModuleWiki";
 import Settings from "../../pages/dashboard/Settings";
+import WikiIntruders from "../../pages/dashboard/WikiIntruders"
+import WikiPlant from "../../pages/dashboard/WikiPlant"
+import WikiSensors from "../../pages/dashboard/WikiSensors"
+
 
 function Sidebar() {
   const user = useContext(UserContext);
@@ -37,12 +40,13 @@ function Sidebar() {
   const history = useHistory();
 
   function switchPages(page: string) {
-    if (page === "modulewiki") {
+    if (page === "wiki") {
       integrations.onToggle();
+    } else {
+      history.push(`${match.url}/${page}`);
+      user.currentPage = page;
+      console.log(user.currentPage, page);
     }
-    history.push(`${match.url}/${page}`);
-    user.currentPage = page;
-    console.log(user.currentPage, page);
   }
 
   const NavItem = (props: any) => {
@@ -121,7 +125,7 @@ function Sidebar() {
         {/* <NavItem icon={FaRss}>Status</NavItem>
         <NavItem icon={HiCollection}>Collections</NavItem>
         <NavItem icon={FaClipboardCheck}>Checklists</NavItem> */}
-        <NavItem icon={HiCode} type="modulewiki">
+        <NavItem icon={HiCode} type="wiki">
           Module Wiki
           <Icon
             as={MdKeyboardArrowRight}
@@ -130,14 +134,14 @@ function Sidebar() {
           />
         </NavItem>
         <Collapse in={integrations.isOpen}>
-          <NavItem pl="12" py="2">
-            Sensor 1
+          <NavItem pl="12" py="2" type="wiki/module/sensors">
+            Sensors Module
           </NavItem>
-          <NavItem pl="12" py="2">
-            Sensor 2
+          <NavItem pl="12" py="2" type="wiki/module/intruders">
+            Intruders Module
           </NavItem>
-          <NavItem pl="12" py="2">
-            Sensor 3
+          <NavItem pl="12" py="2" type="wiki/module/plant">
+            Plant Module
           </NavItem>
         </Collapse>
         {/* <NavItem icon={AiFillGift}>Changelog</NavItem> */}
@@ -206,14 +210,20 @@ function Sidebar() {
             <Route path={`${match.path}/home`}>
               <Home />
             </Route>
-            <Route path={`${match.path}/modulewiki`}>
-              <ModuleWiki />
+            <Route path={`${match.path}/wiki/module/intruders`}>
+              <WikiIntruders />
+            </Route>
+            <Route path={`${match.path}/wiki/module/plant`}>
+              <WikiPlant />
+            </Route>
+            <Route path={`${match.path}/wiki/module/sensors`}>
+              <WikiSensors />
             </Route>
             <Route path={`${match.path}/settings`}>
               <Settings />
             </Route>
             <Route path={match.path}>
-              <h3>Undefined</h3>
+              <Home />
             </Route>
           </Switch>
         </Box>
