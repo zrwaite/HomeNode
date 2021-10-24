@@ -15,27 +15,18 @@ import {
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useRouteMatch,
-  useParams,
-  useHistory,
-} from "react-router-dom";
-import { FaBell, FaClipboardCheck, FaRss } from "react-icons/fa";
-import { AiFillGift } from "react-icons/ai";
+import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
+import { FaBell } from "react-icons/fa";
 import { BsGearFill } from "react-icons/bs";
 import { FiMenu, FiSearch } from "react-icons/fi";
-import { HiCode, HiCollection } from "react-icons/hi";
+import { HiCode } from "react-icons/hi";
 import { MdHome, MdKeyboardArrowRight } from "react-icons/md";
 import React, { useContext } from "react";
 import logo from "../../assets/logo.svg";
 
 import UserContext from "../../User";
-import Home from "../../pages/dashboard/Home"
-import ModuleWiki from "../../pages/dashboard/ModuleWiki"
+import Home from "../../pages/dashboard/Home";
+import ModuleWiki from "../../pages/dashboard/ModuleWiki";
 import Settings from "../../pages/dashboard/Settings";
 
 function Sidebar() {
@@ -46,6 +37,9 @@ function Sidebar() {
   const history = useHistory();
 
   function switchPages(page: string) {
+    if (page === "modulewiki") {
+      integrations.onToggle();
+    }
     history.push(`${match.url}/${page}`);
     user.currentPage = page;
     console.log(user.currentPage, page);
@@ -121,11 +115,13 @@ function Sidebar() {
         color="gray.600"
         aria-label="Main Navigation"
       >
-        <NavItem icon={MdHome} type="home">Home</NavItem>
+        <NavItem icon={MdHome} type="home">
+          Home
+        </NavItem>
         {/* <NavItem icon={FaRss}>Status</NavItem>
         <NavItem icon={HiCollection}>Collections</NavItem>
         <NavItem icon={FaClipboardCheck}>Checklists</NavItem> */}
-        <NavItem icon={HiCode} type="ModuleWiki" onClick={integrations.onToggle}>
+        <NavItem icon={HiCode} type="modulewiki">
           Module Wiki
           <Icon
             as={MdKeyboardArrowRight}

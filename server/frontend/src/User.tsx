@@ -1,10 +1,10 @@
 import { createContext } from "react";
 
 const initialState = {
-    name: "nice",
-    currentPage: "home",
-    darkMode: false,
-    defaultValue: "",
+  name: "nice",
+  currentPage: "home",
+  darkMode: false,
+  defaultValue: "",
 };
 
 const UserContext = createContext(initialState);

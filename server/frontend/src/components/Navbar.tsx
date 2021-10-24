@@ -6,31 +6,19 @@ import {
   Link,
   Button,
   useColorModeValue,
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
   Box,
-  useDisclosure,
   Spacer,
   IconButton,
   SimpleGrid,
   Stack,
-  VStack,
-  CloseButton,
   useColorMode,
   Text
 } from "@chakra-ui/react";
-
-import { IoIosArrowDown } from "react-icons/io";
-import { AiFillHome, AiOutlineInbox, AiOutlineMenu } from "react-icons/ai";
-import { BsFillCameraVideoFill } from "react-icons/bs";
 import { FaMoon, FaSun } from "react-icons/fa";
 import logo from "../assets/logo.svg";
 
 function Navbar() {
   const bg = useColorModeValue("white", "gray.800");
-  const cl = useColorModeValue("gray.800", "white");
-  const mobileNav = useDisclosure();
   const { toggleColorMode: toggleMode } = useColorMode();
   const text = useColorModeValue("dark", "light");
   const SwitchIcon = useColorModeValue(FaMoon, FaSun);
