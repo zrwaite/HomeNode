@@ -15,18 +15,39 @@ import {
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import { FaBell, FaClipboardCheck, FaRss } from "react-icons/fa";
-import { AiFillGift } from "react-icons/ai";
+import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
+import { FaBell } from "react-icons/fa";
 import { BsGearFill } from "react-icons/bs";
 import { FiMenu, FiSearch } from "react-icons/fi";
-import { HiCode, HiCollection } from "react-icons/hi";
+import { HiCode } from "react-icons/hi";
 import { MdHome, MdKeyboardArrowRight } from "react-icons/md";
-import React from "react";
-import logo from "../assets/logo.svg"
+import React, { useContext } from "react";
+import logo from "../../assets/logo.svg";
+
+import UserContext from "../../User";
+import Home from "../../pages/dashboard/Home";
+import Settings from "../../pages/dashboard/Settings";
+import WikiIntruders from "../../pages/dashboard/WikiIntruders"
+import WikiPlant from "../../pages/dashboard/WikiPlant"
+import WikiSensors from "../../pages/dashboard/WikiSensors"
+
 
 function Sidebar() {
+  const user = useContext(UserContext);
   const sidebar = useDisclosure();
   const integrations = useDisclosure();
+  let match = useRouteMatch();
+  const history = useHistory();
+
+  function switchPages(page: string) {
+    if (page === "wiki") {
+      integrations.onToggle();
+    } else {
+      history.push(`${match.url}/${page}`);
+      user.currentPage = page;
+      console.log(user.currentPage, page);
+    }
+  }
 
   const NavItem = (props: any) => {
     const { icon, children, ...rest } = props;
@@ -46,17 +67,18 @@ function Sidebar() {
         fontWeight="semibold"
         transition=".15s ease"
         {...rest}
+        onClick={() => switchPages(props.type)}
       >
-        {(
+        {
           <Icon
             mr="2"
             boxSize="4"
             _groupHover={{
               color: useColorModeValue("gray.600", "gray.300"),
             }}
-            as={icon ? icon: MdKeyboardArrowRight}
+            as={icon ? icon : MdKeyboardArrowRight}
           />
-        )}
+        }
         {children}
       </Flex>
     );
@@ -80,7 +102,7 @@ function Sidebar() {
       {...props}
     >
       <Flex px="4" py="5" align="center">
-        <img src={logo} alt="logo" width="48" height="48"/>
+        <img src={logo} alt="logo" width="48" height="48" />
         <Text
           fontSize="2xl"
           ml="2"
@@ -97,11 +119,13 @@ function Sidebar() {
         color="gray.600"
         aria-label="Main Navigation"
       >
-        <NavItem icon={MdHome}>Home</NavItem>
+        <NavItem icon={MdHome} type="home">
+          Home
+        </NavItem>
         {/* <NavItem icon={FaRss}>Status</NavItem>
         <NavItem icon={HiCollection}>Collections</NavItem>
         <NavItem icon={FaClipboardCheck}>Checklists</NavItem> */}
-        <NavItem icon={HiCode} onClick={integrations.onToggle}>
+        <NavItem icon={HiCode} type="wiki">
           Module Wiki
           <Icon
             as={MdKeyboardArrowRight}
@@ -110,18 +134,20 @@ function Sidebar() {
           />
         </NavItem>
         <Collapse in={integrations.isOpen}>
-          <NavItem pl="12" py="2">
-            Sensor 1
+          <NavItem pl="12" py="2" type="wiki/module/sensors">
+            Sensors Module
           </NavItem>
-          <NavItem pl="12" py="2">
-            Sensor 2
+          <NavItem pl="12" py="2" type="wiki/module/intruders">
+            Intruders Module
           </NavItem>
-          <NavItem pl="12" py="2">
-            Sensor 3
+          <NavItem pl="12" py="2" type="wiki/module/plant">
+            Plant Module
           </NavItem>
         </Collapse>
         {/* <NavItem icon={AiFillGift}>Changelog</NavItem> */}
-        <NavItem icon={BsGearFill}>Settings</NavItem>
+        <NavItem icon={BsGearFill} type="settings">
+          Settings
+        </NavItem>
       </Flex>
     </Box>
   );
@@ -180,7 +206,26 @@ function Sidebar() {
 
         <Box as="main" p="4">
           {/* Add content here, remove div below  */}
-          <Box borderWidth="4px" borderStyle="dashed" rounded="md" h="96" />
+          <Switch>
+            <Route path={`${match.path}/home`}>
+              <Home />
+            </Route>
+            <Route path={`${match.path}/wiki/module/intruders`}>
+              <WikiIntruders />
+            </Route>
+            <Route path={`${match.path}/wiki/module/plant`}>
+              <WikiPlant />
+            </Route>
+            <Route path={`${match.path}/wiki/module/sensors`}>
+              <WikiSensors />
+            </Route>
+            <Route path={`${match.path}/settings`}>
+              <Settings />
+            </Route>
+            <Route path={match.path}>
+              <Home />
+            </Route>
+          </Switch>
         </Box>
       </Box>
     </Box>
