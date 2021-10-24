@@ -83,8 +83,9 @@ const Hero = () => {
             mb={{ base: 2, sm: 0 }}
             size="lg"
             cursor="pointer"
+            onClick={() => {window.open("https://youtu.be/dQw4w9WgXcQ", "_blank")}}
           >
-            Book a Demo
+            Watch Demo
             <Icon boxSize={4} ml={1} viewBox="0 0 20 20" fill="currentColor">
               <path
                 fillRule="evenodd"
