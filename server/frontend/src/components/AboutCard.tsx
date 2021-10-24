@@ -15,11 +15,14 @@ const AboutCard = (props: any) => {
   return (
     <Box
       w="sm"
-      mx="6"
+      mx="4"
+      my="4"
       bg={useColorModeValue("white", "gray.700")}
       shadow="lg"
       rounded="lg"
       overflow="hidden"
+      minWidth="15rem"
+      maxWidth="19rem"
     >
       <Image
         w="full"
