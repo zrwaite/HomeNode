@@ -22,6 +22,11 @@ interface intrudersPutBody {
 	detection?: string;
 	alert_level?: number;
 }
+interface intrudersDeleteBody {
+	//Body query interface for delete request
+	detection?: string;
+	alert_level?: number;
+}
 const buildGetQuery = (req: any) => {
 	//Create the get request
 	let exists = false;
@@ -65,31 +70,54 @@ const buildPutBody = (req: any) => {
 		body.alert_level = req.body.alert_level;
 		exists = true;
 	}
+	if (id === undefined) exists = false;
 	return {exists: exists, id: id, body: body};
 };
-
+const buildDeleteBody = (req: any) =>{
+	let exists = false;
+	let body: intrudersDeleteBody = {};
+	let id = req.body.id;
+	if (req.body.detection !== undefined){
+		body.detection = req.body.detection;
+		exists = true;
+	}
+	if (req.body.alert_level !== undefined){
+		body.alert_level = req.body.alert_level;
+		exists = true;
+	}
+	if (id === undefined) exists = false;
+	return {exists: exists, id: id, body: body};
+}
 /* register controller */
 export default class intrudersController {
 	static async apiGetIntruders(req: Request, res: Response, next: NextFunction) {
 		let result = new response(); //Create new standardized response
 		let intruders;
-		let {exists, query} = buildGetQuery(req);
-		if (query.id) {
-			//Find by id
-			try {
-				intruders = await Intruders.findById(query.id);
-			} catch (e: any) {
-				result.errors.push("Query error", e);
-			}
-		} else if (exists) {
-			//Find by other queries
-			try {
-				intruders = await Intruders.find(query);
+		if (req.query.all = "true"){
+			try{
+				intruders = await Intruders.find();
 			} catch (e: any) {
 				result.errors.push("Query error", e);
 			}
 		} else {
-			result.errors.push("No queries. Include id or username.");
+			let {exists, query} = buildGetQuery(req);
+			if (query.id) {
+				//Find by id
+				try {
+					intruders = await Intruders.findById(query.id);
+				} catch (e: any) {
+					result.errors.push("Query error", e);
+				}
+			} else if (exists) {
+				//Find by other queries
+				try {
+					intruders = await Intruders.find(query);
+				} catch (e: any) {
+					result.errors.push("Query error", e);
+				}
+			} else {
+				result.errors.push("No queries. Include id or username.");
+			}
 		}
 		result = getResult(intruders, "intruders", result);
 		res.status(result.status).json(result); //Return whatever result remains
@@ -154,5 +182,22 @@ export default class intrudersController {
 			}
 		}
 		res.status(result.status).json(result);
+	}
+	static async apiDeleteIntruders(req: Request, res: Response, next: NextFunction){
+		let result = new response();
+		let {exists, id, body} = buildDeleteBody(req);
+		let intruders;
+		if (exists){
+			try{
+				intruders = await Intruders.findByIdAndUpdate(id, {daily_data: [body]}, {new:true}); //Saves branch to mongodb
+				result.status = 201;
+				result.response = intruders;
+				result.success = true;
+			} catch (e: any) {
+				result.errors.push("Error creating request", e);
+			}
+		}
+		res.status(result.status).json(result);
+
 	}
 }
