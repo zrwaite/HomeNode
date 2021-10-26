@@ -70,7 +70,7 @@ const buildPutBody = (req: any) => {
 	} else if (req.body.settings !== undefined) {
 		if (req.body.settings.intrusion_detection !== undefined) {
 			body.settings = {};
-			body.settings.intrusion_detection = true;
+			body.settings.intrusion_detection = req.body.settings.intrusion_detection;
 			type = "intrusion_detection";
 		}
 	} else if (req.body.module !== undefined) {
@@ -84,6 +84,7 @@ const buildPutBody = (req: any) => {
 	if (id == undefined) {
 		type = undefined;
 	}
+	console.log(type);
 	return {type: type, id: id, body: body};
 };
 /* register controller */

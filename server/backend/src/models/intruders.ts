@@ -20,6 +20,10 @@ const intrudersDailySchema = new mongoose.Schema({
         type: Boolean,
         required: false,
     },
+    max_alert_level: {
+        type: Number,
+        required: false,
+    }
 }, {timestamps: true});
 
 const intrudersSchema = new mongoose.Schema({
