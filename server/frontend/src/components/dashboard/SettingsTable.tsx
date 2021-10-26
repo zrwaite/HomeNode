@@ -15,12 +15,12 @@ import { AiFillEdit } from "react-icons/ai";
 import { BsBoxArrowUpRight, BsFillTrashFill } from "react-icons/bs";
 
 export default function SettingsTable() {
-  const header = ["name", "created", "actions"];
+  const header = ["key", "value", "actions"];
   const data = [
-    { name: "Daggy", created: "7 days ago" },
-    { name: "Anubra", created: "23 hours ago" },
-    { name: "Josef", created: "A few seconds ago" },
-    { name: "Sage", created: "A few hours ago" },
+    { key: "Dark Mode", value: "OFF" },
+    { key: "Setting #2", value: "N/A" },
+    { key: "Setting #3", value: "N/A" },
+    { key: "Setting #4", value: "N/A" },
   ];
   return (
     <Flex
@@ -107,10 +107,9 @@ export default function SettingsTable() {
                           fontFamily: "heading",
                         }}
                       >
-                        {x}
                       </Td>
                       <Td color="gray.500" fontSize="md" fontWeight="hairline">
-                        {/* {token[x]} */}
+                        {x === "key" ? data[tid]['key'] : data[tid]['value']}
                       </Td>
                     </React.Fragment>
                   );
@@ -135,6 +134,25 @@ export default function SettingsTable() {
                   Actions
                 </Td>
                 <Td>
+                  {data[tid]['key'] === "Dark Mode" ? (
+                    <ButtonGroup variant="solid" size="sm" spacing={3}>
+                      <IconButton
+                        colorScheme="green"
+                        icon={<AiFillEdit />}
+                        aria-label="button"
+                      />
+                    </ButtonGroup>
+                  ) : (
+                    <ButtonGroup variant="solid" size="sm" spacing={3}>
+                      <IconButton
+                        colorScheme="green"
+                        icon={<AiFillEdit />}
+                        aria-label="button"
+                      />
+                    </ButtonGroup>
+                  )}
+                </Td>
+                {/* <Td>
                   <ButtonGroup variant="solid" size="sm" spacing={3}>
                     <IconButton
                       colorScheme="blue"
@@ -153,7 +171,7 @@ export default function SettingsTable() {
                       aria-label="button"
                     />
                   </ButtonGroup>
-                </Td>
+                </Td> */}
               </Tr>
             );
           })}
