@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import {
   Flex,
@@ -37,10 +37,11 @@ interface UserInfo {
 export default function SettingsTable() {
   const user = useContext(UserContext);
   const { colorMode, toggleColorMode } = useColorMode();
+  const [EmailNotifications, setEmailNotifications] = useState(false);
   const header = ["key", "value", "actions"];
   const data = [
     { key: "Dark Mode", value: "OFF" },
-    { key: "Setting #2", value: "N/A" },
+    { key: "Email Notifications", value: "OFF" },
     { key: "Setting #3", value: "N/A" },
     { key: "Setting #4", value: "N/A" },
   ];
@@ -70,8 +71,26 @@ export default function SettingsTable() {
       });
   }
 
+  function forceEmailNotificationsUpdate() {
+    axios
+      .get<UserInfo>(
+        "http://homenode.tech/api/user?username=129032699zw@gmail.com"
+      )
+      .then((res) => {
+        const { data } = res;
+        console.log(data);
+        let received_email_notifications = data.response.result[0].settings.email_notifications;
+        console.log("GET EMAILNOTIFS: ", received_email_notifications);
+        setEmailNotifications(received_email_notifications);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   useEffect(() => {
     forceColorModeUpdate();
+    forceEmailNotificationsUpdate();
   }, []);
 
   return (
@@ -178,20 +197,45 @@ export default function SettingsTable() {
                 Actions
               </Td>
               <Td>
-                {data[tid]["key"] === "Dark Mode" ? (
+                {data[tid]["key"] === "Dark Mode" && (
                   <ButtonGroup variant="solid" size="sm" spacing={3}>
                     <Switch
                       size="lg"
                       isChecked={colorMode === "dark"}
-                      onChange={() => {axios.put("http://homenode.tech/api/user", {
-                        username: "129032699zw@gmail.com",
-                        settings: {
-                          dark_mode: getOppositeColorMode(),
-                        },
-                      }).then(() => forceColorModeUpdate()); console.log("PUT COLORMODE: ", getOppositeColorMode());}}
+                      onChange={() => {
+                        axios
+                          .put("http://homenode.tech/api/user", {
+                            username: "129032699zw@gmail.com",
+                            settings: {
+                              dark_mode: getOppositeColorMode(),
+                            },
+                          })
+                          .then(() => forceColorModeUpdate());
+                        console.log("PUT COLORMODE: ", getOppositeColorMode());
+                      }}
                     />
                   </ButtonGroup>
-                ) : (
+                )}
+                {data[tid]["key"] === "Email Notifications" && (
+                  <ButtonGroup variant="solid" size="sm" spacing={3}>
+                    <Switch
+                      size="lg"
+                      isChecked={EmailNotifications === true}
+                      onChange={() => {
+                        axios
+                          .put("http://homenode.tech/api/user", {
+                            username: "129032699zw@gmail.com",
+                            settings: {
+                              email_notifications: !EmailNotifications,
+                            },
+                          })
+                          .then(() => forceEmailNotificationsUpdate());
+                        console.log("PUT EMAILNOTIFS: ", !EmailNotifications);
+                      }}
+                    />
+                  </ButtonGroup>
+                )}
+                {data[tid]["key"] !== "Dark Mode" && data[tid]["key"] !== "Email Notifications" && (
                   <ButtonGroup variant="solid" size="sm" spacing={3}>
                     <IconButton
                       colorScheme="green"
