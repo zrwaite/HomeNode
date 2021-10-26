@@ -38,12 +38,12 @@ export default function SettingsTable() {
   const user = useContext(UserContext);
   const { colorMode, toggleColorMode } = useColorMode();
   const [EmailNotifications, setEmailNotifications] = useState(false);
-  const header = ["key", "value", "actions"];
+  const header = ["key", "actions"];
   const data = [
-    { key: "Dark Mode", value: "OFF" },
-    { key: "Email Notifications", value: "OFF" },
-    { key: "Setting #3", value: "N/A" },
-    { key: "Setting #4", value: "N/A" },
+    { key: "Dark Mode" },
+    { key: "Email Notifications" },
+    { key: "Setting #3" },
+    { key: "Setting #4" },
   ];
 
   function getOppositeColorMode() {
@@ -57,7 +57,6 @@ export default function SettingsTable() {
       )
       .then((res) => {
         const { data } = res;
-        console.log(data);
         let received_color_mode = data.response.result[0].settings.dark_mode;
         console.log("GET COLORMODE: ", received_color_mode);
         if (colorMode === "dark" && received_color_mode === false) {
@@ -78,7 +77,6 @@ export default function SettingsTable() {
       )
       .then((res) => {
         const { data } = res;
-        console.log(data);
         let received_email_notifications = data.response.result[0].settings.email_notifications;
         console.log("GET EMAILNOTIFS: ", received_email_notifications);
         setEmailNotifications(received_email_notifications);
@@ -172,7 +170,7 @@ export default function SettingsTable() {
                       }}
                     ></Td>
                     <Td color="gray.500" fontSize="md">
-                      {x === "key" ? data[tid]["key"] : data[tid]["value"]}
+                      {x === "key" && data[tid]["key"]}
                     </Td>
                   </React.Fragment>
                 );
