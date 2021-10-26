@@ -1,4 +1,5 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
+import axios from "axios";
 import {
   Flex,
   useColorModeValue,
@@ -17,6 +18,22 @@ import { AiFillEdit } from "react-icons/ai";
 import { BsBoxArrowUpRight, BsFillTrashFill } from "react-icons/bs";
 import UserContext from "../../User";
 
+interface UserInfo {
+  response: {
+    result: [
+      {
+        username: string;
+        name: string;
+        home_id: string;
+        settings: {
+          dark_mode: boolean;
+          email_notifications: boolean;
+        };
+      }
+    ];
+  };
+}
+
 export default function SettingsTable() {
   const user = useContext(UserContext);
   const { colorMode, toggleColorMode } = useColorMode();
@@ -27,6 +44,36 @@ export default function SettingsTable() {
     { key: "Setting #3", value: "N/A" },
     { key: "Setting #4", value: "N/A" },
   ];
+
+  function getOppositeColorMode() {
+    return colorMode === "dark" ? "false" : "true";
+  }
+
+  function forceColorModeUpdate() {
+    axios
+      .get<UserInfo>(
+        "http://homenode.tech/api/user?username=129032699zw@gmail.com"
+      )
+      .then((res) => {
+        const { data } = res;
+        console.log(data);
+        let received_color_mode = data.response.result[0].settings.dark_mode;
+        console.log("GET COLORMODE: ", received_color_mode);
+        if (colorMode === "dark" && received_color_mode === false) {
+          toggleColorMode();
+        } else if (colorMode === "light" && received_color_mode === true) {
+          toggleColorMode();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  useEffect(() => {
+    forceColorModeUpdate();
+  }, []);
+
   return (
     <Table
       w="full"
@@ -133,7 +180,16 @@ export default function SettingsTable() {
               <Td>
                 {data[tid]["key"] === "Dark Mode" ? (
                   <ButtonGroup variant="solid" size="sm" spacing={3}>
-                    <Switch size="lg" onChange={toggleColorMode} />
+                    <Switch
+                      size="lg"
+                      isChecked={colorMode === "dark"}
+                      onChange={() => {axios.put("http://homenode.tech/api/user", {
+                        username: "129032699zw@gmail.com",
+                        settings: {
+                          dark_mode: getOppositeColorMode(),
+                        },
+                      }).then(() => forceColorModeUpdate()); console.log("PUT COLORMODE: ", getOppositeColorMode());}}
+                    />
                   </ButtonGroup>
                 ) : (
                   <ButtonGroup variant="solid" size="sm" spacing={3}>
