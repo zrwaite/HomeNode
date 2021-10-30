@@ -11,7 +11,6 @@ SENSORS_URL = "/sensors"
 INTRUDERS_URL = "/intruders"
 USER_URL = "/user"
 
-
 # Not really needed since the requests library accepts python dictionaries
 def parse_to_json(python_object):
   return json.dumps(python_object, separators=(',', ':')) 
@@ -37,7 +36,6 @@ def post_data(json_data, sub_url):
   response = requests.post(SERVER_ADDRESS + sub_url, headers=headers, data=json_data)
   return response
 
-
 def get_data(sub_url, headers={}, payload={}):
   response = requests.get(SERVER_ADDRESS + sub_url, headers=headers, params=payload)
   return response
@@ -53,14 +51,14 @@ def post_home_data(json_data):
 	"username": "barryhawkener@gmail.com",
 	"modules" : [],
 	"notifications": []
-}	
+    }	
   """
   response = post_data(json_data, HOME_URL)
   return response
 
-
 def put_home_data(json_data):
-  """Sample JSON 
+  """
+  Sample JSON 
 {
 	"username": "barryhawkener@gmail.com",
 	"name": "Barry",
@@ -84,33 +82,32 @@ def put_home_data(json_data):
 
 def post_sensors_data(json_data):
   """
-{
-	"name": "Barry's Sensors",
-	"username": "barryhawkener@gmail.com",
-	"home_id" : "isdahjk893kbj",
-	"current_data": {
-		"temperature": 20,
-		"humidity": 50,
-		"light_level": 40
-	}
-}	
+    {
+        "name": "Barry's Sensors",
+        "username": "barryhawkener@gmail.com",
+        "home_id" : "isdahjk893kbj",
+        "current_data": {
+            "temperature": 20,
+            "humidity": 50,
+            "light_level": 40
+        }
+    }	
   """
   response = post_data(json_data, SENSORS_URL)
   return response
 
 def put_sensors_data(json_data):
   """Sample JSON 
-  {
-    "id": "615bd1fc329a7345d730d419",
-    "temperature": 20,
-    "humidity": 42,
-    "light_level": 42
-}
-"""
+    {
+        "id": "615bd1fc329a7345d730d419",
+        "temperature": 20,
+        "humidity": 42,
+        "light_level": 42
+    }
+    """
   response = put_data(json_data, SENSORS_URL)
   return response
   
-
 def post_intruders_data(json_data):
   """
   {
@@ -122,8 +119,8 @@ def post_intruders_data(json_data):
 		"powered": true,
 		"intrusion_detected": false
 	}
-}	
-  """
+    }	
+    """
   response = post_data(json_data, INTRUDERS_URL)
   return response
 
@@ -167,7 +164,7 @@ def put_user_data(json_data):
   return response
 
 test = {
-    "id": "616b7f4a3a200197bf2207ee",
+    "id": '616b7f4a3a200197bf2207ee',
     "light_level": 41,
     "temperature": 21,
     "humidity": 41
@@ -176,16 +173,10 @@ test = {
 
 # This doesn't work
 response = put_sensors_data(parse_to_json(test))
-print(response.text)
+print(response.json())
 
-
-'''This WORKS, it still has the backslashes...
-test = {'name': 'Zach'}
-response = test_post_data(parse_to_json(test))
-print(response.text)
-response = post_home_data(parse_to_json(test))
-print(response.text)
-'''
+response = test_put_data(parse_to_json(test))
+print(response.json())
 
 # while True:
 #     # Open Serial
