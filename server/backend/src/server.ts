@@ -19,6 +19,7 @@ app.use(express.static(path.resolve(__dirname, "../../frontend/build"))); //deve
 
 // routes
 import getFile from "./route/files.route";
+import getFrontend from "./route/frontend.route";
 import sensorsRoute from "./route/sensors.route";
 import intrudersRoute from "./route/intruders.route";
 import homeRoute from "./route/home.route";
@@ -40,7 +41,8 @@ app.get("/backend/*", (req, res) => {
 	res.status(result.status).json(result); //Return 200 result
 });
 
-app.get("/*", getFile);
+app.get("/files/*", getFile);
+app.get("/*", getFrontend);
 
 app.get("/", (req: express.Request, res: express.Response) => {
 	res.sendFile(path.resolve(__dirname, "../../frontend/build", "index.html")); //production
