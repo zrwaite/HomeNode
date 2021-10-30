@@ -78,23 +78,31 @@ export default class sensorsController {
 	static async apiGetSensors(req: Request, res: Response, next: NextFunction) {
 		let result = new response(); //Create new standardized response
 		let sensors;
-		let {exists, query} = buildGetQuery(req);
-		if (query.id) {
-			//Find by id
-			try {
-				sensors = await Sensors.findById(query.id);
-			} catch (e: any) {
-				result.errors.push("Query error", e);
-			}
-		} else if (exists) {
-			//Find by other queries
-			try {
-				sensors = await Sensors.find(query);
+		if (req.query.all = "true"){
+			try{
+				sensors = await Sensors.find();
 			} catch (e: any) {
 				result.errors.push("Query error", e);
 			}
 		} else {
-			result.errors.push("No queries. Include id or home_id.");
+			let {exists, query} = buildGetQuery(req);
+			if (query.id) {
+				//Find by id
+				try {
+					sensors = await Sensors.findById(query.id);
+				} catch (e: any) {
+					result.errors.push("Query error", e);
+				}
+			} else if (exists) {
+				//Find by other queries
+				try {
+					sensors = await Sensors.find(query);
+				} catch (e: any) {
+					result.errors.push("Query error", e);
+				}
+			} else {
+				result.errors.push("No queries. Include id or home_id.");
+			}
 		}
 		result = getResult(sensors, "sensors", result);
 		res.status(result.status).json(result); //Return whatever result remains
@@ -149,8 +157,13 @@ export default class sensorsController {
 		let sensors;
 		if (exists) {
 			try {
+				console.log(body);
 				//prettier-ignore
-				sensors = await Sensors.findByIdAndUpdate(id, {$push: {daily_data: body}, current_data: body}, {new:true}); //Saves branch to mongodb
+				let updateData: any = {$push: {daily_data: body}};
+				if(body.temperature) updateData["current_data.temperature"]= body.temperature;
+				if(body.humidity) updateData["current_data.humidity"] = body.humidity;
+				if(body.light_level) updateData["current_data.light_level"] = body.light_level;
+				sensors = await Sensors.findByIdAndUpdate(id, updateData, {new:true}); //Saves branch to mongodb
 				result.status = 201;
 				result.response = sensors;
 				result.success = true;

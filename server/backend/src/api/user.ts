@@ -66,11 +66,11 @@ const buildPutBody = (req: any) => {
 	} else if (req.body.settings !== undefined) {
 		if (req.body.settings.dark_mode !== undefined) {
 			body.settings = {};
-			body.settings.dark_mode = true;
+			body.settings.dark_mode = req.body.settings.dark_mode;
 			putType = "dark_mode";
 		} else if (req.body.settings.email_notifications !== undefined) {
 			body.settings = {};
-			body.settings.email_notifications = true;
+			body.settings.email_notifications = req.body.settings.email_notifications;
 			putType = "email_notifications";
 		}
 	}
@@ -86,8 +86,10 @@ const buildPutBody = (req: any) => {
 	} else {
 		queryType = undefined;
 	}
-	console.log(queryType);
-	return {queryType: queryType, putType: putType, query: query, body: body};
+	let queryObj:any = {};
+	if (queryType) queryObj[queryType] = query;
+	else queryObj = undefined;
+	return {queryObj: queryObj , putType: putType, body: body};
 };
 /* register controller */
 export default class userController {
@@ -157,39 +159,32 @@ export default class userController {
 	}
 	static async apiPutUser(req: Request, res: Response, next: NextFunction) {
 		let result = new response();
-		let {putType, queryType, query, body} = buildPutBody(req);
+		let {putType, queryObj, body} = buildPutBody(req);
 		let user;
-		if (queryType) {
-		} else {
+		if (!queryObj) 
 			result.errors.push("Body error. Make sure to include id or username");
-		}
+		let updateData: any = {};
 		switch (putType) {
 			case "name":
-				try {
-					//prettier-ignore
-					user = await User.findOneAndUpdate({queryType: query},{ name: body.name },{ new: true }); //Saves branch to mongodb
-				} catch (e: any) {
-					result.errors.push("Error creating name request", e);
-				}
+				updateData = { name: body.name };
 				break;
 			case "dark_mode":
-				try {
-					//prettier-ignore
-					user = await User.findOneAndUpdate({queryType: query}, {"settings.dark_mode": body.settings?.dark_mode},{new: true}); //Saves branch to mongodb
-				} catch (e: any) {
-					result.errors.push("Error creating settings darkMode request", e);
-				}
+				updateData = {"settings.dark_mode": body.settings?.dark_mode};
 				break;
 			case "email_notifications":
-				try {
-					//prettier-ignore
-					user = await User.findOneAndUpdate({queryType: query}, {"settings.email_notifications":body.settings?.email_notifications,},{new: true}); //Saves branch to mongodb
-				} catch (e: any) {
-					result.errors.push("Error creating settings email notifications request", e);
-				}
+				updateData = {"settings.email_notifications":body.settings?.email_notifications};
 				break;
 			default:
 				result.errors.push("Body error. Make sure to include id, and name or settings");
+		}
+		console.log(updateData);
+		if (result.errors.length == 0){
+			try {		
+				//prettier-ignore
+				user = await User.findOneAndUpdate(queryObj,updateData,{ new: true }); //Saves branch to mongodb
+			} catch (e: any) {
+				result.errors.push("Error creating name request", e);
+			}
 		}
 		if (user && result.errors.length === 0) {
 			result.status = 201;

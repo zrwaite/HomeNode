@@ -6,5 +6,6 @@ router.route('/')
     .get(intrudersCtrl.apiGetIntruders)
     .post(intrudersCtrl.apiPostIntruders)
     .put(intrudersCtrl.apiPutIntruders)
+    .delete(intrudersCtrl.apiDeleteIntruders)
 
 export default router;
