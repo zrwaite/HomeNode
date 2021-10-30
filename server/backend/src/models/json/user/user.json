@@ -1,13 +1,8 @@
 {
+	"_id": "lkjasdf78bkhjw4",
 	"username": "barryhawkener@gmail.com",
 	"name": "Barry",
-	"homes": [
-		{
-			"name": "Example Home",
-			"home_id": "1287hga8dbhj9",
-			"default": true
-		}
-	],
+	"home_id": "1287hga8dbhj9",
 	"settings": {
 		"dark_mode": true,
 		"email_notifications": true

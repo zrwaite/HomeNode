@@ -40,13 +40,10 @@ const sensorsSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    username: {
-        type: String,
-        required: true,
-    },
     home_id: {
-        type: String,
+        type: mongoose.Types.ObjectId,
         required: true,
+        unique: true,
     },  
     current_data: {
         type: sensorsUpdateSchema,
@@ -66,10 +63,3 @@ const sensorsSchema = new mongoose.Schema({
 }, { timestamps: true});
 
 export default mongoose.model('Sensors', sensorsSchema); //Export data formatting
-
-/*
-"timestamp": 12392938490,
-			"temperature": 20,
-			"humidity": 20,
-			"light_level": 20
-*/

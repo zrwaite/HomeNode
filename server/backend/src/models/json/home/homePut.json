@@ -1,0 +1,16 @@
+{
+    "id": "615bd1fc329a7345d730d419",
+	"user": "barryhawkener2@gmail.com",
+	"settings": {
+		"intrusion_detection": true
+	},
+    "module" : {
+		"type": "sensors",
+		"module_id": "1oiuhf98239hij:" 
+	},
+	"notification": {
+		"title": "Temperature very high",
+		"module_id": "1oiuhf98239hij",
+		"info": "Current Temperature: 35 degrees. Quite high."
+	}
+}

@@ -1,4 +1,5 @@
 {
+	"name": "Barry's Sensors",
 	"home_id" : "isdahjk893kbj",
 	"current_data": {
 		"temperature": 20,

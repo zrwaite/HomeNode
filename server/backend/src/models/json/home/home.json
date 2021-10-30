@@ -1,6 +1,9 @@
 {
+	"_id": "ljkdfa9898w4kj",
 	"name": "Example Home",
-	"username": "barryhawkener@gmail.com",
+	"users": [
+		"barryhawkener@gmail.com"
+	],
 	"modules" : [
 		{
 			"type": "sensors",
@@ -15,6 +18,9 @@
 			"module_id": "209385934hfhjk"
 		}
 	],
+	"settings": {
+		"intrusion_detection": true
+	},
 	"notifications": [
 		{
 			"title": "Temperature very high",

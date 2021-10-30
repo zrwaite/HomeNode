@@ -8,18 +8,21 @@ import {
   useColorModeValue,
 } from "@chakra-ui/react";
 
-import { MdEmail, MdLocationOn } from "react-icons/md";
+import { MdEmail } from "react-icons/md";
 import { FaUniversity } from "react-icons/fa";
 
 const AboutCard = (props: any) => {
   return (
     <Box
       w="sm"
-      mx="6"
-      bg={useColorModeValue("white", "gray.800")}
+      mx="4"
+      my="4"
+      bg={useColorModeValue("white", "gray.700")}
       shadow="lg"
       rounded="lg"
       overflow="hidden"
+      minWidth="15rem"
+      maxWidth="19rem"
     >
       <Image
         w="full"
