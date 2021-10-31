@@ -1,0 +1,10 @@
+{
+	"name": "Barry's Intrusion detection",
+	"username": "barryhawkener@gmail.com",
+	"home_id" : "isdahjk893kbj",
+	"current_data": {
+		"on": true,
+		"powered": true,
+		"intrusion_detected": false
+	}
+}	

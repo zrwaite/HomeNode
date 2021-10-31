@@ -1,0 +1,51 @@
+{
+	"_id": "g7684wjhgbjh",
+	"name": "Barry's Intrusion detection",
+	"home_id": "isdahjk893kbj",
+	"on": true,
+	"powered": true,
+	"current_data": {
+		"timestamp":12392938490,
+		"detection": "nothing to see here",
+		"alert_level": 0
+	},
+	"daily_data" : [
+		{
+			"timestamp": 12392938490,
+			"detection": "small noise level increase",
+			"alert_level": 2
+		}, 
+		{
+			"timestamp": 12392939490,
+			"detection": "slight motion possible",
+			"alert_level": 3
+		},
+		{
+			"timestamp": 12392940500,
+			"detection": "small noise level increase",
+			"alert_level": 2
+		}
+	],
+	"past_data": [
+		{
+			"date": "10/03/2021",
+			"intrusion_detections": false,
+			"max_alert_level": 2
+		},
+		{
+			"date": "10/02/2021",
+			"intrusion_detections": false,
+			"max_alert_level": 3
+		},
+		{
+			"date": "10/01/2021",
+			"intrusion_detections": true,
+			"max_alert_level": 0
+		},
+		{
+			"date": "09/30/2021",
+			"intrusion_detections": false,
+			"max_alert_level": 1
+		}
+	]
+}	

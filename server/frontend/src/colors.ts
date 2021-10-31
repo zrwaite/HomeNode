@@ -5,6 +5,19 @@ export const colors = {
   white: "#FFFFFF",
 
   brand: {
+    50: "#E0ECFF",
+    100: "#E0ECFF",
+    200: "#C1D7FF",
+    300: "#A3C1FF",
+    400: "#8CAFFF",
+    500: "#6690FF",
+    600: "#4A6EDB",
+    700: "#3350B7",
+    800: "#203693",
+    900: "#13247A",
+  },
+
+  brandOld: {
     50: "#ecefff",
     100: "#cbceeb",
     200: "#a9aed6",

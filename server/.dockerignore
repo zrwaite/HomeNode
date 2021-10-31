@@ -1,3 +1,4 @@
-node_modules
-frontend/public
+frontend/node_modules
 frontend/src
+frontend/public
+backend/node_modules
