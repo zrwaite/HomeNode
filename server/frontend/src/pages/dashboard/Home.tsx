@@ -1,10 +1,10 @@
 import React from "react";
-import SensorGroup from "../../components/dashboard/SensorsGroup";
+import ChartsGroup from "../../components/dashboard/ChartsGroup";
 
 function Home() {
   return (
     <div>
-      <SensorGroup />
+      <ChartsGroup />
     </div>
   );
 }
