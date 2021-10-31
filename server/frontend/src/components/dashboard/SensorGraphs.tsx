@@ -1,42 +1,94 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 import GeneralLineChart from "./GeneralLineChart";
 
+interface ModuleData {
+  response: {
+    result: [
+      {
+        current_data: {
+          temperature: number;
+          humidity: number;
+          light_level: number;
+          updatedAt: string;
+        },
+        daily_data: [
+          {
+              temperature: number;
+              humidity: number,
+              light_level: number,
+              updatedAt: string,
+          },
+        ],
+      }
+    ];
+  };
+}
+
 function SensorGraphs() {
-  // insert code to get data here
-  let example_data = [
-    { name: "Page A", uv: 400, pv: 2400, amt: 80 },
-    { name: "Page B", uv: 600, pv: 2300, amt: 100 },
-    { name: "Page C", uv: 300, pv: 2000, amt: 50 },
-    { name: "Page D", uv: 500, pv: 2000, amt: 100 },
-    { name: "Page E", uv: 200, pv: 1800, amt: 40 },
-    { name: "Page F", uv: 300, pv: 1500, amt: 60 },
-    { name: "Page G", uv: 200, pv: 1200, amt: 30 },
-    { name: "Page H", uv: 100, pv: 600, amt: 20 },
-    { name: "Page I", uv: 500, pv: 1700, amt: 70 },
-    { name: "Page J", uv: 400, pv: 1400, amt: 80 },
-  ];
+  const [CurrentData, setCurrentData] = useState({
+    temperature: 0,
+    humidity: 0,
+    light_level: 0,
+    updatedAt: "",
+  });
+
+  const [DailyData, setDailyData] = useState([
+    {
+      temperature: 0,
+      humidity: 0,
+      light_level: 0,
+      updatedAt: "",
+    },
+  ]);
+
+  function getData() {
+    axios
+      .get<ModuleData>(
+        "http://homenode.tech/api/sensors?id=616b7f4a3a200197bf2207ee"
+      )
+      .then((res) => {
+        const { data } = res;
+        let current_data = data.response.result[0].current_data;
+        let daily_data = data.response.result[0].daily_data;
+        console.log("GET SENSORMODULEDATA: ", current_data, daily_data);
+        setCurrentData(current_data);
+        setDailyData(daily_data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  useEffect(() => {
+    var handle = setInterval(getData, 5000);
+    return () => {
+      clearInterval(handle);
+    };
+  });
 
   return (
     <div>
       <GeneralLineChart
-        data={example_data}
+        data={DailyData}
         lines={[
           {
-            key: "uv",
+            key: "temperature",
             stroke: "#FF0000",
             yAxisKey: "left",
           },
           {
-            key: "pv",
+            key: "humidity",
             stroke: "#00FF00",
             yAxisKey: "right",
           },
           {
-            key: "amt",
+            key: "light_level",
             stroke: "#0000FF",
+            yAxisKey: "right",
           },
         ]}
-        xAxisKey="name"
+        // xAxisKey="updatedAt"
         yAxisColours={["#FF0000", "#00FF00"]}
       />
     </div>
