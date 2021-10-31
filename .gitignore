@@ -108,3 +108,10 @@ dist
 
 #VScode
 .vscode
+
+#Python
+env/
+*/__pycache__
+
+# Custom
+*/data

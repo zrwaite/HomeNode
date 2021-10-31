@@ -48,9 +48,9 @@ while True:
     #     json.dump(data_dict, f)
     
     
-    #TODO: Create Daily Data export function to send to sever
+    #TODO: Create Daily Data export function to send to server
     #TODO: Separate Data Handling and Send to server
     
     
-    # r = put_sensors_data(data_dict)
+    # r = put_sensors_data(final_data)
     # print(r.text)

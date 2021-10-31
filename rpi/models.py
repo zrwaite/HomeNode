@@ -10,24 +10,41 @@ class Home:
 
 
 class IntruderModule:
-    def __init__(self):
+    def __init__(self, id, name):
         self._id = id 
         self.name = name
         self.home_id = "isdahjk893kbj"
 
-class SensorModule: #TODO: Create children
-    def __init__(self, id, name, ):
+class Intruder:
+    def __init__(self, name):
+        self.name = name
+
+class SensorModule: 
+    def __init__(self, id, name):
         self._id = id 
         self.name = name
         self.home_id = "isdahjk893kbj"
+        self.sensors = []
+        self.current_data = {}
+        
+    def add_sensors(self,*sensors):
+        for sensor in sensors:
+            self.sensors.append(sensor)
+
+    def update_current_data(self):
+        for sensor in self.sensors:
+            self.current_data[sensor.name] = sensor.most_recent_data
+
+    def export_daily_data(self):
+        for sensor in self.sensors:
+            print(sensor)
 
 class Sensor:
     def __init__(self, name):
         self.name = name
+        self.most_recent_data = None
         self.data = None
         
-        
-
     def load_data(self):
         # If data exists, load it 
         if (os.path.isfile('./data/sensors/' + self.name + '.json')):
@@ -45,9 +62,3 @@ class Sensor:
         with open('./data/sensors/' + self.name + '.json', 'w+') as f:
             print(self.data)
             json.dump(self.data, f)
-
-
-sensor = Sensor('humidity')
-sensor.load_data()
-sensor.append_data(50)
-sensor.update_json()
