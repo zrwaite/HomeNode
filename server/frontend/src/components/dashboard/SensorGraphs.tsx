@@ -20,19 +20,24 @@ function SensorGraphs() {
     <div>
       <GeneralLineChart
         data={example_data}
-        lines={[{
-          key: "uv",
-          stroke: "#FF0000",
-          yAxisKey: "left",
-        }, {
-          key: "pv",
-          stroke: "#00FF00",
-          yAxisKey: "right",
-        }, {
-          key: "amt",
-          stroke: "#0000FF",
-        }]}
+        lines={[
+          {
+            key: "uv",
+            stroke: "#FF0000",
+            yAxisKey: "left",
+          },
+          {
+            key: "pv",
+            stroke: "#00FF00",
+            yAxisKey: "right",
+          },
+          {
+            key: "amt",
+            stroke: "#0000FF",
+          },
+        ]}
         xAxisKey="name"
+        yAxisColours={["#FF0000", "#00FF00"]}
       />
     </div>
   );
