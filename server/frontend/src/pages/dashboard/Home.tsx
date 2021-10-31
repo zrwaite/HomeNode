@@ -1,7 +1,12 @@
 import React from "react";
+import SensorGroup from "../../components/dashboard/SensorsGroup";
 
 function Home() {
-  return <div>home</div>;
+  return (
+    <div>
+      <SensorGroup />
+    </div>
+  );
 }
 
 export default Home;
