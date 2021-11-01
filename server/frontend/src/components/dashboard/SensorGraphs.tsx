@@ -75,21 +75,32 @@ function SensorGraphs() {
           {
             key: "temperature",
             stroke: "#FF0000",
-            yAxisKey: "left",
-          },
-          {
-            key: "humidity",
-            stroke: "#00FF00",
-            yAxisKey: "right",
-          },
-          {
-            key: "light_level",
-            stroke: "#0000FF",
-            yAxisKey: "right",
           },
         ]}
         // xAxisKey="updatedAt"
-        yAxisColours={["#FF0000", "#00FF00"]}
+        yAxisColours={["#FF0000"]}
+      />
+      <GeneralLineChart
+        data={DailyData}
+        lines={[
+          {
+            key: "humidity",
+            stroke: "#0000FF",
+          },
+        ]}
+        // xAxisKey="updatedAt"
+        yAxisColours={["#0000FF"]}
+      />
+      <GeneralLineChart
+        data={DailyData}
+        lines={[
+          {
+            key: "light_level",
+            stroke: "#0000FF",
+          },
+        ]}
+        // xAxisKey="updatedAt"
+        yAxisColours={["#0000FF"]}
       />
     </div>
   );
