@@ -11,15 +11,15 @@ interface ModuleData {
           humidity: number;
           light_level: number;
           updatedAt: string;
-        },
+        };
         daily_data: [
           {
-              temperature: number;
-              humidity: number,
-              light_level: number,
-              updatedAt: string,
-          },
-        ],
+            temperature: number;
+            humidity: number;
+            light_level: number;
+            updatedAt: string;
+          }
+        ];
       }
     ];
   };

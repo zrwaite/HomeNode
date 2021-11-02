@@ -5,7 +5,6 @@ import {
   GridItem,
   useColorModeValue,
   Button,
-  Stack,
   Center,
   Flex,
   Icon,
@@ -13,7 +12,7 @@ import {
   VisuallyHidden,
   Input,
 } from "@chakra-ui/react";
-import Navbar from "../components/Navbar"
+import Navbar from "../components/Navbar";
 import { useHistory } from "react-router-dom";
 
 const SignIn = () => {
@@ -50,7 +49,8 @@ const SignIn = () => {
               color="gray.500"
               letterSpacing="wider"
             >
-              Let's get you monitoring, controlling, and automating your home right now.
+              Let's get you monitoring, controlling, and automating your home
+              right now.
             </chakra.p>
           </GridItem>
           <GridItem colSpan={{ base: "auto", md: 4 }}>
@@ -91,7 +91,13 @@ const SignIn = () => {
                     isRequired={true}
                   />
                 </Flex>
-                <Button colorScheme="brand" w="full" py={2} type="submit" onClick={() => history.push("/dashboard")}>
+                <Button
+                  colorScheme="brand"
+                  w="full"
+                  py={2}
+                  type="submit"
+                  onClick={() => history.push("/dashboard")}
+                >
                   Sign In
                 </Button>
               </SimpleGrid>
@@ -122,7 +128,13 @@ const SignIn = () => {
             </Box>
             <chakra.p fontSize="xs" textAlign="center" color="gray.600">
               Don't have an account?{" "}
-              <chakra.a color="brand.500" onClick={() => history.push("/signup")} cursor="pointer">Sign up here.</chakra.a>
+              <chakra.a
+                color="brand.500"
+                onClick={() => history.push("/signup")}
+                cursor="pointer"
+              >
+                Sign up here.
+              </chakra.a>
             </chakra.p>
           </GridItem>
         </SimpleGrid>

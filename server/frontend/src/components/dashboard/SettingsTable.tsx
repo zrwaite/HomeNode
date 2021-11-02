@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import {
-  Flex,
   useColorModeValue,
   ButtonGroup,
   IconButton,
@@ -15,7 +14,7 @@ import {
   useColorMode,
 } from "@chakra-ui/react";
 import { AiFillEdit } from "react-icons/ai";
-import { BsBoxArrowUpRight, BsFillTrashFill } from "react-icons/bs";
+// import { BsBoxArrowUpRight, BsFillTrashFill } from "react-icons/bs";
 import UserContext from "../../User";
 
 interface UserInfo {
@@ -77,7 +76,8 @@ export default function SettingsTable() {
       )
       .then((res) => {
         const { data } = res;
-        let received_email_notifications = data.response.result[0].settings.email_notifications;
+        let received_email_notifications =
+          data.response.result[0].settings.email_notifications;
         console.log("GET EMAILNOTIFS: ", received_email_notifications);
         setEmailNotifications(received_email_notifications);
       })
@@ -233,15 +233,16 @@ export default function SettingsTable() {
                     />
                   </ButtonGroup>
                 )}
-                {data[tid]["key"] !== "Dark Mode" && data[tid]["key"] !== "Email Notifications" && (
-                  <ButtonGroup variant="solid" size="sm" spacing={3}>
-                    <IconButton
-                      colorScheme="green"
-                      icon={<AiFillEdit />}
-                      aria-label="button"
-                    />
-                  </ButtonGroup>
-                )}
+                {data[tid]["key"] !== "Dark Mode" &&
+                  data[tid]["key"] !== "Email Notifications" && (
+                    <ButtonGroup variant="solid" size="sm" spacing={3}>
+                      <IconButton
+                        colorScheme="green"
+                        icon={<AiFillEdit />}
+                        aria-label="button"
+                      />
+                    </ButtonGroup>
+                  )}
               </Td>
               {/* <Td>
                 <ButtonGroup variant="solid" size="sm" spacing={3}>

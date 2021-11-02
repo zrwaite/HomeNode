@@ -5,7 +5,6 @@ import {
   GridItem,
   useColorModeValue,
   Button,
-  Stack,
   Center,
   Flex,
   Icon,
@@ -13,12 +12,12 @@ import {
   VisuallyHidden,
   Input,
 } from "@chakra-ui/react";
-import Navbar from "../components/Navbar"
+import Navbar from "../components/Navbar";
 import { useHistory } from "react-router-dom";
 
 const SignUp = () => {
   let history = useHistory();
-  
+
   return (
     <>
       <Navbar />
@@ -131,11 +130,19 @@ const SignUp = () => {
             </Box>
             <chakra.p fontSize="xs" textAlign="center" color="gray.600">
               By signing up you agree to our{" "}
-              <chakra.a color="brand.500" cursor="pointer">Terms of Service</chakra.a>
+              <chakra.a color="brand.500" cursor="pointer">
+                Terms of Service
+              </chakra.a>
             </chakra.p>
             <chakra.p fontSize="xs" textAlign="center" color="gray.600">
               Already have an account?{" "}
-              <chakra.a color="brand.500" onClick={() => history.push("/signin")} cursor="pointer">Sign in here.</chakra.a>
+              <chakra.a
+                color="brand.500"
+                onClick={() => history.push("/signin")}
+                cursor="pointer"
+              >
+                Sign in here.
+              </chakra.a>
             </chakra.p>
           </GridItem>
         </SimpleGrid>

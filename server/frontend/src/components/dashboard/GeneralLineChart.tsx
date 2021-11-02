@@ -8,10 +8,7 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
-import {
-  useColorModeValue,
-  Table,
-} from "@chakra-ui/react";
+import { useColorModeValue, Table } from "@chakra-ui/react";
 
 function GeneralLineChart(props: any) {
   return (
