@@ -61,7 +61,7 @@ function SensorGraphs() {
   }
 
   useEffect(() => {
-    var handle = setInterval(getData, 5000);
+    var handle = setInterval(getData, 2500);
     return () => {
       clearInterval(handle);
     };
