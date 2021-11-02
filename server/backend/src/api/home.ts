@@ -1,35 +1,10 @@
 import {Request, Response, NextFunction} from "express"; //Typescript types
 import response from "../models/response"; //Created pre-formatted uniform response
 import getResult from "./modules/getResult";
-import Home from "../models/home"; //Schema for mongodb
+import Home from "../models/home/home"; //Schema for mongodb
 
-interface homeGetQuery {
-	//Url query interface for get request
-	id?: string;
-	username?: string;
-}
-interface homePostBody {
-	//Body query interface for post request
-	name: string;
-	user: string[];
-	modules: object[];
-	settings: object;
-	notifications: object[];
-}
-interface homePutBody {
-	//Body query interface for put request
-	user?: string;
-	settings?: homeSettings;
-	module?: homeModule;
-	notification?: object;
-}
-interface homeSettings {
-	intrusion_detection?: boolean;
-}
-interface homeModule {
-	type: string;
-	module_id: string;
-}
+import {homeGetQuery, homePostBody, homePutBody} from "../models/home/homeInterfaces";
+
 
 const buildGetQuery = (req: any) => {
 	//Create the get request

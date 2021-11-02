@@ -1,28 +1,11 @@
 import {Request, Response, NextFunction} from "express"; //Typescript types
 import response from "../models/response"; //Created pre-formatted uniform response
 import getResult from "./modules/getResult"; //Creates standard response
-import Sensors from "../models/sensors"; //Schema for mongodb
+import Sensors from "../models/sensors/sensors"; //Schema for mongodb
 import axios from "axios";
 
-interface sensorsGetQuery {
-	//Url query interface for get request
-	id?: string;
-	home_id?: string;
-}
-interface sensorsPostBody {
-	//Body query interface for post request
-	name: string;
-	home_id: string;
-	current_data: object;
-	daily_data: object[];
-	past_data: object[];
-}
-interface sensorsPutBody {
-	//Body query interface for put request
-	temperature?: number;
-	humidity?: number;
-	light_level?: number;
-}
+/* Sensors Interfaces imports */ 
+import {sensorsGetQuery, sensorsPostBody, sensorsPutBody} from "../models/sensors/sensorsInterface";
 
 const buildGetQuery = (req: any) => {
 	//Create the get request
@@ -78,7 +61,7 @@ export default class sensorsController {
 	static async apiGetSensors(req: Request, res: Response, next: NextFunction) {
 		let result = new response(); //Create new standardized response
 		let sensors;
-		if (req.query.all = "true"){
+		if (req.query.all === "true"){
 			try{
 				sensors = await Sensors.find();
 			} catch (e: any) {

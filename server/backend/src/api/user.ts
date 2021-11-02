@@ -1,31 +1,13 @@
 import {Request, Response, NextFunction} from "express"; //Typescript types
 import response from "../models/response"; //Created pre-formatted uniform response
 import getResult from "./modules/getResult"; //Creates formmated response
-import User from "../models/user"; //Schema for mongodb
+import User from "../models/user/user"; //Schema for mongodb
 import homeCtrl from "../api/home"; //Used for internally referenced home request
 import axios from "axios";
 
-interface userGetQuery {
-	//Url query interface for get request
-	id?: string;
-	username?: string;
-}
-interface userPostBody {
-	//Body query interface for post request
-	username: string;
-	name: string;
-	home_id: string;
-	settings: object;
-}
-interface userPutBody {
-	//Body query interface for put request
-	name?: string;
-	settings?: userSettings;
-}
-interface userSettings {
-	dark_mode?: boolean;
-	email_notifications?: boolean;
-}
+/* Interface imports */
+import {userGetQuery, userPostBody, userPutBody, userSettings} from "../models/user/userInterface";
+
 
 const buildGetQuery = (req: any) => {
 	//Create the get request
