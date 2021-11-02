@@ -5,7 +5,7 @@ SERVER_ADDRESS = "http://homenode.tech/api"
 
 HOME_URL = "/home"
 SENSORS_URL = "/sensors"
-INTRUDERS_URL = "/intruders"
+INTRUDERS_URL = "/intruders?put_type=daily_data"
 USER_URL = "/user"
 
 def parse_to_json(python_object):

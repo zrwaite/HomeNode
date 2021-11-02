@@ -35,7 +35,7 @@ class SensorModule:
         for sensor in self.sensors:
             self.current_data[sensor.name] = sensor.most_recent_data
 
-    def export_daily_data(self):
+    def export_daily_data(self): #The daily data is all of the data in a given day, the raspberry pi wipes the data every day
         for sensor in self.sensors:
             print(sensor)
 
@@ -45,11 +45,21 @@ class Sensor:
         self.most_recent_data = None
         self.data = None
         
+    def reset_json(self):
+        #Since all of the data is already stored on the MongoDB server, we don't need to save more. Only enough locally
+        #so we know we are not sending duplicates
+        os.remove('./data/sensors/' + self.name + '.json')
+
     def load_data(self):
         # If data exists, load it 
         if (os.path.isfile('./data/sensors/' + self.name + '.json')):
             with open('./data/sensors/' + self.name + '.json', 'r') as f:
                 self.data = json.load(f)
+        
+        else: #Create the file
+            self.data = []
+            self.update_json()
+            
         
     
     def append_data(self,data):
