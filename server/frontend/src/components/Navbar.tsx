@@ -16,8 +16,11 @@ import {
 } from "@chakra-ui/react";
 import { FaMoon, FaSun } from "react-icons/fa";
 import logo from "../assets/logo.svg";
+import { useHistory } from "react-router-dom";
 
 function Navbar() {
+  let history = useHistory();
+  
   const bg = useColorModeValue("white", "gray.800");
   const { toggleColorMode: toggleMode } = useColorMode();
   const text = useColorModeValue("dark", "light");
@@ -329,7 +332,7 @@ function Navbar() {
               {/* <Button colorScheme="brand" variant="ghost" size="sm">
                 Sign in
               </Button> */}
-              <Button colorScheme="brand" variant="solid" size="sm">
+              <Button colorScheme="brand" variant="solid" size="sm" onClick={() => history.push("/signin")}>
                 Sign in
               </Button>
             </HStack>

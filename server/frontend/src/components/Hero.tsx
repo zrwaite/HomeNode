@@ -9,8 +9,11 @@ import {
   Text,
   Icon,
 } from "@chakra-ui/react";
+import { useHistory } from "react-router-dom";
 
 const Hero = () => {
+  let history = useHistory();
+
   return (
     <Box px={8} py={24} mx="auto">
       <Box
@@ -63,6 +66,7 @@ const Hero = () => {
             mb={{ base: 2, sm: 0 }}
             size="lg"
             cursor="pointer"
+            onClick={() => history.push("/signup")}
           >
             Get Started
             <Icon boxSize={4} ml={1} viewBox="0 0 20 20" fill="currentColor">
