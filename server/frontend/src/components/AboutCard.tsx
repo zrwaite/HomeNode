@@ -22,7 +22,7 @@ const AboutCard = (props: any) => {
       rounded="lg"
       overflow="hidden"
       minWidth="15rem"
-      maxWidth="19rem"
+      maxWidth="18rem"
     >
       <Image
         w="full"
