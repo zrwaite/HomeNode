@@ -8,15 +8,31 @@ import {
   Tooltip,
   Legend,
 } from "recharts";
+import {
+  useColorModeValue,
+  Table,
+} from "@chakra-ui/react";
 
 function GeneralLineChart(props: any) {
   return (
-    <div>
+    <Table
+      w="full"
+      bg={useColorModeValue("white", "gray.800")}
+      display={{
+        base: "block",
+        md: "table",
+      }}
+      sx={{
+        "@media print": {
+          display: "table",
+        },
+      }}
+    >
       <LineChart
         width={600}
         height={300}
         data={props.data}
-        margin={{ top: 5, right: 20, bottom: 5, left: 0 }}
+        margin={{ top: 30, right: 20, bottom: 5, left: 0 }}
       >
         {props.lines.map((line: any) => (
           <Line
@@ -42,7 +58,7 @@ function GeneralLineChart(props: any) {
         <Tooltip />
         <Legend />
       </LineChart>
-    </div>
+    </Table>
   );
 }
 
