@@ -9,8 +9,11 @@ import {
   Text,
   Icon,
 } from "@chakra-ui/react";
+import { useHistory } from "react-router-dom";
 
 const Hero = () => {
+  let history = useHistory();
+
   return (
     <Box px={8} py={24} mx="auto">
       <Box
@@ -24,9 +27,9 @@ const Hero = () => {
           fontWeight="bold"
           lineHeight="none"
           letterSpacing={{ base: "normal", md: "tight" }}
-          color={useColorModeValue("gray.900",'gray.100')}
+          color={useColorModeValue("gray.900", "gray.100")}
         >
-          The {" "}
+          The{" "}
           <Text
             display={{ base: "block", lg: "inline" }}
             w="full"
@@ -42,12 +45,13 @@ const Hero = () => {
           px={{ base: 0, lg: 24 }}
           mb={6}
           fontSize={{ base: "lg", md: "xl" }}
-          color={useColorModeValue("gray.600",'gray.300')}
+          color={useColorModeValue("gray.600", "gray.300")}
         >
-          HomeNode is a smart home system, capable of monitoring, controlling, and automating many different factors of your home.
+          HomeNode is a smart home system, capable of monitoring, controlling,
+          and automating many different factors of your home.
         </chakra.p>
         <Stack
-        direction={{base:"column",sm:"row"}}
+          direction={{ base: "column", sm: "row" }}
           mb={{ base: 4, md: 8 }}
           spacing={2}
           justifyContent={{ sm: "left", md: "center" }}
@@ -63,6 +67,7 @@ const Hero = () => {
             mb={{ base: 2, sm: 0 }}
             size="lg"
             cursor="pointer"
+            onClick={() => history.push("/signup")}
           >
             Get Started
             <Icon boxSize={4} ml={1} viewBox="0 0 20 20" fill="currentColor">
@@ -83,7 +88,9 @@ const Hero = () => {
             mb={{ base: 2, sm: 0 }}
             size="lg"
             cursor="pointer"
-            onClick={() => {window.open("https://youtu.be/dQw4w9WgXcQ", "_blank")}}
+            onClick={() => {
+              window.open("https://youtu.be/dQw4w9WgXcQ", "_blank");
+            }}
           >
             Watch Demo
             <Icon boxSize={4} ml={1} viewBox="0 0 20 20" fill="currentColor">

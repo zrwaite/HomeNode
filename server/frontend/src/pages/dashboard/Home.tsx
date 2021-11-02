@@ -1,7 +1,12 @@
 import React from "react";
+import ChartsGroup from "../../components/dashboard/ChartsGroup";
 
 function Home() {
-  return <div>home</div>;
+  return (
+    <div>
+      <ChartsGroup />
+    </div>
+  );
 }
 
 export default Home;

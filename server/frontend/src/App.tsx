@@ -5,6 +5,8 @@ import UserContext from "./User";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
 import Dashboard from "./pages/Dashboard";
+import SignIn from "./pages/SignIn";
+import SignUp from "./pages/SignUp";
 
 const user = {
   name: "nice",
@@ -21,6 +23,12 @@ function App() {
           <Switch>
             <Route path="/dashboard">
               <Dashboard />
+            </Route>
+            <Route path="/signin">
+              <SignIn />
+            </Route>
+            <Route path="/signup">
+              <SignUp />
             </Route>
             <Route path="/">
               <Landing />
