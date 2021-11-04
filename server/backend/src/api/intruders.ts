@@ -199,6 +199,7 @@ export default class intrudersController {
 				break;
 			default:
 				errors.forEach((error)=>result.errors.push("Missing "+error));
+				putType = undefined;
 		}
 		if (putType) {
 			try {
@@ -208,6 +209,7 @@ export default class intrudersController {
 				result.response = intruders;
 				result.success = true;
 			} catch (e: any) {
+				result.status = 404;
 				result.errors.push("Error creating request", e);
 			}
 		}
