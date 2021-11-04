@@ -39,13 +39,12 @@ const buildPostBody = (req: any) => {
 	let exists = false;
 	let undefinedParams: string[] = [];
 	let body: any = {};
-	["name", "username", "home_id", "current_data"].forEach((param) => {
+	["name", "home_id", "current_data"].forEach((param) => {
 		if (req.body[param]==undefined) undefinedParams.push(param);
 	});
 	if (undefinedParams.length == 0) { 
 		let postBody: intrudersPostBody = {
 			name: req.body.name,
-			username: req.body.username,
 			home_id: req.body.home_id,
 			current_data: req.body.current_data,
 			daily_data: [],

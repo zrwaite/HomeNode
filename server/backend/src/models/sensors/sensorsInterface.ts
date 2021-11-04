@@ -11,10 +11,16 @@ interface sensorsPostBody {
 	daily_data: object[];
 	past_data: object[];
 }
-interface sensorsPutBody {
+interface sensorsDailyPutBody {
 	//Body query interface for put request
 	temperature?: number;
 	humidity?: number;
 	light_level?: number;
 }
-export {sensorsGetQuery, sensorsPostBody, sensorsPutBody}
+interface sensorsPastPutBody {
+	date: Date;
+	average_temperature: number;
+	average_humidity: number;
+	average_light_level: number;
+}
+export {sensorsGetQuery, sensorsPostBody, sensorsPastPutBody, sensorsDailyPutBody}

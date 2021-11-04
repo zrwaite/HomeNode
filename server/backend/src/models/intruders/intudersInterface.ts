@@ -7,7 +7,6 @@ interface intrudersGetQuery {
 interface intrudersPostBody {
 	//Body query interface for post request
 	name: string;
-	username: string;
 	home_id: string;
 	current_data: object;
 	daily_data: object[];
