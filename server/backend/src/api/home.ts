@@ -55,6 +55,7 @@ const buildPutBody = (req: any) => {
 	let id = req.body.id;
 	let body: any = {};
 	let undefinedParams: string[] = [];
+	// let body: homePutBody = {}; I removed interfaces for this one
 	let param = req.query.put_type;
 	if (req.body[param]==undefined) undefinedParams.push(param);
 	else {
