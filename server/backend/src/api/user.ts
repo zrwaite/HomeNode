@@ -22,14 +22,12 @@ const buildGetQuery = (req: any) => {
 			if (req.query.id!== undefined){
 				query = req.query.id;
 				queryType = "id";
-			} else if (req.username!== undefined){
+			} else if (req.query.username!== undefined){
 				query = req.query.username;
 				queryType = "username";
 			} else {
 				undefinedParams.push("id, username");
 			}
-			let iDQuery: userGetQuery = {};
-			query = iDQuery;
 	}
 	return {queryType: queryType, query: query, errors: undefinedParams};
 };
@@ -55,26 +53,38 @@ const buildPostBody = (req: any) => {
 };
 const buildPutBody = (req: any) => {
 	//Create the put request for the daily data array
-	let putType = undefined;
+	let putType:string|undefined = req.query.put_type;
 	let body: any = {};
 	let undefinedParams: string[] = [];
 	// let body: userPutBody = {}; I removed interfaces for this one
-	let param = req.query.put_type;
-	if (req.body[param]==undefined) undefinedParams.push(param);
-	else {
-		putType = param;
-		body = req.body[param];
+	switch (putType){
+		case "name":
+			if (req.body.name==undefined) undefinedParams.push("name");
+			else body = { name: req.body.name };
+			break;
+		case "settings.dark_mode": case "settings":
+			if (req.body.settings.dark_mode==undefined) undefinedParams.push("settings.dark_mode");
+			else body = {"settings.dark_mode": req.body.settings.dark_mode}
+			break;
+		case "settings.email_notifications": case "email_notifications":
+			if (req.body.settings.email_notifications==undefined) undefinedParams.push("settings.email_notifications");
+			else body = {"settings.email_notifications":req.body.settings.email_notifications}
+			break;
+		default:
+			putType = undefined;
+			undefinedParams.push("put_type");
 	}
-	//Create query object
+	//Create query object 
 	let query: any = {};
 	let queryType = undefined;
-	if (req.query.id!== undefined){
-		query = req.query.id;
+	if (req.body.id!== undefined){
+		query = req.body.id;
 		queryType = "_id";
-	} else if (req.username!== undefined){
-		query = req.query.username;
+	} else if (req.body.username!== undefined){
+		query = req.body.username;
 		queryType = "username";
 	} else {
+		putType = undefined;
 		undefinedParams.push("id, username");
 	}
 	let queryObj:any = {};
@@ -99,7 +109,7 @@ export default class userController {
 				catch (e: any) {result.errors.push("Query error", e);}
 				break;
 			case "username":
-				try {user = await User.find(query);}
+				try {user = await User.find({username: query});}
 				catch (e: any) {result.errors.push("Query error", e);}
 				break;
 			default:
@@ -116,25 +126,29 @@ export default class userController {
 			try {
 				newUser = new User(body);
 				await newUser.save(); //Saves branch to mongodb
-				const homeData: any = await axios.put("/api/home", {
-					id: body.home_id,
-					user: body.username
-				});
-				let homeResult: any = homeData.data;
-				if (homeResult) {
-					console.log(homeResult);
-					result.success = homeResult.success;
-					result.errors.push(...homeResult.errors);
-					result.status = homeResult.status;
-					result.response = {
-						userResult: newUser,
-						homeResult: homeResult.response,
-					};
-				} else {
-					result.success = false;
-					result.errors.push("Error adding user to home");
-					result.status = 400;
-					result.response = {userResult: newUser};
+				try{
+					const homeData: any = await axios.put("/api/home?put_type=user", {
+						id: body.home_id,
+						user: body.username
+					});
+					let homeResult: any = homeData.data;
+					if (homeResult) {
+						result.success = homeResult.success;
+						result.errors.push(...homeResult.errors);
+						result.status = homeResult.status;
+						result.response = {
+							userResult: newUser,
+							homeResult: homeResult.response,
+						};
+					} else {
+						result.success = false;
+						result.errors.push("Error adding user to home");
+						result.status = 400;
+						result.response = {userResult: newUser};
+					}
+				} catch (e) {
+					result.errors.push("Error adding to home");
+					console.log(e);
 				}
 			} catch (e: any) {
 				result.errors.push("Error creating request", e);
@@ -148,30 +162,10 @@ export default class userController {
 		let result = new response();
 		let {putType, queryObj, body, errors} = buildPutBody(req);
 		let user;
-		let updateData: any = {};
-
-		if (!queryObj) result.errors.push("Body error. Make sure to include id or username");
-		else {
-			switch (putType) {
-				case "name":
-					updateData = { name: body.name };
-					break;
-				case "dark_mode":
-					updateData = {"settings.dark_mode": body.settings?.dark_mode};
-					break;
-				case "email_notifications":
-					updateData = {"settings.email_notifications":body.settings?.email_notifications};
-					break;
-				default:
-					errors.forEach((error)=>result.errors.push("Missing "+error));
-					putType = undefined;
-			}
-		}
-
 		if (putType){
 			try {
 				//prettier-ignore
-				user = await User.findOneAndUpdate(queryObj,updateData,{ new: true }); //Saves branch to mongodb 
+				user = await User.findOneAndUpdate(queryObj,body,{ new: true }); //Saves branch to mongodb 
 				result.status = 201;
 				result.response = user;
 				result.success = true;
@@ -180,6 +174,8 @@ export default class userController {
 				result.errors.push("User not found, or trying to add duplicate value, or review other errors", e);
 				result.status = 404;
 			}
+		} else {
+			errors.forEach((error)=>result.errors.push("missing "+error));
 		}
 		res.status(result.status).json(result);
 	}
