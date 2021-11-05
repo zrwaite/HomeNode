@@ -1,9 +1,9 @@
 import axios from "axios";
 const putPastData = async () => {
-	let pastData:any = await axios.get('/api/intruders?all=test');
+	let pastData:any = await axios.get('/api/intruders?get_type=all');
 }
 const intruderCompress = async () => {
-	let allIntruders:any = await axios.get('/api/intruders?all=test');
+	let allIntruders:any = await axios.get('/api/intruders?get_type=all');
 	let intrudersArray:[any] = allIntruders.data.response.result;
 	intrudersArray.forEach(module =>{
 		let dailyData: [any] = module.daily_data;
@@ -14,7 +14,6 @@ const intruderCompress = async () => {
 			if (data.alert_level > 7) intrusionDetections = true;
 		});
 		let date = new Date().toLocaleDateString().toString();
-		console.log(date);
 			
 			//let allIntruders:any = await axios.get('/api/intruders?all=test');
 			/*

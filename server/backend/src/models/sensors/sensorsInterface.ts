@@ -23,4 +23,12 @@ interface sensorsPastPutBody {
 	average_humidity: number;
 	average_light_level: number;
 }
-export {sensorsGetQuery, sensorsPostBody, sensorsPastPutBody, sensorsDailyPutBody}
+
+interface sensorsDeleteBody {
+	//Body query interface for put request
+	temperature: number;
+	humidity: number;
+	light_level: number;
+}
+
+export {sensorsGetQuery, sensorsPostBody, sensorsPastPutBody, sensorsDailyPutBody, sensorsDeleteBody}

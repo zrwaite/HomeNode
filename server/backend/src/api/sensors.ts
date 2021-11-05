@@ -5,7 +5,7 @@ import Sensors from "../models/sensors/sensors"; //Schema for mongodb
 import axios from "axios";
 
 /* Sensors Interfaces imports */ 
-import {sensorsGetQuery, sensorsPostBody, sensorsPastPutBody, sensorsDailyPutBody} from "../models/sensors/sensorsInterface";
+import {sensorsGetQuery, sensorsPostBody, sensorsPastPutBody, sensorsDailyPutBody, sensorsDeleteBody} from "../models/sensors/sensorsInterface";
 
 const buildGetQuery = (req: any) => {
 	//Create the get request
@@ -99,6 +99,34 @@ const buildPutBody = (req: any) => {
 	if (id === undefined) putType = undefined;
 	return {putType: putType, id: id, body: body, errors: undefinedParams};
 };
+
+const buildDeleteBody = (req: any) =>{
+	let deleteType = undefined;
+	let id = req.body.id;
+	let body: any = {};
+	let undefinedParams: string[] = [];
+	switch (req.query.delete_type){
+		case "daily_data":
+			["temperature", "humidity", "light_level"].forEach((param) => {
+				if (req.body[param]==undefined) undefinedParams.push(param);
+			});
+			if (undefinedParams.length == 0) { 
+				let deleteBody: sensorsDeleteBody = {
+					temperature: req.body.temperature,
+					humidity: req.body.humidity,
+					light_level: req.body.light_level
+				};
+				deleteType = "daily_data";
+				body = deleteBody;
+			}
+			break;
+		default:
+			undefinedParams.push("delete_type");
+			break;
+	}
+	if (id === undefined) deleteType = false;
+	return {deleteType: deleteType, id: id, body: body, errors: undefinedParams};
+}
 
 /* sensors controller */
 export default class sensorsController {
@@ -196,5 +224,25 @@ export default class sensorsController {
 			}
 		}
 		res.status(result.status).json(result);
+	}
+	static async apiDeleteSensors(req: Request, res: Response, next: NextFunction){
+		let result = new response();
+		let {deleteType, id, body, errors} = buildDeleteBody(req);
+		let sensors;
+		switch(deleteType){
+			case "daily_data":
+				try{
+					sensors = await Sensors.findByIdAndUpdate(id, {daily_data: [body]}, {new:true}); //Saves branch to mongodb
+					result.status = 201;
+					result.response = sensors;
+					result.success = true;
+				} catch (e: any) {
+					result.errors.push("Error creating request", e);
+				}
+			default:
+				errors.forEach((error)=> result.errors.push("missing "+error))
+		}
+		res.status(result.status).json(result);
+
 	}
 }

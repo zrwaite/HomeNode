@@ -24,7 +24,7 @@ interface intrudersPastPutBody {
 }
 interface intrudersDeleteBody {
 	//Body query interface for delete request
-	detection?: string;
-	alert_level?: number;
+	detection: string;
+	alert_level: number;
 }
 export {intrudersGetQuery, intrudersPostBody, intrudersDailyPutBody, intrudersPastPutBody, intrudersDeleteBody};

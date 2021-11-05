@@ -100,7 +100,7 @@ const buildPutBody = (req: any) => {
 const buildDeleteBody = (req: any) =>{
 	let deleteType = undefined;
 	let id = req.body.id;
-	let body: intrudersDeleteBody = {};
+	let body: any = {};
 	let undefinedParams: string[] = [];
 	switch (req.query.delete_type){
 		case "daily_data":
