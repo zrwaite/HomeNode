@@ -104,7 +104,7 @@ const buildDeleteBody = (req: any) =>{
 	let undefinedParams: string[] = [];
 	switch (req.query.delete_type){
 		case "daily_data":
-			["detection", "alert"].forEach((param) => {
+			["detection", "alert_level"].forEach((param) => {
 				if (req.body[param]==undefined) undefinedParams.push(param);
 			});
 			if (undefinedParams.length == 0) { 
