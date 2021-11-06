@@ -202,7 +202,7 @@ export default function SettingsTable() {
                       isChecked={colorMode === "dark"}
                       onChange={() => {
                         axios
-                          .put("http://homenode.tech/api/user", {
+                          .put("http://homenode.tech/api/user?put_type=settings.dark_mode", {
                             username: "129032699zw@gmail.com",
                             settings: {
                               dark_mode: getOppositeColorMode(),
@@ -221,7 +221,7 @@ export default function SettingsTable() {
                       isChecked={EmailNotifications === true}
                       onChange={() => {
                         axios
-                          .put("http://homenode.tech/api/user", {
+                          .put("http://homenode.tech/api/user?put_type=settings.email_notifications", {
                             username: "129032699zw@gmail.com",
                             settings: {
                               email_notifications: !EmailNotifications,
