@@ -26,8 +26,6 @@ const buildGetQuery = (req: any) => {
 			} else {
 				undefinedParams.push("id, home_id");
 			}
-			let iDQuery: sensorsGetQuery = {};
-			query = iDQuery;
 	}
 	return {queryType: queryType, query: query, errors: undefinedParams};
 };
@@ -72,30 +70,39 @@ const buildPutBody = (req: any) => {
 				};
 				putType = "past_data";
 				body = pastBody;
+			} else {
+				putType = undefined;
 			}
 			break;
 		case "daily_data":
+			let bodyParts: any = [];
 			let dailyBody: sensorsDailyPutBody = {};
 			if (req.body.temperature !== undefined) {
-				body.temperature = req.body.temperature;
+				dailyBody.temperature = req.body.temperature;
+				bodyParts.push({"current_data.temperature": req.body.temperature});
 				putType = "daily_data";
 			}
 			if (req.body.humidity !== undefined) {
-				body.humidity = req.body.humidity;
+				dailyBody.humidity = req.body.humidity;
+				bodyParts.push({"current_data.humidity": req.body.humidity});
 				putType = "daily_data";
 			}
 			if (req.body.light_level !== undefined) {
-				body.light_level = req.body.light_level;
+				dailyBody.light_level = req.body.light_level;
+				bodyParts.push({"current_data.light_level": req.body.light_level});
 				putType = "daily_data";
 			}
 			if (!putType) undefinedParams.push("temperature, humidity or light_level");
-			body = dailyBody;
-
+			else {
+				body = {$push: {daily_data: dailyBody}};
+				bodyParts.forEach((part: object) => body = {...body, ...part});
+			}
 			break;
 		default:
 			undefinedParams.push("put_type");
 			break;
 	}
+	console.log(body);
 	if (id === undefined) putType = undefined;
 	return {putType: putType, id: id, body: body, errors: undefinedParams};
 };
@@ -159,30 +166,35 @@ export default class sensorsController {
 		let newSensors;
 		if (exists) {
 			try {
+				console.log(body);
 				newSensors = new Sensors(body);
 				await newSensors.save(); //Saves branch to mongodb
-				const homeData: any = await axios.put("/api/home", {
+				try{
+					const homeData: any = await axios.put("localhost/api/home?put_type=module", {
 					id: body.home_id,
 					module : {
 						type: 'sensors',
 						module_id: newSensors._id 
 					}
-				});
-				let homeResult: any = homeData.data;
-				if (homeResult) {
-					console.log(homeResult);
-					result.success = homeResult.success;
-					result.errors.push(...homeResult.errors);
-					result.status = homeResult.status;
-					result.response = {
-						sensorResult: newSensors,
-						homeResult: homeResult.response,
-					};
-				} else {
-					result.success = false;
-					result.errors.push("Error adding user to home");
-					result.status = 400;
-					result.response = {sensorResult: newSensors};
+					});
+					let homeResult: any = homeData.data;
+					if (homeResult) {
+						console.log(homeResult);
+						result.success = homeResult.success;
+						result.errors.push(...homeResult.errors);
+						result.status = homeResult.status;
+						result.response = {
+							sensorResult: newSensors,
+							homeResult: homeResult.response,
+						};
+					} else {
+						result.success = false;
+						result.errors.push("Error adding user to home");
+						result.status = 400;
+						result.response = {sensorResult: newSensors};
+					}
+				} catch (e:any) {
+					result.errors.push("Error creating home request", e);
 				}
 			} catch (e: any) {
 				result.errors.push("Error creating request", e);
@@ -199,10 +211,8 @@ export default class sensorsController {
 		let sensors;
 		switch (putType){
 			case "daily_data":
-				updateData = {$push: {daily_data: body}};
-				if(body.temperature) updateData["current_data.temperature"]= body.temperature;
-				if(body.humidity) updateData["current_data.humidity"] = body.humidity;
-				if(body.light_level) updateData["current_data.light_level"] = body.light_level;
+				updateData = body;
+				
 				break;
 			case "past_data":
 				updateData = {$push: {past_data: body}};
@@ -212,6 +222,7 @@ export default class sensorsController {
 				putType = undefined;
 		}
 		if (putType) {
+			console.log(updateData);
 			try {
 				//prettier-ignore
 				sensors = await Sensors.findByIdAndUpdate(id, updateData, {new:true}); //Saves branch to mongodb

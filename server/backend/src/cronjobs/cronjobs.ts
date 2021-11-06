@@ -5,7 +5,7 @@ import sensorsCompress from "./sensorsCompress";
 const cronjobs = () => {
 	cron.schedule('* * * * *', () => {
 		//intruderCompress();
-		//sensorsCompress();
+	//	sensorsCompress();
 	});
 }
 export default cronjobs;

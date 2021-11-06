@@ -17,14 +17,12 @@ const buildGetQuery = (req: any) => {
 			if (req.query.id!== undefined){
 				query = req.query.id;
 				queryType = "id";
-			} else if (req.username!== undefined){
+			} else if (req.query.username!== undefined){
 				query = req.query.username;
 				queryType = "username";
 			} else {
 				undefinedParams.push("id, username");
 			}
-			let iDQuery: homeGetQuery = {};
-			query = iDQuery;
 	}
 	return {queryType: queryType, query: query, errors: undefinedParams};
 };
@@ -51,16 +49,32 @@ const buildPostBody = (req: any) => {
 };
 const buildPutBody = (req: any) => {
 	//Create the put request for the daily data array
-	let putType = undefined;
-	let id = req.body.id;
+	let putType:string|undefined = req.query.put_type;
 	let body: any = {};
 	let undefinedParams: string[] = [];
+	let id = req.body.id;
+	console.log(id);
 	// let body: homePutBody = {}; I removed interfaces for this one
-	let param = req.query.put_type;
-	if (req.body[param]==undefined) undefinedParams.push(param);
-	else {
-		putType = param;
-		body = req.body[param];
+	switch (putType){
+		case "user":
+			if (req.body.user==undefined) undefinedParams.push("user");
+			else body = {$addToSet: {users: req.body.user}};
+			break;
+		case "settings.intrusion_detection":
+			if (req.body.settings.intrusion_detection==undefined) undefinedParams.push("intrusion_detection");
+			body = {"settings.intrusion_detection": req.body.settings.intrusion_detection};
+			break;
+		case "module":
+			if (req.body.module==undefined) undefinedParams.push("module");
+			body = {_id: id, "modules.module_id": {$ne: req.body.module.module_id}}, {$addToSet: {modules: req.body.module}};
+			break;
+		case "notification":
+			if (req.body.notification==undefined) undefinedParams.push("notification");
+			body = {$push: {notifications: req.body.notification}};
+			break;
+		default:
+			putType = undefined;
+			undefinedParams.push("put_type");
 	}
 	if (id === undefined) putType = undefined;
 	return {putType: putType, id: id, body: body, errors: undefinedParams};
@@ -77,11 +91,13 @@ export default class homeController {
 				catch (e: any) {result.errors.push("Query error", e);}
 				break;
 			case "id":
+				console.log(query)
 				try {home = await Home.findById(query);} 
 				catch (e: any) {result.errors.push("Query error", e);}
 				break;
 			case "username":
-				try {home = await Home.find({usernames: {$all: [query]}});}
+				console.log(query);
+				try {home = await Home.find({users: {$all: [query]}});}
 				catch (e: any) {result.errors.push("Query error", e);}
 				break;
 			default:
@@ -113,28 +129,10 @@ export default class homeController {
 		let result = new response();
 		let {putType, id, body, errors} = buildPutBody(req);
 		let home;
-		let updateData: any = {};
-		switch (putType) {
-			case "user":
-				updateData = {$addToSet: {users: body}};
-				break;
-			case "intrusion_detection":
-				updateData = {"settings.intrusion_detection": body};
-				break;
-			case "module":
-				updateData = {_id: id, "modules.module_id": {$ne: body.module?.module_id}}, {$addToSet: {modules: body.module}};
-				break;
-			case "notification":
-				updateData = {$push: {notifications: body.notification}};
-				break;
-			default:
-				errors.forEach((error)=>result.errors.push("Missing "+error));
-				putType = undefined;
-		}
 		if (putType) {
 			try {
 				//prettier-ignore
-				home = await Home.findByIdAndUpdate(id, updateData, {new: true}); //Saves branch to mongodb
+				home = await Home.findByIdAndUpdate(id, body, {new: true}); //Saves branch to mongodb
 				result.status = 201;
 				result.response = home;
 				result.success = true;
@@ -142,6 +140,8 @@ export default class homeController {
 				result.status = 404;
 				result.errors.push("Home not found, or trying to add duplicate value", e);
 			}
+		} else {
+			errors.forEach((error)=>result.errors.push("missing "+error));
 		}
 		res.status(result.status).json(result);
 	}

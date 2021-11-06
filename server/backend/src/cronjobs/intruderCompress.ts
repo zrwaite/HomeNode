@@ -1,4 +1,5 @@
 import axios from "axios";
+
 const putPastData = async (intrusion_detections: boolean, max_alert_level: number) => {
 	let date = new Date().toLocaleDateString().toString();
 	const pastData: any = await axios.put("/api/intruders?put_type=past_data",{
@@ -11,7 +12,7 @@ const putPastData = async (intrusion_detections: boolean, max_alert_level: numbe
 	else console.log("Error putting past data");
 }
 const deleteDailyData = async (detection: string, alert_level: number) => {
-	const deleteData: any = await axios.put("/api/intruders?delete_type=daily_data",{
+	const deleteData: any = await axios.put("localhost/api/intruders?delete_type=daily_data",{
 		detection: detection,
 		alert_level: alert_level
 	});
@@ -20,7 +21,14 @@ const deleteDailyData = async (detection: string, alert_level: number) => {
 	else console.log("Error deleting daily data");
 }
 const intruderCompress = async () => {
-	let allIntruders:any = await axios.get('/api/intruders?get_type=all');
+	let res:any  = await axios.put("http://localhost/api/sensors?get_type=all",{
+	date: 8,
+	intrusion_detections: 8,
+	max_alert_level: 8
+});
+console.log(res)
+return;
+	let allIntruders:any = await axios.get('localhost/api/intruders?get_type=all');
 	let intrudersArray:[any] = allIntruders.data.response.result;
 	intrudersArray.forEach(module =>{
 		let dailyData: [any] = module.daily_data;

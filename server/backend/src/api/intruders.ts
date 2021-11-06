@@ -29,9 +29,8 @@ const buildGetQuery = (req: any) => {
 			} else {
 				undefinedParams.push("id, home_id");
 			}
-			let iDQuery: intrudersGetQuery = {};
-			query = iDQuery;
 	}
+	console.log(query)
 	return {queryType: queryType, query: query, errors: undefinedParams};
 };
 const buildPostBody = (req: any) => {
@@ -57,11 +56,11 @@ const buildPostBody = (req: any) => {
 };
 const buildPutBody = (req: any) => {
 	//Create the put request for the daily data array
-	let putType = undefined;
+	let putType: string|undefined = req.query.put_type;
 	let id = req.body.id;
 	let body: any = {};
 	let undefinedParams: string[] = [];
-	switch (req.query.put_type) {
+	switch (putType) {
 		case "past_data":
 			["date", "intrusion_detections", "max_alert_level"].forEach((param) => {
 				if (req.body[param]==undefined) undefinedParams.push(param);
@@ -72,8 +71,9 @@ const buildPutBody = (req: any) => {
 					intrusion_detections: req.body.intrusion_detections,
 					max_alert_level: req.body.max_alert_level,
 				};
-				putType = "past_data";
-				body = pastBody;
+				body = {$push: {past_data: pastBody}};
+			} else {
+				putType = undefined;
 			}
 			break;
 		case "daily_data":
@@ -85,8 +85,9 @@ const buildPutBody = (req: any) => {
 					detection: req.body.detection,
 					alert_level: req.body.alert_level
 				};
-				putType = "daily_data";
-				body = dailyBody;
+				body = {$push: {daily_data: dailyBody}, current_data: dailyBody};
+			} else {
+				putType = undefined;
 			}
 			break;
 		default:
@@ -114,6 +115,8 @@ const buildDeleteBody = (req: any) =>{
 				};
 				deleteType = "daily_data";
 				body = deleteBody;
+			} else {
+				deleteType= undefined;
 			}
 			break;
 		default:
@@ -135,7 +138,7 @@ export default class intrudersController {
 				catch (e: any) {result.errors.push("Query error", e);}
 				break;
 			case "id":
-				try {intruders = await Intruders.findById(query.id);} 
+				try {intruders = await Intruders.findById(query);} 
 				catch (e: any) {result.errors.push("Query error", e);}
 				break;
 			case "home_id":
@@ -156,7 +159,7 @@ export default class intrudersController {
 			try {
 				newIntruders = new Intruders(body);
 				await newIntruders.save(); //Saves branch to mongodb
-				const homeData: any = await axios.put("/api/home", {
+				const homeData: any = await axios.put("/api/home?put_type=module", {
 					id: body.home_id,
 					module : {
 						type: 'intruders',
@@ -188,22 +191,11 @@ export default class intrudersController {
 		let result = new response();
 		let {putType, id, body, errors} = buildPutBody(req);
 		let intruders;
-		let updateData: any = {};
-		switch (putType){
-			case "daily_data":
-				updateData = {$push: {daily_data: body}, current_data: body};
-				break;
-			case "past_data":
-				updateData = {$push: {past_data: body}};
-				break;
-			default:
-				errors.forEach((error)=>result.errors.push("Missing "+error));
-				putType = undefined;
-		}
+		console.log(body);
 		if (putType) {
 			try {
 				//prettier-ignore
-				intruders = await Intruders.findByIdAndUpdate(id, updateData, {new:true}); //Saves branch to mongodb
+				intruders = await Intruders.findByIdAndUpdate(id, body, {new:true}); //Saves branch to mongodb
 				result.status = 201;
 				result.response = intruders;
 				result.success = true;
@@ -211,6 +203,8 @@ export default class intrudersController {
 				result.status = 404;
 				result.errors.push("Error creating request", e);
 			}
+		} else {
+			errors.forEach((error)=>result.errors.push("Missing "+error));
 		}
 		res.status(result.status).json(result);
 	}
