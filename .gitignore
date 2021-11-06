@@ -115,3 +115,7 @@ env/
 
 # Custom
 */data
+
+#PyCharm
+.idea/
+*.pyc
