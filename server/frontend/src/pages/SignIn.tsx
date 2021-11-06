@@ -96,7 +96,7 @@ const SignIn = () => {
                   w="full"
                   py={2}
                   type="submit"
-                  onClick={() => history.push("/dashboard")}
+                  onClick={() => history.push("/dashboard/home")}
                 >
                   Sign In
                 </Button>

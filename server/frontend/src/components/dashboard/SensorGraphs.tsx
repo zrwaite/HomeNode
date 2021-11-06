@@ -26,12 +26,14 @@ interface ModuleData {
 }
 
 function SensorGraphs() {
-  const [CurrentData, setCurrentData] = useState({
-    temperature: 0,
-    humidity: 0,
-    light_level: 0,
-    updatedAt: "",
-  });
+  const [CurrentData, setCurrentData] = useState([
+    {
+      temperature: 0,
+      humidity: 0,
+      light_level: 0,
+      updatedAt: "",
+    },
+  ]);
 
   const [DailyData, setDailyData] = useState([
     {
@@ -45,14 +47,23 @@ function SensorGraphs() {
   function getData() {
     axios
       .get<ModuleData>(
-        "http://homenode.tech/api/sensors?id=616b7f4a3a200197bf2207ee"
+        "http://homenode.tech/api/sensors?id=61870da5d98c502cf04c5770"
       )
       .then((res) => {
         const { data } = res;
         let current_data = data.response.result[0].current_data;
+        let updated_data = {
+          temperature: current_data.temperature,
+          humidity: current_data.humidity,
+          light_level: current_data.light_level,
+          updatedAt: current_data.updatedAt,
+        };
         let daily_data = data.response.result[0].daily_data;
         console.log("GET SENSORMODULEDATA: ", current_data, daily_data);
-        setCurrentData(current_data);
+        setCurrentData([...CurrentData, updated_data]);
+        if (CurrentData.length > 10) {
+          setCurrentData([...CurrentData.slice(1), updated_data]);
+        }
         setDailyData(daily_data);
       })
       .catch((err) => {
@@ -68,39 +79,81 @@ function SensorGraphs() {
   });
 
   return (
-    <div>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(600px, 1fr))",
+        gridGap: "20px",
+      }}
+    >
+      <GeneralLineChart
+        data={CurrentData}
+        lines={[
+          {
+            key: "temperature",
+            graphType: "live ",
+            stroke: "#ff86b8",
+          },
+        ]}
+        // xAxisKey="updatedAt"
+        yAxisColours={["#ff86b8"]}
+      />
+      <GeneralLineChart
+        data={CurrentData}
+        lines={[
+          {
+            key: "humidity",
+            graphType: "live ",
+            stroke: "#b586ff",
+          },
+        ]}
+        // xAxisKey="updatedAt"
+        yAxisColours={["#b586ff"]}
+      />
+      <GeneralLineChart
+        data={CurrentData}
+        lines={[
+          {
+            key: "light_level",
+            graphType: "live ",
+            stroke: "#ff9d86",
+          },
+        ]}
+        // xAxisKey="updatedAt"
+        yAxisColours={["#ff9d86"]}
+      />
       <GeneralLineChart
         data={DailyData}
         lines={[
           {
             key: "temperature",
-            stroke: "#FF0000",
+            stroke: "#ff00ea",
           },
         ]}
         // xAxisKey="updatedAt"
-        yAxisColours={["#FF0000"]}
+        yAxisColours={["#ff00ea"]}
       />
       <GeneralLineChart
         data={DailyData}
         lines={[
           {
             key: "humidity",
-            stroke: "#0000FF",
+            stroke: "#ff00ea",
           },
         ]}
         // xAxisKey="updatedAt"
-        yAxisColours={["#0000FF"]}
+        yAxisColours={["#ff00ea"]}
       />
       <GeneralLineChart
         data={DailyData}
         lines={[
           {
             key: "light_level",
-            stroke: "#0000FF",
+            stroke: "#ff9600",
           },
         ]}
         // xAxisKey="updatedAt"
-        yAxisColours={["#0000FF"]}
+        yAxisColours={["#ff9600"]}
       />
     </div>
   );
