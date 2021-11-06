@@ -50,7 +50,7 @@ def post_home_data(python_dict):
   return response
 
 def put_home_data(python_dict):
-  response = put_data(python_dict, "/home?put_type=sensors")
+  response = put_data(python_dict, "/home?put_type=home")
   return response
 
 def post_sensors_data(python_dict):
@@ -58,7 +58,7 @@ def post_sensors_data(python_dict):
   return response
 
 def put_sensors_data(python_dict):
-  response = put_data(python_dict, "/sensors?put_type=sensors")
+  response = put_data(python_dict, "/sensors?put_type=daily_data")
   return response
   
 def post_intruders_data(python_dict):

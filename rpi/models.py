@@ -47,7 +47,7 @@ class Intruder:
 class SensorModule: 
     def __init__(self, home_id):
         self._id = None
-        self.name = "Barry's Sensor Module"
+        self.name = "Gongster's Sensor Module"
         self.home_id = home_id
         self.sensors = [] # A dictionary where the key is the sensor_name, the value is just the object
         self.current_data = {}
@@ -66,7 +66,7 @@ class SensorModule:
 
     def initialize_new_sensor_module_on_server(self):
         response = post_sensors_data({'name': self.name,'home_id': self.home_id, 'current_data': self.current_data})
-        self._id = response.json()["response"]["sensorResult"]["current_data"]["_id"]
+        self._id = response.json()["response"]["sensorResult"]["_id"]
         self.store_sensor_module_id()
 
     def store_sensor_module_id(self):
@@ -84,7 +84,8 @@ class SensorModule:
 
     def update_current_data(self):
         for sensor in self.sensors:
-            self.current_data[sensor.name] = sensor.get_most_recent_data()
+            if sensor.get_most_recent_data(): #If the recent data is not none
+                self.current_data[sensor.name] = sensor.get_most_recent_data()
 
     def export_daily_data(self): #The daily data is all of the data in a given day, the raspberry pi wipes the data every day
         for sensor in self.sensors:
@@ -92,7 +93,7 @@ class SensorModule:
     
     def upload_data(self):
         final_object = self.current_data
-        final_object['id'] = self.home_id
+        final_object['id'] = self._id
 
         response = put_sensors_data(final_object)
         print(response.json())

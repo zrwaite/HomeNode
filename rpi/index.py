@@ -16,7 +16,9 @@ home = Home("Gongster's Home")
 sensor_module = SensorModule(home.home_id)
 temperature_sensor = Sensor('temperature')
 humidity_sensor = Sensor('humidity')
-sensor_module.add_sensors(temperature_sensor, humidity_sensor)
+light_sensor = Sensor('light')
+moisture_sensor = Sensor('moisture')
+sensor_module.add_sensors(temperature_sensor, humidity_sensor, light_sensor, moisture_sensor)
 
 
 while True:
@@ -25,11 +27,13 @@ while True:
     # ser = Serial(port='/dev/ttyS0', baudrate=9600)  # open serial port
     # ser.write(str.encode('1'))
 
-    time.sleep(1)
+    time.sleep(10)
 
     # s = ser.readline()
     # data = s.decode('UTF-8')
-    data = "humidity/48.00/temperature/22.50"
+    data = "humidity/58.00/temperature/42.50"
+
+    print(data)
     data_list = data.split('/')
     
     data_dict = {}
@@ -44,7 +48,7 @@ while True:
     # Go over each of the sensor data and put it into the right JSON file
     for key in data_dict:
         # if sensor data
-        if key in ['temperature', 'humidity']:
+        if key in ['temperature', 'humidity', 'light', 'moisture']:
             for sensor_object in sensor_module.sensors:
                 if sensor_object.name == key:
                     sensor = sensor_object
@@ -67,7 +71,3 @@ while True:
     sensor_module.upload_data()
     #TODO: Create Daily Data export function to send to server
     #TODO: Separate Data Handling and Send to server
-    
-    
-    # r = put_sensors_data(final_data)
-    # print(r.text)
