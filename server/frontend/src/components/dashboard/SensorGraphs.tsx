@@ -64,6 +64,9 @@ function SensorGraphs() {
         console.log("GET SENSORMODULEDATA: ", current_data, daily_data);
         console.log("NICE", [...CurrentData, updated_data]);
         setCurrentData([...CurrentData, updated_data]);
+        if (CurrentData.length > 10) {
+          setCurrentData([...CurrentData.slice(1), updated_data]);
+        }
         setDailyData(daily_data);
       })
       .catch((err) => {
