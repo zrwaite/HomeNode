@@ -47,7 +47,7 @@ function SensorGraphs() {
   function getData() {
     axios
       .get<ModuleData>(
-        "http://homenode.tech/api/sensors?id=616b7f4a3a200197bf2207ee"
+        "http://homenode.tech/api/sensors?id=61870da5d98c502cf04c5770"
       )
       .then((res) => {
         const { data } = res;
@@ -91,66 +91,69 @@ function SensorGraphs() {
         lines={[
           {
             key: "temperature",
-            stroke: "#FF0000",
+            graphType: "live ",
+            stroke: "#ff86b8",
           },
         ]}
         // xAxisKey="updatedAt"
-        yAxisColours={["#FF0000"]}
+        yAxisColours={["#ff86b8"]}
       />
       <GeneralLineChart
         data={CurrentData}
         lines={[
           {
             key: "humidity",
-            stroke: "#FF0000",
+            graphType: "live ",
+            stroke: "#b586ff",
           },
         ]}
         // xAxisKey="updatedAt"
-        yAxisColours={["#FF0000"]}
+        yAxisColours={["#b586ff"]}
       />
       <GeneralLineChart
         data={CurrentData}
         lines={[
           {
             key: "light_level",
-            stroke: "#FF0000",
+            graphType: "live ",
+            stroke: "#ff9d86",
           },
         ]}
         // xAxisKey="updatedAt"
-        yAxisColours={["#FF0000"]}
+        yAxisColours={["#ff9d86"]}
       />
       <GeneralLineChart
         data={DailyData}
         lines={[
           {
             key: "temperature",
-            stroke: "#FF0000",
+            stroke: "#ff00ea",
           },
         ]}
         // xAxisKey="updatedAt"
-        yAxisColours={["#FF0000"]}
+        yAxisColours={["#ff00ea"]}
       />
       <GeneralLineChart
         data={DailyData}
         lines={[
           {
             key: "humidity",
-            stroke: "#0000FF",
+            stroke: "#ff00ea",
           },
         ]}
         // xAxisKey="updatedAt"
-        yAxisColours={["#0000FF"]}
+        yAxisColours={["#ff00ea"]}
       />
       <GeneralLineChart
         data={DailyData}
         lines={[
           {
             key: "light_level",
-            stroke: "#0000FF",
+            stroke: "#ff9600",
           },
         ]}
         // xAxisKey="updatedAt"
-        yAxisColours={["#0000FF"]}
+        yAxisColours={["#ff9600"]}
       />
     </div>
   );
