@@ -6,14 +6,12 @@ interface ModuleData {
   response: {
     result: [
       {
-        current_data: [
-          {
-            temperature: number;
-            humidity: number;
-            light_level: number;
-            updatedAt: string;
-          }
-        ];
+        current_data: {
+          temperature: number;
+          humidity: number;
+          light_level: number;
+          updatedAt: string;
+        };
         daily_data: [
           {
             temperature: number;
@@ -54,11 +52,18 @@ function SensorGraphs() {
       .then((res) => {
         const { data } = res;
         let current_data = data.response.result[0].current_data;
+        let updated_data = {
+          temperature: current_data.temperature,
+          humidity: current_data.humidity,
+          light_level: current_data.light_level,
+          updatedAt: current_data.updatedAt,
+        };
         let daily_data = data.response.result[0].daily_data;
-        console.log("GET CUR: ", current_data[0]);
+        console.log("GET CUR: ", current_data);
         console.log("GET DAL: ", daily_data);
         console.log("GET SENSORMODULEDATA: ", current_data, daily_data);
-        setCurrentData([...CurrentData, current_data[0]]);
+        console.log("NICE", [...CurrentData, updated_data]);
+        setCurrentData([...CurrentData, updated_data]);
         setDailyData(daily_data);
       })
       .catch((err) => {
