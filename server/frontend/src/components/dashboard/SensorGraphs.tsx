@@ -6,12 +6,14 @@ interface ModuleData {
   response: {
     result: [
       {
-        current_data: {
-          temperature: number;
-          humidity: number;
-          light_level: number;
-          updatedAt: string;
-        };
+        current_data: [
+          {
+            temperature: number;
+            humidity: number;
+            light_level: number;
+            updatedAt: string;
+          }
+        ];
         daily_data: [
           {
             temperature: number;
@@ -26,12 +28,14 @@ interface ModuleData {
 }
 
 function SensorGraphs() {
-  const [CurrentData, setCurrentData] = useState({
-    temperature: 0,
-    humidity: 0,
-    light_level: 0,
-    updatedAt: "",
-  });
+  const [CurrentData, setCurrentData] = useState([
+    {
+      temperature: 0,
+      humidity: 0,
+      light_level: 0,
+      updatedAt: "",
+    },
+  ]);
 
   const [DailyData, setDailyData] = useState([
     {
@@ -51,8 +55,10 @@ function SensorGraphs() {
         const { data } = res;
         let current_data = data.response.result[0].current_data;
         let daily_data = data.response.result[0].daily_data;
+        console.log("GET CUR: ", current_data[0]);
+        console.log("GET DAL: ", daily_data);
         console.log("GET SENSORMODULEDATA: ", current_data, daily_data);
-        setCurrentData(current_data);
+        setCurrentData([...CurrentData, current_data[0]]);
         setDailyData(daily_data);
       })
       .catch((err) => {
@@ -68,7 +74,46 @@ function SensorGraphs() {
   });
 
   return (
-    <div>
+    <div
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fill, minmax(600px, 1fr))",
+        gridGap: "20px",
+      }}
+    >
+      <GeneralLineChart
+        data={CurrentData}
+        lines={[
+          {
+            key: "temperature",
+            stroke: "#FF0000",
+          },
+        ]}
+        // xAxisKey="updatedAt"
+        yAxisColours={["#FF0000"]}
+      />
+      <GeneralLineChart
+        data={CurrentData}
+        lines={[
+          {
+            key: "humidity",
+            stroke: "#FF0000",
+          },
+        ]}
+        // xAxisKey="updatedAt"
+        yAxisColours={["#FF0000"]}
+      />
+      <GeneralLineChart
+        data={CurrentData}
+        lines={[
+          {
+            key: "light_level",
+            stroke: "#FF0000",
+          },
+        ]}
+        // xAxisKey="updatedAt"
+        yAxisColours={["#FF0000"]}
+      />
       <GeneralLineChart
         data={DailyData}
         lines={[
