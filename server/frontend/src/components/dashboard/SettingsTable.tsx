@@ -41,8 +41,6 @@ export default function SettingsTable() {
   const data = [
     { key: "Dark Mode" },
     { key: "Email Notifications" },
-    { key: "Setting #3" },
-    { key: "Setting #4" },
   ];
 
   function getOppositeColorMode() {
