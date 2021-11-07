@@ -30,15 +30,17 @@ class Home:
 
 
     def store_home_id(self):
+        if not os.path.isdir('./data'):
+            os.mkdir('./data')
         with open('./data/home_id.json', 'w+') as f: #Store the id on 'hard storage' as a JSOn
             json.dump(self.home_id, f)
 
 
 class IntruderModule:
-    def __init__(self, id, name):
-        self._id = id 
-        self.name = name
-        self.home_id = "isdahjk893kbj"
+    def __init__(self, home_id):
+        self._id = None
+        self.name = "Gongster's Intruder Module"
+        self.home_id = home_id
 
 class Intruder:
     def __init__(self, name):
@@ -96,8 +98,7 @@ class SensorModule:
         final_object['id'] = self._id
 
         response = put_sensors_data(final_object)
-        print(response.json())
-        
+
 
 class Sensor:
     def __init__(self, name):
@@ -118,6 +119,8 @@ class Sensor:
                 self.data = json.load(f)
         
         else: #Create the file
+            if not os.path.isdir('./data/sensors'):
+                os.mkdir('./data/sensors/')
             self.data = []
             self.update_json()
             

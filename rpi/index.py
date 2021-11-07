@@ -23,20 +23,24 @@ sensor_module.add_sensors(temperature_sensor, humidity_sensor, light_sensor, moi
 
 while True:
 
+    data = ""
     # Open Serial
-    # ser = Serial(port='/dev/ttyS0', baudrate=9600)  # open serial port
-    # ser.write(str.encode('1'))
+    ser = Serial(port='/dev/ttyS0', baudrate=9600, timeout=1)
+    ser.write(str.encode('1'))
+    time.sleep(1)
+    #while ser.in_waiting:
+    s = ser.readline()
+    data += s.decode('UTF-8')
 
-    time.sleep(10)
+    ser.write(str.encode('2'))
+    time.sleep(1)
+    s = ser.readline()
+    data += s.decode('UTF-8')
 
-    # s = ser.readline()
-    # data = s.decode('UTF-8')
-    data = "humidity/58.00/temperature/42.50"
 
-    print(data)
-    data_list = data.split('/')
-    
+    data_list = data.strip().replace('\n','').replace('\r','/').replace('\\','').split('/')
     data_dict = {}
+
     for index, value in enumerate(data_list):
         if index % 2 == 0:
             data_dict[data_list[index]] = float(data_list[index+1].replace('\\','').strip())
