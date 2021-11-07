@@ -36,12 +36,7 @@ export default function SettingsTable() {
   const { colorMode, toggleColorMode } = useColorMode();
   const [EmailNotifications, setEmailNotifications] = useState(false);
   const header = ["key", "actions"];
-  const data = [
-    { key: "Dark Mode" },
-    { key: "Email Notifications" },
-    { key: "Setting #3" },
-    { key: "Setting #4" },
-  ];
+  const data = [{ key: "Dark Mode" }, { key: "Email Notifications" }];
 
   function getOppositeColorMode() {
     return colorMode === "dark" ? "false" : "true";
