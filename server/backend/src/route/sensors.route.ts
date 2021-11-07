@@ -6,5 +6,7 @@ router.route('/')
     .get(sensorsCtrl.apiGetSensors)
     .post(sensorsCtrl.apiPostSensors)
     .put(sensorsCtrl.apiPutSensors)
+    .delete(sensorsCtrl.apiDeleteSensors)
+
 
 export default router;

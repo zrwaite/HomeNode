@@ -3,9 +3,9 @@ import cron from "node-cron";
 import sensorsCompress from "./sensorsCompress";
 
 const cronjobs = () => {
-	cron.schedule('*/5 * * * *', () => {
+	cron.schedule('* * * * *', () => {
 		//intruderCompress();
-		//sensorsCompress();
+	//	sensorsCompress();
 	});
 }
 export default cronjobs;
