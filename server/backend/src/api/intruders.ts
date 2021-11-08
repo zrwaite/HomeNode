@@ -30,7 +30,6 @@ const buildGetQuery = (req: any) => {
 				undefinedParams.push("id, home_id");
 			}
 	}
-	console.log(query)
 	return {queryType: queryType, query: query, errors: undefinedParams};
 };
 const buildPostBody = (req: any) => {
@@ -191,7 +190,6 @@ export default class intrudersController {
 		let result = new response();
 		let {putType, id, body, errors} = buildPutBody(req);
 		let intruders;
-		console.log(body);
 		if (putType) {
 			try {
 				//prettier-ignore

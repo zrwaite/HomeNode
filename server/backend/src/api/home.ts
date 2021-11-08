@@ -53,7 +53,6 @@ const buildPutBody = (req: any) => {
 	let body: any = {};
 	let undefinedParams: string[] = [];
 	let id = req.body.id;
-	console.log(id);
 	// let body: homePutBody = {}; I removed interfaces for this one
 	switch (putType){
 		case "user":
@@ -91,12 +90,10 @@ export default class homeController {
 				catch (e: any) {result.errors.push("Query error", e);}
 				break;
 			case "id":
-				console.log(query)
 				try {home = await Home.findById(query);} 
 				catch (e: any) {result.errors.push("Query error", e);}
 				break;
 			case "username":
-				console.log(query);
 				try {home = await Home.find({users: {$all: [query]}});}
 				catch (e: any) {result.errors.push("Query error", e);}
 				break;

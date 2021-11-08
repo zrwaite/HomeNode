@@ -58,7 +58,7 @@ const buildPutBody = (req: any) => {
 	let undefinedParams: string[] = [];
 	switch (req.query.put_type) {
 		case "past_data":
-			["date", "average_temperature", "average_humidity", "average_light_level"].forEach((param) => {
+			["date", "average_temperature", "average_humidity", "average_light_level", "average_moisture"].forEach((param) => {
 				if (req.body[param]==undefined) undefinedParams.push(param);
 			});
 			if (undefinedParams.length == 0) { 
@@ -67,6 +67,7 @@ const buildPutBody = (req: any) => {
 					average_temperature: req.body.average_temperature,
 					average_humidity: req.body.average_humidity,
 					average_light_level: req.body.average_light_level,
+					average_moisture: req.body.average_moisture,
 				};
 				putType = "past_data";
 				body = pastBody;
@@ -92,7 +93,12 @@ const buildPutBody = (req: any) => {
 				bodyParts.push({"current_data.light_level": req.body.light_level});
 				putType = "daily_data";
 			}
-			if (!putType) undefinedParams.push("temperature, humidity or light_level");
+			if (req.body.moisture !== undefined) {
+				dailyBody.moisture = req.body.moisture;
+				bodyParts.push({"current_data.moisture": req.body.moisture});
+				putType = "daily_data";
+			}
+			if (!putType) undefinedParams.push("temperature, humidity, moisture or light_level");
 			else {
 				body = {$push: {daily_data: dailyBody}};
 				bodyParts.forEach((part: object) => body = {...body, ...part});
@@ -102,7 +108,6 @@ const buildPutBody = (req: any) => {
 			undefinedParams.push("put_type");
 			break;
 	}
-	console.log(body);
 	if (id === undefined) putType = undefined;
 	return {putType: putType, id: id, body: body, errors: undefinedParams};
 };
@@ -114,14 +119,15 @@ const buildDeleteBody = (req: any) =>{
 	let undefinedParams: string[] = [];
 	switch (req.query.delete_type){
 		case "daily_data":
-			["temperature", "humidity", "light_level"].forEach((param) => {
+			["temperature", "humidity", "light_level", "moisture"].forEach((param) => {
 				if (req.body[param]==undefined) undefinedParams.push(param);
 			});
 			if (undefinedParams.length == 0) { 
 				let deleteBody: sensorsDeleteBody = {
 					temperature: req.body.temperature,
 					humidity: req.body.humidity,
-					light_level: req.body.light_level
+					light_level: req.body.light_level,
+					moisture: req.body.moisture
 				};
 				deleteType = "daily_data";
 				body = deleteBody;
@@ -166,20 +172,18 @@ export default class sensorsController {
 		let newSensors;
 		if (exists) {
 			try {
-				console.log(body);
 				newSensors = new Sensors(body);
 				await newSensors.save(); //Saves branch to mongodb
 				try{
 					const homeData: any = await axios.put("localhost/api/home?put_type=module", {
-					id: body.home_id,
-					module : {
-						type: 'sensors',
-						module_id: newSensors._id 
-					}
+						id: body.home_id,
+						module : {
+							type: 'sensors',
+							module_id: newSensors._id 
+						}
 					});
 					let homeResult: any = homeData.data;
 					if (homeResult) {
-						console.log(homeResult);
 						result.success = homeResult.success;
 						result.errors.push(...homeResult.errors);
 						result.status = homeResult.status;
@@ -222,7 +226,6 @@ export default class sensorsController {
 				putType = undefined;
 		}
 		if (putType) {
-			console.log(updateData);
 			try {
 				//prettier-ignore
 				sensors = await Sensors.findByIdAndUpdate(id, updateData, {new:true}); //Saves branch to mongodb

@@ -16,12 +16,14 @@ interface sensorsDailyPutBody {
 	temperature?: number;
 	humidity?: number;
 	light_level?: number;
+	moisture?: number;
 }
 interface sensorsPastPutBody {
 	date: Date;
 	average_temperature: number;
 	average_humidity: number;
 	average_light_level: number;
+	average_moisture: number;
 }
 
 interface sensorsDeleteBody {
@@ -29,6 +31,7 @@ interface sensorsDeleteBody {
 	temperature: number;
 	humidity: number;
 	light_level: number;
+	moisture: number;
 }
 
 export {sensorsGetQuery, sensorsPostBody, sensorsPastPutBody, sensorsDailyPutBody, sensorsDeleteBody}

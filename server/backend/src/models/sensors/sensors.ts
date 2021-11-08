@@ -13,6 +13,10 @@ const sensorsUpdateSchema = new mongoose.Schema({
         type: Number,
         required: false,
     },
+    moisture: {
+        type: Number,
+        required: false,
+    }
 }, {timestamps: true});
 
 const sensorsDailySchema = new mongoose.Schema({
@@ -32,6 +36,10 @@ const sensorsDailySchema = new mongoose.Schema({
         type: Number,
         required: false,
     },
+    average_moisture : {
+        type: Number,
+        required: false,
+    }
 }, {timestamps: true});
 
 const sensorsSchema = new mongoose.Schema({
