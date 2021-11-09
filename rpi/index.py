@@ -16,7 +16,7 @@ home = Home("Gongster's Home")
 sensor_module = SensorModule(home.home_id)
 temperature_sensor = Sensor('temperature')
 humidity_sensor = Sensor('humidity')
-light_sensor = Sensor('light')
+light_sensor = Sensor('light_level')
 moisture_sensor = Sensor('moisture')
 sensor_module.add_sensors(temperature_sensor, humidity_sensor, light_sensor, moisture_sensor)
 
@@ -52,7 +52,7 @@ while True:
     # Go over each of the sensor data and put it into the right JSON file
     for key in data_dict:
         # if sensor data
-        if key in ['temperature', 'humidity', 'light', 'moisture']:
+        if key in ['temperature', 'humidity', 'light_level', 'moisture']:
             for sensor_object in sensor_module.sensors:
                 if sensor_object.name == key:
                     sensor = sensor_object
