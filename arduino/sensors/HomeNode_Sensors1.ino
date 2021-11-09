@@ -24,6 +24,7 @@ int counter2 = 0;
 float timer = 0;
 
 float activeData[2];
+float pastActiveData[] = {0,0};
 
 char address = '1';
 
@@ -115,10 +116,16 @@ void loop() {
     char c = Serial.read();
     if(c == address){
       Serial.print("temperature/");
-      Serial.print(activeData[0]);
+      if(pastActiveData[0] != activeData[0]){
+          Serial.print(activeData[0]); 
+      }
       Serial.print("/humidity/");
-      Serial.print(activeData[1]);
+      if(pastActiveData[1] != activeData[1]){
+          Serial.print(activeData[1]); 
+      }
       Serial.print("\\\n\r");
+      pastActiveData[0] = activeData[0];
+      pastActiveData[1] = activeData[1];
     }
   }
 }
