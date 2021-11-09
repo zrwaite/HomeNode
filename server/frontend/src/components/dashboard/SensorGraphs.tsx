@@ -4,24 +4,22 @@ import GeneralLineChart from "./GeneralLineChart";
 
 interface ModuleData {
   response: {
-    result: [
-      {
-        current_data: {
+    result: {
+      current_data: {
+        temperature: number;
+        humidity: number;
+        light_level: number;
+        updatedAt: string;
+      };
+      daily_data: [
+        {
           temperature: number;
           humidity: number;
           light_level: number;
           updatedAt: string;
-        };
-        daily_data: [
-          {
-            temperature: number;
-            humidity: number;
-            light_level: number;
-            updatedAt: string;
-          }
-        ];
-      }
-    ];
+        }
+      ];
+    };
   };
 }
 
@@ -51,14 +49,14 @@ function SensorGraphs() {
       )
       .then((res) => {
         const { data } = res;
-        let current_data = data.response.result[0].current_data;
+        let current_data = data.response.result.current_data;
         let updated_data = {
           temperature: current_data.temperature,
           humidity: current_data.humidity,
           light_level: current_data.light_level,
           updatedAt: current_data.updatedAt,
         };
-        let daily_data = data.response.result[0].daily_data;
+        let daily_data = data.response.result.daily_data;
         console.log("GET SENSORMODULEDATA: ", current_data, daily_data);
         setCurrentData([...CurrentData, updated_data]);
         if (CurrentData.length > 10) {
@@ -138,11 +136,11 @@ function SensorGraphs() {
         lines={[
           {
             key: "humidity",
-            stroke: "#ff00ea",
+            stroke: "#9086ff",
           },
         ]}
         // xAxisKey="updatedAt"
-        yAxisColours={["#ff00ea"]}
+        yAxisColours={["#9086ff"]}
       />
       <GeneralLineChart
         data={DailyData}

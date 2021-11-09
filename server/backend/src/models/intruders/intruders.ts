@@ -1,40 +1,32 @@
 import mongoose from 'mongoose';
 //user schema that defines the entity
-const sensorsUpdateSchema = new mongoose.Schema({
-    temperature : {
-        type: Number,
+const intrudersUpdateSchema = new mongoose.Schema({
+    detection : {
+        type: String,
         required: false,
     },
-    humidity : {
-        type: Number,
-        required: false,
-    },
-    light_level : {
+    alert_level : {
         type: Number,
         required: false,
     },
 }, {timestamps: true});
 
-const sensorsDailySchema = new mongoose.Schema({
+const intrudersDailySchema = new mongoose.Schema({
     date: {
-        type: String,
+        type: Date,
         required: true,
     },
-    average_temperature : {
-        type: Number,
+    intrusion_detections : {
+        type: Boolean,
         required: false,
     },
-    average_humidity : {
+    max_alert_level: {
         type: Number,
         required: false,
-    },
-    average_light_level : {
-        type: Number,
-        required: false,
-    },
+    }
 }, {timestamps: true});
 
-const sensorsSchema = new mongoose.Schema({
+const intrudersSchema = new mongoose.Schema({
     // define type, required (the most important)
     name: {
         type: String,
@@ -44,22 +36,22 @@ const sensorsSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         required: true,
         unique: true,
-    },  
+    },
     current_data: {
-        type: sensorsUpdateSchema,
+        type: intrudersUpdateSchema,
         required: false,
         default: {},
     },
     daily_data: {
-        type: [sensorsUpdateSchema],
+        type: [intrudersUpdateSchema],
         required: false,
         default: [],
     },
     past_data: {
-        type: [sensorsDailySchema],
+        type: [intrudersDailySchema],
         required: false,
         default: [],
     },
 }, { timestamps: true});
 
-export default mongoose.model('Sensors', sensorsSchema); //Export data formatting
+export default mongoose.model('Intruders', intrudersSchema); //Export data formatting

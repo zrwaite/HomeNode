@@ -10,6 +10,7 @@ import {
   Icon,
 } from "@chakra-ui/react";
 import { useHistory } from "react-router-dom";
+import dashboard_screenshot from "../assets/dashboard_screenshot.png"
 
 const Hero = () => {
   let history = useHistory();
@@ -113,7 +114,7 @@ const Hero = () => {
           w="full"
           rounded="lg"
           shadow="2xl"
-          src="https://kutty.netlify.app/hero.jpg"
+          src={dashboard_screenshot}
           alt="Hellonext feedback boards software screenshot"
         />
       </Box>

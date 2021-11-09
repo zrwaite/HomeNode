@@ -1,32 +1,48 @@
 import mongoose from 'mongoose';
 //user schema that defines the entity
-const intrudersUpdateSchema = new mongoose.Schema({
-    detection : {
-        type: String,
-        required: false,
-    },
-    alert_level : {
+const sensorsUpdateSchema = new mongoose.Schema({
+    temperature : {
         type: Number,
         required: false,
     },
-}, {timestamps: true});
-
-const intrudersDailySchema = new mongoose.Schema({
-    date: {
-        type: String,
-        required: true,
-    },
-    intrusion_detections : {
-        type: Boolean,
+    humidity : {
+        type: Number,
         required: false,
     },
-    max_alert_level: {
+    light_level : {
+        type: Number,
+        required: false,
+    },
+    moisture: {
         type: Number,
         required: false,
     }
 }, {timestamps: true});
 
-const intrudersSchema = new mongoose.Schema({
+const sensorsDailySchema = new mongoose.Schema({
+    date: {
+        type: String,
+        required: true,
+    },
+    average_temperature : {
+        type: Number,
+        required: false,
+    },
+    average_humidity : {
+        type: Number,
+        required: false,
+    },
+    average_light_level : {
+        type: Number,
+        required: false,
+    },
+    average_moisture : {
+        type: Number,
+        required: false,
+    }
+}, {timestamps: true});
+
+const sensorsSchema = new mongoose.Schema({
     // define type, required (the most important)
     name: {
         type: String,
@@ -36,22 +52,22 @@ const intrudersSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         required: true,
         unique: true,
-    },
+    },  
     current_data: {
-        type: intrudersUpdateSchema,
+        type: sensorsUpdateSchema,
         required: false,
         default: {},
     },
     daily_data: {
-        type: [intrudersUpdateSchema],
+        type: [sensorsUpdateSchema],
         required: false,
         default: [],
     },
     past_data: {
-        type: [intrudersDailySchema],
+        type: [sensorsDailySchema],
         required: false,
         default: [],
     },
 }, { timestamps: true});
 
-export default mongoose.model('Intruders', intrudersSchema); //Export data formatting
+export default mongoose.model('Sensors', sensorsSchema); //Export data formatting

@@ -42,10 +42,10 @@ app.get("/backend/*", (req, res) => {
 });
 
 app.get("/files/*", getFile);
-app.get("/*", getFrontend);
-
 app.get("/", (req: express.Request, res: express.Response) => {
 	res.sendFile(path.resolve(__dirname, "../../frontend/build", "index.html")); //production
 });
+app.get("/*", getFrontend);
+
 
 export default app; //Export server for use in index.js

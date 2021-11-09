@@ -19,17 +19,15 @@ import UserContext from "../../User";
 
 interface UserInfo {
   response: {
-    result: [
-      {
-        username: string;
-        name: string;
-        home_id: string;
-        settings: {
-          dark_mode: boolean;
-          email_notifications: boolean;
-        };
-      }
-    ];
+    result: [{
+      username: string;
+      name: string;
+      home_id: string;
+      settings: {
+        dark_mode: boolean;
+        email_notifications: boolean;
+      };
+    }];
   };
 }
 
@@ -38,12 +36,7 @@ export default function SettingsTable() {
   const { colorMode, toggleColorMode } = useColorMode();
   const [EmailNotifications, setEmailNotifications] = useState(false);
   const header = ["key", "actions"];
-  const data = [
-    { key: "Dark Mode" },
-    { key: "Email Notifications" },
-    { key: "Setting #3" },
-    { key: "Setting #4" },
-  ];
+  const data = [{ key: "Dark Mode" }, { key: "Email Notifications" }];
 
   function getOppositeColorMode() {
     return colorMode === "dark" ? "false" : "true";
@@ -202,12 +195,15 @@ export default function SettingsTable() {
                       isChecked={colorMode === "dark"}
                       onChange={() => {
                         axios
-                          .put("http://homenode.tech/api/user?put_type=settings.dark_mode", {
-                            username: "129032699zw@gmail.com",
-                            settings: {
-                              dark_mode: getOppositeColorMode(),
-                            },
-                          })
+                          .put(
+                            "http://homenode.tech/api/user?put_type=settings.dark_mode",
+                            {
+                              username: "129032699zw@gmail.com",
+                              settings: {
+                                dark_mode: getOppositeColorMode(),
+                              },
+                            }
+                          )
                           .then(() => forceColorModeUpdate());
                         console.log("PUT COLORMODE: ", getOppositeColorMode());
                       }}
@@ -221,12 +217,15 @@ export default function SettingsTable() {
                       isChecked={EmailNotifications === true}
                       onChange={() => {
                         axios
-                          .put("http://homenode.tech/api/user?put_type=settings.email_notifications", {
-                            username: "129032699zw@gmail.com",
-                            settings: {
-                              email_notifications: !EmailNotifications,
-                            },
-                          })
+                          .put(
+                            "http://homenode.tech/api/user?put_type=settings.email_notifications",
+                            {
+                              username: "129032699zw@gmail.com",
+                              settings: {
+                                email_notifications: !EmailNotifications,
+                              },
+                            }
+                          )
                           .then(() => forceEmailNotificationsUpdate());
                         console.log("PUT EMAILNOTIFS: ", !EmailNotifications);
                       }}

@@ -6,7 +6,9 @@ import { HiOutlineSparkles } from "react-icons/hi";
 
 import zac from "../assets/zac.jpg";
 import george from "../assets/george.jpg";
+import steven from "../assets/steven.jpg";
 import hargun from "../assets/hargun.jpg";
+import michael from "../assets/michael.jpg";
 
 function About() {
   return (
@@ -22,9 +24,9 @@ function About() {
       >
         <AboutCard
           name="Zac Waite"
-          role_emoji={MdHeadset}
+          role_emoji={HiOutlineSparkles}
           image={zac}
-          emoji_color="white"
+          emoji_color="yellow"
           role_description="Project Manager and Backend Developer"
           description="Student athlete and insomniac web/robot programmer"
           university="uWaterloo Software Engineering"
@@ -42,20 +44,19 @@ function About() {
         />
         <AboutCard
           name="Steven Gong"
-          role_emoji={MdHeadset}
-          image="https://thispersondoesnotexist.com/image"
-          emoji_color="white"
+          role_emoji={HiOutlineSparkles}
+          image={steven}
+          emoji_color="yellow"
           role_description="Role"
-          description="[Placeholder description] Full Stack maker & UI / UX Designer , love hip hop music Author of
-          Building UI."
+          description="Ex-gamer and aspiring youtuber"
           university="uWaterloo Software Engineering"
           email="userid@uwaterloo.ca"
         />
         <AboutCard
           name="Hargun Mujral"
-          role_emoji={MdHeadset}
+          role_emoji={HiOutlineSparkles}
           image={hargun}
-          emoji_color="white"
+          emoji_color="yellow"
           role_description="Arduino and Data Processing"
           description="16 year old math nerd and EDM fanatic"
           university="uWaterloo Software Engineering"
@@ -63,9 +64,9 @@ function About() {
         />
         <AboutCard
           name="Michael Dennisov"
-          role_emoji={MdHeadset}
-          image="https://thispersondoesnotexist.com/image"
-          emoji_color="white"
+          role_emoji={HiOutlineSparkles}
+          image={michael}
+          emoji_color="yellow"
           role_description="Role"
           description="[Placeholder description] Full Stack maker & UI / UX Designer , love hip hop music Author of
           Building UI."
