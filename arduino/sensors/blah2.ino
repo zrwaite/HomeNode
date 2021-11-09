@@ -19,6 +19,7 @@ int counter2 = 0;
 float timer = 0;
 
 float activeData[2];
+float pastActiveData[] = {0,0};
 
 char address = '2';
 
@@ -108,16 +109,16 @@ void loop() {
     char c = Serial.read();
     if(c == address){
       Serial.print("light/");
-      Serial.print(activeData[0]);
+      if(pastActiveData[0] != activeData[0]){
+          Serial.print(activeData[0]); 
+      }
       Serial.print("/moisture/");
-      Serial.print(activeData[1]);
+      if(pastActiveData[1] != activeData[1]){
+          Serial.print(activeData[1]); 
+      }
       Serial.print("\\\n\r");
+      pastActiveData[0] = activeData[0];
+      pastActiveData[1] = activeData[1];
     }
   }
-}
-
-float generate(int num){
-  float randNumber = random(100);
-  delay(100);
-  return randNumber / 15.00 + 200.00 / 8.00;
 }
