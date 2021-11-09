@@ -19,7 +19,7 @@ import UserContext from "../../User";
 
 interface UserInfo {
   response: {
-    result: {
+    result: [{
       username: string;
       name: string;
       home_id: string;
@@ -27,7 +27,7 @@ interface UserInfo {
         dark_mode: boolean;
         email_notifications: boolean;
       };
-    };
+    }];
   };
 }
 
@@ -49,7 +49,7 @@ export default function SettingsTable() {
       )
       .then((res) => {
         const { data } = res;
-        let received_color_mode = data.response.result.settings.dark_mode;
+        let received_color_mode = data.response.result[0].settings.dark_mode;
         console.log("GET COLORMODE: ", received_color_mode);
         if (colorMode === "dark" && received_color_mode === false) {
           toggleColorMode();
@@ -70,7 +70,7 @@ export default function SettingsTable() {
       .then((res) => {
         const { data } = res;
         let received_email_notifications =
-          data.response.result.settings.email_notifications;
+          data.response.result[0].settings.email_notifications;
         console.log("GET EMAILNOTIFS: ", received_email_notifications);
         setEmailNotifications(received_email_notifications);
       })
