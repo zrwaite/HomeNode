@@ -8,6 +8,7 @@ import zac from "../assets/zac.jpg";
 import george from "../assets/george.jpg";
 import steven from "../assets/steven.jpg";
 import hargun from "../assets/hargun.jpg";
+import michael from "../assets/michael.jpg";
 
 function About() {
   return (
@@ -64,7 +65,7 @@ function About() {
         <AboutCard
           name="Michael Dennisov"
           role_emoji={HiOutlineSparkles}
-          image="https://thispersondoesnotexist.com/image"
+          image={michael}
           emoji_color="yellow"
           role_description="Role"
           description="[Placeholder description] Full Stack maker & UI / UX Designer , love hip hop music Author of
