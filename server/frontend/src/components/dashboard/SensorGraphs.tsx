@@ -136,11 +136,11 @@ function SensorGraphs() {
         lines={[
           {
             key: "humidity",
-            stroke: "#ff00ea",
+            stroke: "#9086ff",
           },
         ]}
         // xAxisKey="updatedAt"
-        yAxisColours={["#ff00ea"]}
+        yAxisColours={["#9086ff"]}
       />
       <GeneralLineChart
         data={DailyData}
