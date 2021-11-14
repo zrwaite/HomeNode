@@ -108,7 +108,10 @@ const buildPutBody = (req: any) => {
 			undefinedParams.push("put_type");
 			break;
 	}
-	if (id === undefined) putType = undefined;
+	if (id === undefined) {
+		putType = undefined;
+		undefinedParams.push("id");
+	}
 	return {putType: putType, id: id, body: body, errors: undefinedParams};
 };
 
@@ -137,7 +140,10 @@ const buildDeleteBody = (req: any) =>{
 			undefinedParams.push("delete_type");
 			break;
 	}
-	if (id === undefined) deleteType = false;
+	if (id === undefined) {
+		deleteType = undefined;
+		undefinedParams.push("id");
+	}
 	return {deleteType: deleteType, id: id, body: body, errors: undefinedParams};
 }
 
@@ -174,16 +180,18 @@ export default class sensorsController {
 			try {
 				newSensors = new Sensors(body);
 				await newSensors.save(); //Saves branch to mongodb
+				let putBody = {
+					id: body.home_id,
+					module: {
+						type: 'sensors',
+						module_id: newSensors._id.toString()
+					}
+				}
 				try{
-					const homeData: any = await axios.put("localhost/api/home?put_type=module", {
-						id: body.home_id,
-						module : {
-							type: 'sensors',
-							module_id: newSensors._id 
-						}
-					});
+					const homeData: any = await axios.put("/api/home?put_type=module", putBody);
 					let homeResult: any = homeData.data;
 					if (homeResult) {
+						console.log(homeResult);
 						result.success = homeResult.success;
 						result.errors.push(...homeResult.errors);
 						result.status = homeResult.status;
@@ -192,9 +200,7 @@ export default class sensorsController {
 							homeResult: homeResult.response,
 						};
 					} else {
-						result.success = false;
 						result.errors.push("Error adding user to home");
-						result.status = 400;
 						result.response = {sensorResult: newSensors};
 					}
 				} catch (e:any) {

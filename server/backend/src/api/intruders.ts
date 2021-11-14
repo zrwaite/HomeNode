@@ -93,7 +93,10 @@ const buildPutBody = (req: any) => {
 			undefinedParams.push("put_type");
 			break;
 	}
-	if (id === undefined) putType = undefined;
+	if (id === undefined) {
+		putType = undefined;
+		undefinedParams.push("id");
+	}
 	return {putType: putType, id: id, body: body, errors: undefinedParams};
 };
 
@@ -122,7 +125,10 @@ const buildDeleteBody = (req: any) =>{
 			undefinedParams.push("delete_type");
 			break;
 	}
-	if (id === undefined) deleteType = false;
+	if (id === undefined) {
+		deleteType = undefined;
+		undefinedParams.push("id");
+	}
 	return {deleteType: deleteType, id: id, body: body, errors: undefinedParams};
 }
 /* register controller */
@@ -158,25 +164,30 @@ export default class intrudersController {
 			try {
 				newIntruders = new Intruders(body);
 				await newIntruders.save(); //Saves branch to mongodb
-				const homeData: any = await axios.put("/api/home?put_type=module", {
+				let putBody = {
 					id: body.home_id,
 					module : {
 						type: 'intruders',
-						module_id: newIntruders._id 
+						module_id: newIntruders._id.toString()
 					}
-				});
-				let homeResult: any = homeData.data;
-				if (homeResult) {
-					result.success = homeResult.success;
-					result.errors.push(...homeResult.errors);
-					result.status = homeResult.status;
-					result.response = {
-						intruderResult: newIntruders,
-						homeResult: homeResult.response,
-					};
-				} else {
-					result.errors.push("Error adding user to home");
-					result.response = {intruderResult: newIntruders};
+				}
+				try{
+					const homeData: any = await axios.put("/api/home?put_type=module", putBody);
+					let homeResult: any = homeData.data;
+					if (homeResult) {
+						result.success = homeResult.success;
+						result.errors.push(...homeResult.errors);
+						result.status = homeResult.status;
+						result.response = {
+							intruderResult: newIntruders,
+							homeResult: homeResult.response,
+						};
+					} else {
+						result.errors.push("Error adding user to home");
+						result.response = {intruderResult: newIntruders};
+					}
+				} catch (e: any){
+					result.errors.push("Error adding to home", e);
 				}
 			} catch (e: any) {
 				result.errors.push("Error creating request", e);

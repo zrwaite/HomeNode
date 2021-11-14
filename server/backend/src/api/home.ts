@@ -53,30 +53,39 @@ const buildPutBody = (req: any) => {
 	let body: any = {};
 	let undefinedParams: string[] = [];
 	let id = req.body.id;
+	let query: any = {};
 	// let body: homePutBody = {}; I removed interfaces for this one
 	switch (putType){
 		case "user":
 			if (req.body.user==undefined) undefinedParams.push("user");
 			else body = {$addToSet: {users: req.body.user}};
+			query = {_id: id};
 			break;
 		case "settings.intrusion_detection":
 			if (req.body.settings.intrusion_detection==undefined) undefinedParams.push("intrusion_detection");
 			body = {"settings.intrusion_detection": req.body.settings.intrusion_detection};
+			query = {_id: id};
 			break;
 		case "module":
 			if (req.body.module==undefined) undefinedParams.push("module");
-			body = {_id: id, "modules.module_id": {$ne: req.body.module.module_id}}, {$addToSet: {modules: req.body.module}};
+			body = {$addToSet: {modules: req.body.module}};
+			query = {_id: id, "modules.module_id": {$ne: req.body.module.module_id}};
 			break;
 		case "notification":
 			if (req.body.notification==undefined) undefinedParams.push("notification");
 			body = {$push: {notifications: req.body.notification}};
+			query = {_id: id};
 			break;
 		default:
 			putType = undefined;
 			undefinedParams.push("put_type");
 	}
-	if (id === undefined) putType = undefined;
-	return {putType: putType, id: id, body: body, errors: undefinedParams};
+	console.log(body);
+	if (id === undefined) {
+		putType = undefined;
+		undefinedParams.push("id");
+	}
+	return {putType: putType, query: query, body: body, errors: undefinedParams};
 };
 /* register controller */
 export default class homeController {
@@ -124,12 +133,12 @@ export default class homeController {
 	}
 	static async apiPutHome(req: Request, res: Response, next: NextFunction) {
 		let result = new response();
-		let {putType, id, body, errors} = buildPutBody(req);
+		let {putType, query, body, errors} = buildPutBody(req);
 		let home;
 		if (putType) {
 			try {
 				//prettier-ignore
-				home = await Home.findByIdAndUpdate(id, body, {new: true}); //Saves branch to mongodb
+				home = await Home.findByIdAndUpdate(query, body, {new: true}); //Saves branch to mongodb
 				result.status = 201;
 				result.response = home;
 				result.success = true;
