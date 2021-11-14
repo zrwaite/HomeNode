@@ -10,7 +10,7 @@ import {intrudersGetQuery, intrudersPostBody, intrudersDailyPutBody, intrudersPa
 
 /* Build Functions */
 
-const buildGetQuery = (req: any) => {
+const buildGetQuery = async (req: any) => {
 	//Create the get request
 	let queryType = undefined;
 	let query: any = {};
@@ -32,7 +32,7 @@ const buildGetQuery = (req: any) => {
 	}
 	return {queryType: queryType, query: query, errors: undefinedParams};
 };
-const buildPostBody = (req: any) => {
+const buildPostBody = async (req: any) => {
 	//Create the post request
 	let exists = false;
 	let undefinedParams: string[] = [];
@@ -53,7 +53,7 @@ const buildPostBody = (req: any) => {
 	}
 	return {exists: exists, body: body, errors: undefinedParams};
 };
-const buildPutBody = (req: any) => {
+const buildPutBody = async (req: any) => {
 	//Create the put request for the daily data array
 	let putType: string|undefined = req.query.put_type;
 	let id = req.body.id;
@@ -100,7 +100,7 @@ const buildPutBody = (req: any) => {
 	return {putType: putType, id: id, body: body, errors: undefinedParams};
 };
 
-const buildDeleteBody = (req: any) =>{
+const buildDeleteBody = async (req: any) =>{
 	let deleteType = undefined;
 	let id = req.body.id;
 	let body: any = {};
@@ -135,7 +135,7 @@ const buildDeleteBody = (req: any) =>{
 export default class intrudersController {
 	static async apiGetIntruders(req: Request, res: Response, next: NextFunction) {
 		let result = new response(); //Create new standardized response
-		let {queryType, query, errors} = buildGetQuery(req);
+		let {queryType, query, errors} = await buildGetQuery(req);
 		let intruders;
 		switch (queryType){
 			case "all":
@@ -158,7 +158,7 @@ export default class intrudersController {
 	}
 	static async apiPostIntruders(req: Request, res: Response, next: NextFunction) {
 		let result = new response();
-		let {exists, body, errors} = buildPostBody(req);
+		let {exists, body, errors} = await buildPostBody(req);
 		let newIntruders;
 		if (exists) {
 			try {
@@ -199,7 +199,7 @@ export default class intrudersController {
 	}
 	static async apiPutIntruders(req: Request, res: Response, next: NextFunction) {
 		let result = new response();
-		let {putType, id, body, errors} = buildPutBody(req);
+		let {putType, id, body, errors} = await buildPutBody(req);
 		let intruders;
 		if (putType) {
 			try {
@@ -219,7 +219,7 @@ export default class intrudersController {
 	}
 	static async apiDeleteIntruders(req: Request, res: Response, next: NextFunction){
 		let result = new response();
-		let {deleteType, id, body, errors} = buildDeleteBody(req);
+		let {deleteType, id, body, errors} = await buildDeleteBody(req);
 		let intruders;
 		switch(deleteType){
 			case "daily_data":

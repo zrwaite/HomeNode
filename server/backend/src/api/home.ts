@@ -5,7 +5,7 @@ import Home from "../models/home/home"; //Schema for mongodb
 
 import {homeGetQuery, homePostBody, homePutBody} from "../models/home/homeInterfaces";
 
-const buildGetQuery = (req: any) => {
+const buildGetQuery = async (req: any) => {
 	let queryType = undefined;
 	let query: any = {};
 	let undefinedParams: string[] = [];
@@ -26,7 +26,7 @@ const buildGetQuery = (req: any) => {
 	}
 	return {queryType: queryType, query: query, errors: undefinedParams};
 };
-const buildPostBody = (req: any) => {
+const buildPostBody = async (req: any) => {
 	//Create the post request
 	let exists = false;
 	let undefinedParams: string[] = [];
@@ -47,7 +47,7 @@ const buildPostBody = (req: any) => {
 	}
 	return {exists: exists, body: body, errors: undefinedParams};
 };
-const buildPutBody = (req: any) => {
+const buildPutBody = async (req: any) => {
 	//Create the put request for the daily data array
 	let putType:string|undefined = req.query.put_type;
 	let body: any = {};
@@ -90,7 +90,7 @@ const buildPutBody = (req: any) => {
 export default class homeController {
 	static async apiGetHome(req: Request, res: Response, next: NextFunction) {
 		let result = new response(); //Create new standardized response
-		let {queryType, query, errors} = buildGetQuery(req);
+		let {queryType, query, errors} = await buildGetQuery(req);
 		let home;
 		switch (queryType){
 			case "all":
@@ -113,7 +113,7 @@ export default class homeController {
 	}
 	static async apiPostHome(req: Request, res: Response, next: NextFunction) {
 		let result = new response();
-		let {exists, body, errors} = buildPostBody(req);
+		let {exists, body, errors} = await buildPostBody(req);
 		let newHome;
 		if (exists) {
 			try {
@@ -132,7 +132,7 @@ export default class homeController {
 	}
 	static async apiPutHome(req: Request, res: Response, next: NextFunction) {
 		let result = new response();
-		let {putType, query, body, errors} = buildPutBody(req);
+		let {putType, query, body, errors} = await buildPutBody(req);
 		let home;
 		if (putType) {
 			try {

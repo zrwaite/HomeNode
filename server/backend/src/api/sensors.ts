@@ -7,7 +7,7 @@ import axios from "axios";
 /* Sensors Interfaces imports */ 
 import {sensorsGetQuery, sensorsPostBody, sensorsPastPutBody, sensorsDailyPutBody, sensorsDeleteBody} from "../models/sensors/sensorsInterface";
 
-const buildGetQuery = (req: any) => {
+const buildGetQuery = async (req: any) => {
 	//Create the get request
 	let queryType = undefined;
 	let query: any = {};
@@ -29,7 +29,7 @@ const buildGetQuery = (req: any) => {
 	}
 	return {queryType: queryType, query: query, errors: undefinedParams};
 };
-const buildPostBody = (req: any) => {
+const buildPostBody = async (req: any) => {
 	//Create the post request
 	let exists = false;
 	let undefinedParams: string[] = [];
@@ -50,7 +50,7 @@ const buildPostBody = (req: any) => {
 	}
 	return {exists: exists, body: body, errors: undefinedParams};
 };
-const buildPutBody = (req: any) => {
+const buildPutBody = async (req: any) => {
 	//Create the put request for the daily data array
 	let putType = undefined;
 	let id = req.body.id;
@@ -115,7 +115,7 @@ const buildPutBody = (req: any) => {
 	return {putType: putType, id: id, body: body, errors: undefinedParams};
 };
 
-const buildDeleteBody = (req: any) =>{
+const buildDeleteBody = async (req: any) =>{
 	let deleteType = undefined;
 	let id = req.body.id;
 	let body: any = {};
@@ -152,7 +152,7 @@ export default class sensorsController {
 	static async apiGetSensors(req: Request, res: Response, next: NextFunction) {
 		let result = new response(); //Create new standardized response
 		let sensors;
-		let {queryType, query, errors} = buildGetQuery(req);
+		let {queryType, query, errors} = await buildGetQuery(req);
 		switch (queryType){
 			case "all":
 				try{sensors = await Sensors.find();} 
@@ -174,7 +174,7 @@ export default class sensorsController {
 	}
 	static async apiPostSensors(req: Request, res: Response, next: NextFunction) {
 		let result = new response();
-		let {exists, body, errors} = buildPostBody(req);
+		let {exists, body, errors} = await buildPostBody(req);
 		let newSensors;
 		if (exists) {
 			try {
@@ -215,7 +215,7 @@ export default class sensorsController {
 	}
 	static async apiPutSensors(req: Request, res: Response, next: NextFunction) {
 		let result = new response();
-		let {putType, id, body, errors} = buildPutBody(req);
+		let {putType, id, body, errors} = await buildPutBody(req);
 		let updateData: any = {};
 		let sensors;
 		switch (putType){
@@ -246,7 +246,7 @@ export default class sensorsController {
 	}
 	static async apiDeleteSensors(req: Request, res: Response, next: NextFunction){
 		let result = new response();
-		let {deleteType, id, body, errors} = buildDeleteBody(req);
+		let {deleteType, id, body, errors} = await buildDeleteBody(req);
 		let sensors;
 		switch(deleteType){
 			case "daily_data":
