@@ -7,6 +7,7 @@ interface userPostBody {
 	//Body query interface for post request
 	username: string;
 	name: string;
+	hash: string;
 	home_id: string;
 	settings: object;
 }
