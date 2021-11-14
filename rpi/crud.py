@@ -49,8 +49,8 @@ def post_home_data(python_dict):
   response = post_data(python_dict, "/home")
   return response
 
-def put_home_data(python_dict):
-  response = put_data(python_dict, "/home?put_type=home")
+def put_notification_data(python_dict):
+  response = put_data(python_dict, "/home?put_type=notification")
   return response
 
 def post_sensors_data(python_dict):
@@ -67,12 +67,4 @@ def post_intruders_data(python_dict):
 
 def put_intruders_data(python_dict):
   response = put_data(python_dict, "/intruders?put_type=daily_data")
-  return response
-  
-def post_user_data(python_dict):
-  response = post_data(python_dict, "/user")
-  return response
-
-def put_user_data(python_dict):
-  response = put_data(python_dict, "/user?put_type=user")
   return response
