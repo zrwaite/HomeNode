@@ -36,48 +36,12 @@ class Home:
             json.dump(self.home_id, f)
 
 
-class IntruderModule:
+class Module: #Parent of IntruderModule and SensorModule
     def __init__(self, home_id):
         self._id = None
-        self.name = "Gongster's Intruder Module"
-        self.home_id = home_id
-
-class Intruder:
-    def __init__(self, name):
-        self.name = name
-
-class SensorModule: 
-    def __init__(self, home_id):
-        self._id = None
-        self.name = "Gongster's Sensor Module"
+        self.name = None
         self.home_id = home_id
         self.sensors = [] # A dictionary where the key is the sensor_name, the value is just the object
-        self.current_data = {}
-
-        self.get_sensor_module_id()
-
-        print("Initialized sensor module, with id", self._id)
-
-
-    def get_sensor_module_id(self):
-        if os.path.isfile('./data/sensor_module_id.json'):
-            self.load_sensor_module_id_from_json()
-        else:
-            self.initialize_new_sensor_module_on_server()
-
-
-    def initialize_new_sensor_module_on_server(self):
-        response = post_sensors_data({'name': self.name,'home_id': self.home_id, 'current_data': self.current_data})
-        self._id = response.json()["response"]["sensorResult"]["_id"]
-        self.store_sensor_module_id()
-
-    def store_sensor_module_id(self):
-        with open('./data/sensor_module_id.json', 'w+') as f: #Store the id on 'hard storage' as a JSOn
-            json.dump(self._id, f)
-
-    def load_sensor_module_id_from_json(self):
-        with open('./data/sensor_module_id.json', 'r') as f: #Store the id on 'hard storage' as a JSOn
-            self._id = json.load(f)
 
     def add_sensors(self,*sensors):
         # Add one or multiple sensors
@@ -93,12 +57,83 @@ class SensorModule:
         for sensor in self.sensors:
             print(sensor)
     
+
+class IntruderModule(Module):
+    # Noise Sensor, Motion, door is open,
+    def __init__(self, home_id):
+        super().__init__(home_id) #Initialize parent class
+
+    def upload_data(self):
+        final_object = self.current_data
+        final_object['id'] = self._id
+
+        response = put_intruders_data(final_object)
+
+    def get_intruder_module_id(self):
+        if os.path.isfile('./data/intruder_module_id.json'):
+            self.load_intruder_module_id_from_json()
+        else:
+            self.initialize_new_intruder_module_on_server()
+
+    def initialize_new_intruder_module_on_server(self):
+        response = post_intruders_data({'name': self.name,'home_id': self.home_id, 'current_data': self.current_data})
+        self._id = response.json()["response"]["intruderResult"]["_id"]
+        self.store_intruder_module_id()
+
+    def store_intruder_module_id(self):
+        with open('./data/intruder_module_id.json', 'w+') as f: #Store the id on 'hard storage' as a JSOn
+            json.dump(self._id, f)
+
+    def load_intruder_module_id_from_json(self):
+        with open('./data/intruder_module_id.json', 'r') as f: #Store the id on 'hard storage' as a JSOn
+            self._id = json.load(f)
+
+    def upload_data(self):
+        final_object = self.current_data
+        final_object['id'] = self._id
+
+        response = put_intruders_data(final_object)
+
+
+class Intruder:
+    def __init__(self, name):
+        self.name = name
+    
+class SensorModule(Module): 
+    # Includes Light Level, Humidity, Temperature, and Moisture Sensor
+    def __init__(self, home_id):
+        super().__init__(home_id) #Initialize parent class
+        self.name = "Gongster's Sensor Module"
+        self.current_data = {}
+
+        self.get_sensor_module_id()
+
+        print("Initialized sensor module, with id", self._id)
+
+    def get_sensor_module_id(self):
+        if os.path.isfile('./data/sensor_module_id.json'):
+            self.load_sensor_module_id_from_json()
+        else:
+            self.initialize_new_sensor_module_on_server()
+
+    def initialize_new_sensor_module_on_server(self):
+        response = post_sensors_data({'name': self.name,'home_id': self.home_id, 'current_data': self.current_data})
+        self._id = response.json()["response"]["sensorResult"]["_id"]
+        self.store_sensor_module_id()
+
+    def store_sensor_module_id(self):
+        with open('./data/sensor_module_id.json', 'w+') as f: #Store the id on 'hard storage' as a JSOn
+            json.dump(self._id, f)
+
+    def load_sensor_module_id_from_json(self):
+        with open('./data/sensor_module_id.json', 'r') as f: #Store the id on 'hard storage' as a JSOn
+            self._id = json.load(f)
+
     def upload_data(self):
         final_object = self.current_data
         final_object['id'] = self._id
 
         response = put_sensors_data(final_object)
-
 
 class Sensor:
     def __init__(self, name):
