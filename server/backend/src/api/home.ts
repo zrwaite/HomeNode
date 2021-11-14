@@ -80,7 +80,6 @@ const buildPutBody = (req: any) => {
 			putType = undefined;
 			undefinedParams.push("put_type");
 	}
-	console.log(body);
 	if (id === undefined) {
 		putType = undefined;
 		undefinedParams.push("id");

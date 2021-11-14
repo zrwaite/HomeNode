@@ -191,7 +191,6 @@ export default class sensorsController {
 					const homeData: any = await axios.put("/api/home?put_type=module", putBody);
 					let homeResult: any = homeData.data;
 					if (homeResult) {
-						console.log(homeResult);
 						result.success = homeResult.success;
 						result.errors.push(...homeResult.errors);
 						result.status = homeResult.status;
