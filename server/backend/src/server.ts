@@ -21,9 +21,11 @@ app.use(express.static(path.resolve(__dirname, "../../frontend/build"))); //deve
 import getFile from "./route/files.route";
 import getFrontend from "./route/frontend.route";
 import apiRoute from "./route/api.route";
+import authRoute from "./route/auth.route";
 
 // api
-app.use("/api", apiRoute)
+app.use("/api", apiRoute);
+app.use("/auth", authRoute);
 
 app.get("/test", (req, res) => {
 	let result = new response(200, [], {page: "test"}, true);
