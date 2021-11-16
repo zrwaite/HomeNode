@@ -9,6 +9,7 @@ interface ModuleData {
         temperature: number;
         humidity: number;
         light_level: number;
+        moisture: number;
         updatedAt: string;
       };
       daily_data: [
@@ -16,6 +17,7 @@ interface ModuleData {
           temperature: number;
           humidity: number;
           light_level: number;
+          moisture: number;
           updatedAt: string;
         }
       ];
@@ -26,10 +28,11 @@ interface ModuleData {
 function SensorGraphs() {
   const [CurrentData, setCurrentData] = useState([
     {
-      temperature: 0,
-      humidity: 0,
-      light_level: 0,
-      updatedAt: "",
+      "live temperature": 0,
+      "live humidity": 0,
+      "live light level": 0,
+      "live moisture": 0,
+      "updatedAt": "",
     },
   ]);
 
@@ -38,6 +41,7 @@ function SensorGraphs() {
       temperature: 0,
       humidity: 0,
       light_level: 0,
+      moisture: 0,
       updatedAt: "",
     },
   ]);
@@ -51,10 +55,11 @@ function SensorGraphs() {
         const { data } = res;
         let current_data = data.response.result.current_data;
         let updated_data = {
-          temperature: current_data.temperature,
-          humidity: current_data.humidity,
-          light_level: current_data.light_level,
-          updatedAt: current_data.updatedAt,
+          "live temperature": current_data.temperature,
+          "live humidity": current_data.humidity,
+          "live light level": current_data.light_level,
+          "live moisture": current_data.moisture,
+          "updatedAt": current_data.updatedAt,
         };
         let daily_data = data.response.result.daily_data;
         console.log("GET SENSORMODULEDATA: ", current_data, daily_data);
@@ -88,8 +93,7 @@ function SensorGraphs() {
         data={CurrentData}
         lines={[
           {
-            key: "temperature",
-            graphType: "live ",
+            key: "live temperature",
             stroke: "#ff86b8",
           },
         ]}
@@ -100,8 +104,7 @@ function SensorGraphs() {
         data={CurrentData}
         lines={[
           {
-            key: "humidity",
-            graphType: "live ",
+            key: "live humidity",
             stroke: "#b586ff",
           },
         ]}
@@ -112,8 +115,18 @@ function SensorGraphs() {
         data={CurrentData}
         lines={[
           {
-            key: "light_level",
-            graphType: "live ",
+            key: "live light level",
+            stroke: "#ff9d86",
+          },
+        ]}
+        // xAxisKey="updatedAt"
+        yAxisColours={["#ff9d86"]}
+      />
+      <GeneralLineChart
+        data={CurrentData}
+        lines={[
+          {
+            key: "live moisture",
             stroke: "#ff9d86",
           },
         ]}
@@ -152,6 +165,17 @@ function SensorGraphs() {
         ]}
         // xAxisKey="updatedAt"
         yAxisColours={["#ff9600"]}
+      />
+      <GeneralLineChart
+        data={DailyData}
+        lines={[
+          {
+            key: "moisture",
+            stroke: "#ff9d86",
+          },
+        ]}
+        // xAxisKey="updatedAt"
+        yAxisColours={["#ff9d86"]}
       />
     </div>
   );
