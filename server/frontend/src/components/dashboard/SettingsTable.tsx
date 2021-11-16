@@ -18,16 +18,18 @@ import UserContext from "../../User";
 
 interface UserInfo {
   response: {
-    result: [{
-      username: string;
-      name: string;
-      home_id: string;
-      settings: {
-        dark_mode: boolean;
-        email_notifications: boolean;
-        intrusion_detection: boolean;
-      };
-    }];
+    result: [
+      {
+        username: string;
+        name: string;
+        home_id: string;
+        settings: {
+          dark_mode: boolean;
+          email_notifications: boolean;
+          intrusion_detection: boolean;
+        };
+      }
+    ];
   };
 }
 
@@ -37,7 +39,11 @@ export default function SettingsTable() {
   const [EmailNotifications, setEmailNotifications] = useState(false);
   const [IntrusionDetection, setIntrusionDetection] = useState(false);
   const header = ["key", "actions"];
-  const data = [{ key: "Dark Mode" }, { key: "Email Notifications" }, { key: "Intrusion Detection" }];
+  const data = [
+    { key: "Dark Mode" },
+    { key: "Email Notifications" },
+    { key: "Intrusion Detection" },
+  ];
 
   function getOppositeColorMode() {
     return colorMode === "dark" ? "false" : "true";
@@ -82,15 +88,12 @@ export default function SettingsTable() {
 
   function forceIntrusionDetectionUpdate() {
     axios
-      .get(
-        "http://homenode.tech/api/home?id=616c934f27eae9a51f5d6d8f"
-      )
+      .get("http://homenode.tech/api/home?id=616c934f27eae9a51f5d6d8f")
       .then((res) => {
         const { data } = res;
-        console.log(data)
         let received_intrusion_detection =
           data.response.result.settings.intrusion_detection;
-        
+
         console.log("GET INTRUSIONDETECTION: ", received_intrusion_detection);
         setIntrusionDetection(received_intrusion_detection);
       })
@@ -103,6 +106,7 @@ export default function SettingsTable() {
     forceColorModeUpdate();
     forceEmailNotificationsUpdate();
     forceIntrusionDetectionUpdate();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -270,13 +274,17 @@ export default function SettingsTable() {
                             }
                           )
                           .then(() => forceIntrusionDetectionUpdate());
-                        console.log("PUT INTRUSIONDETECTION: ", !IntrusionDetection);
+                        console.log(
+                          "PUT INTRUSIONDETECTION: ",
+                          !IntrusionDetection
+                        );
                       }}
                     />
                   </ButtonGroup>
                 )}
                 {data[tid]["key"] !== "Dark Mode" &&
-                  data[tid]["key"] !== "Email Notifications" && data[tid]["key"] !== "Intrusion Detection" && (
+                  data[tid]["key"] !== "Email Notifications" &&
+                  data[tid]["key"] !== "Intrusion Detection" && (
                     <ButtonGroup variant="solid" size="sm" spacing={3}>
                       <IconButton
                         colorScheme="green"
