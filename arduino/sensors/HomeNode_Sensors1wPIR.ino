@@ -1,9 +1,9 @@
 //The following is an arbitrary number of data points
-#define DATAPOINTS 10
+#define DATAPOINTS 5
 //The following is the number of iterations before we wipe the data
 #define DAILYITERATIONS 10
 //the following is the tolerance to change before the temperature/humidity is updated
-#define TOLERANCE 0.5
+#define TOLERANCE 0
 //We will enter each datapoint into an array, and for the sake of demonstration,
 
 #include "DHT.h"
@@ -22,7 +22,6 @@ float humidityPastAverage[DAILYITERATIONS] = {0};
 int counter2 = 0;
 
 float timer = 0;
-int manualPush = 0;
 
 float activeData[2];
 float pastActiveData[] = {0,0};
@@ -34,6 +33,9 @@ void setup() {
   randomSeed(analogRead(0));
   timer = millis();
   dht.begin();
+
+  pinMode(3, INPUT);
+  pinMode(4, INPUT);
 }
 
 float readDHT_Temperature(){
@@ -55,16 +57,20 @@ void loop() {
   // Check if it's time to read another datapoint
   // It takes about 250 ms to read the sensor, but the data can be up to
   // 2 seconds old accord to sensor specifications
-
-  manualPush++;
-
-  if(millis() - timer > 500){
+  if(millis() - timer > 1000){
     timer = millis();
     storage[i] = readDHT_Temperature();
     humidityStorage[i] = readDHT_Humidity();
     counter += storage[i];
     humidityCounter += humidityStorage[i];
     i++;
+    Serial.print("PIR: ");
+    Serial.print(analogRead(A0));
+    Serial.print(" IR: ");
+    Serial.print(digitalRead(3));
+    Serial.print(" REED: ");
+    Serial.print(digitalRead(4));
+    Serial.print("\n");
   }
 
   // Check if we have enough datapoints to make an average calculation
@@ -88,8 +94,8 @@ void loop() {
   
   int flag = 0;
   int humidityFlag = 0;
-  if (counter2 == DATAPOINTS){
-    for (int j = 1; j < 8; j++){
+  if (counter2 >= DATAPOINTS){
+    for (int j = 1; j < 3; j++){
       if (abs(pastAverages[DATAPOINTS-1] - pastAverages[DATAPOINTS-1- j]) >= TOLERANCE){
           flag = 1;
       }
@@ -97,11 +103,10 @@ void loop() {
           humidityFlag = 1;
       }
     }
-    if (flag == 1 || manualPush == 50){
+    if (flag == 1){
       //Serial.println("Temperature: ");
       //Serial.println(pastAverages[counter2]);
       activeData[0] = pastAverages[DATAPOINTS-1];
-      manualPush = 0;
     }
     /*for(int k = 0; k < DATAPOINTS; k++){
       Serial.print(k);
@@ -110,11 +115,10 @@ void loop() {
       Serial.print(" "); 
     }
     Serial.print("\n");*/
-    if (humidityFlag == 1 || manualPush == 50){
+    if (humidityFlag == 1){
       //Serial.println("Temperature: ");
       //Serial.println(pastAverages[counter2]);
       activeData[1] = humidityPastAverage[DATAPOINTS-1];
-      manualPush = 0;
     }
     counter2 =0;
   }
@@ -122,16 +126,16 @@ void loop() {
     char c = Serial.read();
     if(c == address){
       Serial.print("temperature/");
-      //if(pastActiveData[0] != activeData[0]){
+      if(pastActiveData[0] != activeData[0]){
           Serial.print(activeData[0]); 
-      //}
+      }
       Serial.print("/humidity/");
-      //if(pastActiveData[1] != activeData[1]){
+      if(pastActiveData[1] != activeData[1]){
           Serial.print(activeData[1]); 
-      //}
+      }
       Serial.print("\\\n\r");
       pastActiveData[0] = activeData[0];
       pastActiveData[1] = activeData[1];
-    }
+    } 
   }
 }

@@ -8,6 +8,8 @@
   //We will call a random number generator
 
 
+double randomInput = 20.00;
+
 float storage[DATAPOINTS];
 float moistureStorage[DATAPOINTS];
 float moistureCounter = 0;
@@ -15,6 +17,7 @@ float counter = 0;
 float pastAverages[DAILYITERATIONS] = {0};
 float moisturePastAverage[DAILYITERATIONS] = {0};
 int counter2 = 0;
+int manualPush = 0;
 
 float timer = 0;
 
@@ -51,11 +54,19 @@ void loop() {
     delay(100);
     counter += storage[i];
   }*/
+  manualPush++;
+
+
+
+  randomInput = randBell(randomInput);
+  //Serial.println(randomInput);
+ 
 
   if(millis() - timer > 100){
     timer = millis();
-    storage[i] = readLight();
-    moistureStorage[i] = readMoisture();
+    storage[i] = randomInput;/*readLight();*/
+   // Serial.println(storage[i]);
+    moistureStorage[i] = randomInput;/*readMoisture();*/
     counter += storage[i];
     moistureCounter += moistureStorage[i];
     i++;
@@ -75,8 +86,10 @@ void loop() {
     //Serial.println(counter2);
     counter = 0;
     moistureCounter = 0;
+    //Serial.println(average);
+
   }
-    
+ 
   
   int flag = 0;
   int moistureFlag = 0;
@@ -89,22 +102,30 @@ void loop() {
           moistureFlag = 1;
       }
     }
-    if (flag == 1){
+    if ((flag == 1 || manualPush == 50)){
       //Serial.println("Temperature: ");
       //Serial.println(pastAverages[counter2]);
       activeData[0] = pastAverages[DATAPOINTS-1];
       flag = 0;
+      manualPush = 0;
+      Serial.println(activeData[0]);
+
     }
 
-    if (moistureFlag == 1){
+    if (moistureFlag == 1 || manualPush == 50){
       //Serial.println("Temperature: ");
-      //Serial.println(pastAverages[counter2]);
+//      Serial.println(pastAverages[counter2]);
       activeData[1] = moisturePastAverage[DATAPOINTS-1];
       moistureFlag = 0;
+      manualPush = 0;
+      Serial.println(activeData[1]);
+
     }
     counter2=0;
-    
   }
+
+
+
   if(Serial.available()){
     char c = Serial.read();
     if(c == address){
@@ -121,4 +142,44 @@ void loop() {
       pastActiveData[1] = activeData[1];
     }
   }
+}
+
+
+
+double randNormal(double mean, double stddev)
+{//Box muller method
+    static double n2 = 0.0;
+    static int n2_cached = 0;
+    if (!n2_cached)
+    {
+        double x, y, r;
+        do
+        {
+            x = 2.0*rand()/RAND_MAX - 1;
+            y = 2.0*rand()/RAND_MAX - 1;
+
+            r = x*x + y*y;
+        }
+        while (r == 0.0 || r > 1.0);
+        {
+            double d = sqrt(-2.0*log(r)/r);
+            double n1 = x*d;
+            n2 = y*d;
+            double result = n1*stddev + mean;
+            n2_cached = 1;
+            return result;
+        }
+    }
+    else
+    {
+        n2_cached = 0;
+        return n2*stddev + mean;
+    }
+}
+
+double randBell(double randomInput){
+  if (random(20)==1){
+    return (randNormal(0, 0.05)+randomInput);
+  }
+  return randomInput;
 }
