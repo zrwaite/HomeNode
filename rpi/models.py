@@ -58,10 +58,41 @@ class Module: #Parent of IntruderModule and SensorModule
             print(sensor)
     
 
+    def check_data_and_notify(self):
+        #TODO: Make sure the numbers are right
+        for sensor in self.sensors:
+            title = ""
+            info = ""
+            if sensor.name == 'temperature':
+                if sensor.get_most_recent_data() > 25:
+                    title = "Your house is overheating!"
+                    info = "Your house is reaching a temperature of {}! This is quite high.".format(sensor.get_most_recent_data())
+            
+            elif sensor.name == 'humidity':
+                if sensor.get_most_recent_data() > 70:
+                    title = "High humidity detected!"
+                    info = "Humidity of {}".format(sensor.get_most_recent_data())
+
+        
+            elif sensor.name == 'light_level':
+                if sensor.get_most_recent_data() > 20:
+                    title = "High light level detected!"
+                    info = "Light level of {}".format(sensor.get_most_recent_data())
+
+
+            elif sensor.name == 'moisture':
+                if sensor.get_most_recent_data() > 30:
+                    title = "High moisture detected!"
+                    info = "You have a moisture of level {}".format(sensor.get_most_recent_data())
+
+            if title != "" and info != "": #If there is a notification to be sent
+                put_notification_data({'id': self.home_id, 'notification': {'title': title, 'module_id': self._id, 'info': info}})
+
 class IntruderModule(Module):
     # Noise Sensor, Motion, door is open,
     def __init__(self, home_id):
         super().__init__(home_id) #Initialize parent class
+        self.name = "Gongster's Intruder Module"
 
     def upload_data(self):
         final_object = self.current_data
@@ -99,6 +130,8 @@ class Intruder:
     def __init__(self, name):
         self.name = name
     
+    #We eventually want to detect when theres intrudders
+
 class SensorModule(Module): 
     # Includes Light Level, Humidity, Temperature, and Moisture Sensor
     def __init__(self, home_id):
@@ -169,8 +202,6 @@ class Sensor:
         with open('./data/sensors/' + self.name + '.json', 'w+') as f:
             json.dump(self.data, f)
 
-    def check_data_and_notify(self):
-        return
 
     def get_most_recent_data(self):
         try:

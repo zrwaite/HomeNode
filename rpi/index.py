@@ -1,5 +1,6 @@
-from models import *
+from models import Home, Sensor, SensorModule, Intruder, IntruderModule
 from crud import *
+from helper import format_serial_data
 from serial import Serial
 from time import time
 from datetime import date
@@ -20,17 +21,6 @@ sensor_module.add_sensors(temperature_sensor, humidity_sensor, light_sensor, moi
 
 
 previous_time = time() #Initialize previous time
-
-def format_serial_data(data_string):
-        data_list = data_string.strip().replace('\n','').replace('\r','/').replace('\\','').split('/')
-        data_dict = {}
-        for index, value in enumerate(data_list):
-            if index % 2 == 0 and index + 1 < len(data_list):
-                if data_list[index + 1] != "":
-                    data_dict[data_list[index]] = float(data_list[index+1].replace('\\','').strip())
-        
-        return data_list
-            
     
 while True:
 
@@ -49,7 +39,7 @@ while True:
         # s = ser.readline()
         # data += s.decode('UTF-8')
 
-        data_list = format_serial_data(data)
+        data_dict = format_serial_data(data)
 
         
         """At a high level, we will all each sensor data be an object instance (stored as a python dict 
@@ -82,8 +72,10 @@ while True:
         #TODO: Create Daily Data export function to send to server
         #TODO: Separate Data Handling and Send to server
     
-    else:
+    else: #Read intruder things from serial line
         previous_time = time() #Update time
 
         s = ser.readline()
         data += s.decode('UTF-8')
+
+        data_dict = format_serial_data(data)
