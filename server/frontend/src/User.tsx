@@ -1,7 +1,10 @@
 import { createContext } from "react";
 
 const initialState = {
-  name: "nice",
+  name: "",
+  username: "",
+  userID: "",
+  homeID: "",
   currentPage: "home",
   darkMode: false,
   defaultValue: "",
