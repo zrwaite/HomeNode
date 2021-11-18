@@ -22,6 +22,7 @@ float humidityPastAverage[DAILYITERATIONS] = {0};
 int counter2 = 0;
 
 float timer = 0;
+int manualPush = 0;
 
 float activeData[2];
 float pastActiveData[] = {0,0};
@@ -54,6 +55,9 @@ void loop() {
   // Check if it's time to read another datapoint
   // It takes about 250 ms to read the sensor, but the data can be up to
   // 2 seconds old accord to sensor specifications
+
+  manualPush++;
+
   if(millis() - timer > 500){
     timer = millis();
     storage[i] = readDHT_Temperature();
@@ -93,10 +97,11 @@ void loop() {
           humidityFlag = 1;
       }
     }
-    if (flag == 1){
+    if (flag == 1 || manualPush == 50){
       //Serial.println("Temperature: ");
       //Serial.println(pastAverages[counter2]);
       activeData[0] = pastAverages[DATAPOINTS-1];
+      manualPush = 0;
     }
     /*for(int k = 0; k < DATAPOINTS; k++){
       Serial.print(k);
@@ -105,10 +110,11 @@ void loop() {
       Serial.print(" "); 
     }
     Serial.print("\n");*/
-    if (humidityFlag == 1){
+    if (humidityFlag == 1 || manualPush == 50){
       //Serial.println("Temperature: ");
       //Serial.println(pastAverages[counter2]);
       activeData[1] = humidityPastAverage[DATAPOINTS-1];
+      manualPush = 0;
     }
     counter2 =0;
   }
