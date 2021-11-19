@@ -2,6 +2,7 @@ import {Request, Response, NextFunction} from "express"; //Typescript types
 import response from "../models/response"; //Created pre-formatted uniform response
 import getResult from "./modules/getResult";
 import Home from "../models/home/home"; //Schema for mongodb
+import bcrypt from "bcrypt";
 
 import {homeGetQuery, homePostBody, homePutBody} from "../models/home/homeInterfaces";
 
@@ -34,9 +35,13 @@ const buildPostBody = async (req: any) => {
 	["name"].forEach((param) => {
 		if (req.body[param]==undefined) undefinedParams.push(param);
 	});
+	let password = "";
 	if (undefinedParams.length == 0) { 
+		password = Math.random().toString(36).slice(-8);
+		let hash = bcrypt.hashSync(password, 10);
 		let postBody: homePostBody = {
 			name: req.body.name,
+			hash: hash,
 			user: [],
 			modules: [],
 			settings: {intrusion_detection: true},
@@ -45,7 +50,7 @@ const buildPostBody = async (req: any) => {
 		body = postBody;
 		exists = true;
 	}
-	return {exists: exists, body: body, errors: undefinedParams};
+	return {password: password, exists: exists, body: body, errors: undefinedParams};
 };
 const buildPutBody = async (req: any) => {
 	//Create the put request for the daily data array
@@ -113,14 +118,15 @@ export default class homeController {
 	}
 	static async apiPostHome(req: Request, res: Response, next: NextFunction) {
 		let result = new response();
-		let {exists, body, errors} = await buildPostBody(req);
-		let newHome;
+		let {exists, body, errors, password} = await buildPostBody(req);
+		let newHome: any;
 		if (exists) {
 			try {
 				newHome = new Home(body);
 				await newHome.save(); //Saves branch to mongodb
+				delete newHome.hash;
 				result.status = 201;
-				result.response = newHome;
+				result.response = {home: newHome, password: password};
 				result.success = true;
 			} catch (e: any) {
 				result.errors.push("Error creating request", e);
