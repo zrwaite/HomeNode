@@ -70,19 +70,30 @@ export default function IntrusionDetectionArea() {
       });
   }
 
+  function convertDate(date: string) {
+    let date_obj = new Date(date);
+    let day = date_obj.getDate();
+    let month = date_obj.getMonth() + 1;
+    let year = date_obj.getFullYear();
+    let hours = date_obj.getHours();
+    let minutes = date_obj.getMinutes();
+    let seconds = date_obj.getSeconds();
+    let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    let non_24_hour_time = hours > 12 ? hours - 12 : hours;
+    if (hours > 12) {
+      return `${days[date_obj.getDay()]}, ${months[month - 1]} ${day}, ${year} ${non_24_hour_time}:${minutes}:${seconds} PM`;
+    } else {
+      return `${days[date_obj.getDay()]}, ${months[month - 1]} ${day}, ${year} ${non_24_hour_time}:${minutes}:${seconds} AM`;
+    }
+  }
+
   useEffect(() => {
     var handle = setInterval(getData, 2500);
     return () => {
       clearInterval(handle);
     };
   });
-
-  // useEffect(() => {
-  //   forceColorModeUpdate();
-  //   forceEmailNotificationsUpdate();
-  //   forceIntrusionDetectionUpdate();
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
 
   return (
     <Table
@@ -110,9 +121,9 @@ export default function IntrusionDetectionArea() {
         }}
       >
         <Tr>
-          {header.map((x) => (
-            <Th key={x}>{x}</Th>
-          ))}
+          <Th key={"Date & Time"}>Date & Time</Th>
+          <Th key={"Detection"}>Detection</Th>
+          <Th key={"Alert Level"}>Alert Level</Th>
         </Tr>
       </Thead>
       <Tbody
@@ -126,169 +137,12 @@ export default function IntrusionDetectionArea() {
           },
         }}
       >
-        {data.map((token, tid) => {
+        {DailyData.map((data, index) => {
           return (
-            <Tr
-              key={tid}
-              display={{
-                base: "grid",
-                md: "table-row",
-              }}
-              sx={{
-                "@media print": {
-                  display: "table-row",
-                },
-                gridTemplateColumns: "minmax(0px, 35%) minmax(0px, 65%)",
-                gridGap: "10px",
-              }}
-            >
-              {Object.keys(token).map((x) => {
-                return (
-                  <React.Fragment key={`${tid}${x}`}>
-                    <Td
-                      display={{
-                        base: "table-cell",
-                        md: "none",
-                      }}
-                      sx={{
-                        "@media print": {
-                          display: "none",
-                        },
-                        textTransform: "uppercase",
-                        color: "gray.400",
-                        fontSize: "xs",
-                        fontWeight: "bold",
-                        letterSpacing: "wider",
-                        fontFamily: "heading",
-                      }}
-                    ></Td>
-                    <Td color="gray.500" fontSize="md">
-                      {x === "key" && data[tid]["key"]}
-                    </Td>
-                  </React.Fragment>
-                );
-              })}
-              <Td
-                display={{
-                  base: "table-cell",
-                  md: "none",
-                }}
-                sx={{
-                  "@media print": {
-                    display: "none",
-                  },
-                  textTransform: "uppercase",
-                  color: "gray.400",
-                  fontSize: "xs",
-                  fontWeight: "bold",
-                  letterSpacing: "wider",
-                  fontFamily: "heading",
-                }}
-              >
-                Actions
-              </Td>
-              <Td>
-                {data[tid]["key"] === "Dark Mode" && (
-                  <ButtonGroup variant="solid" size="sm" spacing={3}>
-                    <Switch
-                      size="lg"
-                      isChecked={colorMode === "dark"}
-                      onChange={() => {
-                        axios
-                          .put(
-                            "http://homenode.tech/api/user?put_type=settings.dark_mode",
-                            {
-                              username: "129032699zw@gmail.com",
-                              settings: {
-                                dark_mode: getOppositeColorMode(),
-                              },
-                            }
-                          )
-                          .then(() => forceColorModeUpdate());
-                        console.log("PUT COLORMODE: ", getOppositeColorMode());
-                      }}
-                    />
-                  </ButtonGroup>
-                )}
-                {data[tid]["key"] === "Email Notifications" && (
-                  <ButtonGroup variant="solid" size="sm" spacing={3}>
-                    <Switch
-                      size="lg"
-                      isChecked={EmailNotifications === true}
-                      onChange={() => {
-                        axios
-                          .put(
-                            "http://homenode.tech/api/user?put_type=settings.email_notifications",
-                            {
-                              username: "129032699zw@gmail.com",
-                              settings: {
-                                email_notifications: !EmailNotifications,
-                              },
-                            }
-                          )
-                          .then(() => forceEmailNotificationsUpdate());
-                        console.log("PUT EMAILNOTIFS: ", !EmailNotifications);
-                      }}
-                    />
-                  </ButtonGroup>
-                )}
-                {data[tid]["key"] === "Intrusion Detection" && (
-                  <ButtonGroup variant="solid" size="sm" spacing={3}>
-                    <Switch
-                      size="lg"
-                      isChecked={IntrusionDetection === true}
-                      onChange={() => {
-                        axios
-                          .put(
-                            "http://homenode.tech/api/home?put_type=settings.intrusion_detection",
-                            {
-                              id: "616c934f27eae9a51f5d6d8f",
-                              settings: {
-                                intrusion_detection: !IntrusionDetection,
-                              },
-                            }
-                          )
-                          .then(() => forceIntrusionDetectionUpdate());
-                        console.log(
-                          "PUT INTRUSIONDETECTION: ",
-                          !IntrusionDetection
-                        );
-                      }}
-                    />
-                  </ButtonGroup>
-                )}
-                {data[tid]["key"] !== "Dark Mode" &&
-                  data[tid]["key"] !== "Email Notifications" &&
-                  data[tid]["key"] !== "Intrusion Detection" && (
-                    <ButtonGroup variant="solid" size="sm" spacing={3}>
-                      <IconButton
-                        colorScheme="green"
-                        icon={<AiFillEdit />}
-                        aria-label="button"
-                      />
-                    </ButtonGroup>
-                  )}
-              </Td>
-              {/* <Td>
-                <ButtonGroup variant="solid" size="sm" spacing={3}>
-                  <IconButton
-                    colorScheme="blue"
-                    icon={<BsBoxArrowUpRight />}
-                    aria-label="button"
-                  />
-                  <IconButton
-                    colorScheme="green"
-                    icon={<AiFillEdit />}
-                    aria-label="button"
-                  />
-                  <IconButton
-                    colorScheme="red"
-                    variant="outline"
-                    icon={<BsFillTrashFill />}
-                    aria-label="button"
-                  />
-                </ButtonGroup>
-              </Td> */}
+            <Tr key={index}>
+              <Td key={"Date & Time"}>{convertDate(data.updatedAt)}</Td>
+              <Td key={"Detection"}>{data.detection}</Td>
+              <Td key={"Alert Level"}>{data.alert_level}</Td>
             </Tr>
           );
         })}
