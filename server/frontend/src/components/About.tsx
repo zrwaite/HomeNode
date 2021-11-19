@@ -1,7 +1,6 @@
 import React from "react";
 import AboutCard from "./AboutCard";
 import { Flex, useColorModeValue } from "@chakra-ui/react";
-import { MdHeadset } from "react-icons/md";
 import { HiOutlineSparkles } from "react-icons/hi";
 
 import zac from "../assets/zac.jpg";
