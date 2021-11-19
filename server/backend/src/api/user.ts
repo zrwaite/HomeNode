@@ -9,16 +9,6 @@ import createToken from "../auth/createToken";
 /* Interface imports */
 import {userGetQuery, userPostBody, userPutBody, userSettings} from "../models/user/userInterface";
 
-const generateHash = async (password: string) => {
-	bcrypt.hash(password, 10).then(function(hash) {
-		return hash;
-	}).catch(function(e) {
-		console.log(e);
-		return "0";
-	});
-	return "0";
-}
-
 const buildGetQuery = async (req: any) => {
 	//Create the get request
 	let queryType = undefined;
@@ -50,7 +40,7 @@ const buildPostBody = async (req: any) => {
 		if (req.body[param]==undefined) undefinedParams.push(param);
 	});
 	if (undefinedParams.length == 0) { 
-		let hash = await generateHash(req.body.password);
+		let hash = bcrypt.hashSync(req.body.password, 10);
 		if (hash!=="0"){
 			let postBody: userPostBody = {
 				username: req.body.username,
