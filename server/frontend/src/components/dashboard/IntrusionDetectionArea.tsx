@@ -17,86 +17,53 @@ import {
 import { AiFillEdit } from "react-icons/ai";
 import UserContext from "../../User";
 
-interface UserInfo {
+interface ModuleData {
   response: {
-    result: [
-      {
-        username: string;
-        name: string;
-        home_id: string;
-        settings: {
-          dark_mode: boolean;
-          email_notifications: boolean;
-          intrusion_detection: boolean;
-        };
-      }
-    ];
+    result: {
+      current_data: {
+        detection: string;
+        alert_level: number;
+        updatedAt: string;
+      };
+      daily_data: [
+        {
+          detection: string;
+          alert_level: number;
+          updatedAt: string;
+        }
+      ];
+    };
   };
 }
 
 export default function IntrusionDetectionArea() {
   const user = useContext(UserContext);
-  const { colorMode, toggleColorMode } = useColorMode();
-  const [EmailNotifications, setEmailNotifications] = useState(false);
-  const [IntrusionDetection, setIntrusionDetection] = useState(false);
+  const [CurrentData, setCurrentData] = useState({
+    detection: "",
+    alert_level: 0,
+    updatedAt: "",
+  });
+  const [DailyData, setDailyData] = useState([
+    {
+      detection: "",
+      alert_level: 0,
+      updatedAt: "",
+    },
+  ]);
   const header = ["key", "actions"];
-  const data = [
-    { key: "Dark Mode" },
-    { key: "Email Notifications" },
-    { key: "Intrusion Detection" },
-  ];
 
-  function getOppositeColorMode() {
-    return colorMode === "dark" ? "false" : "true";
-  }
-
-  function forceColorModeUpdate() {
+  function getData() {
     axios
-      .get<UserInfo>(
-        "http://homenode.tech/api/user?username=129032699zw@gmail.com"
+      .get<ModuleData>(
+        "http://homenode.tech/api/intruders?id=6196f37d29168d65cb1d2adb"
       )
       .then((res) => {
         const { data } = res;
-        let received_color_mode = data.response.result[0].settings.dark_mode;
-        console.log("GET COLORMODE: ", received_color_mode);
-        if (colorMode === "dark" && received_color_mode === false) {
-          toggleColorMode();
-        } else if (colorMode === "light" && received_color_mode === true) {
-          toggleColorMode();
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
-  function forceEmailNotificationsUpdate() {
-    axios
-      .get<UserInfo>(
-        "http://homenode.tech/api/user?username=129032699zw@gmail.com"
-      )
-      .then((res) => {
-        const { data } = res;
-        let received_email_notifications =
-          data.response.result[0].settings.email_notifications;
-        console.log("GET EMAILNOTIFS: ", received_email_notifications);
-        setEmailNotifications(received_email_notifications);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
-  function forceIntrusionDetectionUpdate() {
-    axios
-      .get("http://homenode.tech/api/home?id=616c934f27eae9a51f5d6d8f")
-      .then((res) => {
-        const { data } = res;
-        let received_intrusion_detection =
-          data.response.result.settings.intrusion_detection;
-
-        console.log("GET INTRUSIONDETECTION: ", received_intrusion_detection);
-        setIntrusionDetection(received_intrusion_detection);
+        let current_data = data.response.result.current_data;
+        let daily_data = data.response.result.daily_data;
+        console.log("GET INTRUDERSMODULEDATA: ", current_data, daily_data);
+        setCurrentData(current_data);
+        setDailyData(daily_data);
       })
       .catch((err) => {
         console.log(err);
@@ -104,11 +71,18 @@ export default function IntrusionDetectionArea() {
   }
 
   useEffect(() => {
-    forceColorModeUpdate();
-    forceEmailNotificationsUpdate();
-    forceIntrusionDetectionUpdate();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    var handle = setInterval(getData, 2500);
+    return () => {
+      clearInterval(handle);
+    };
+  });
+
+  // useEffect(() => {
+  //   forceColorModeUpdate();
+  //   forceEmailNotificationsUpdate();
+  //   forceIntrusionDetectionUpdate();
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, []);
 
   return (
     <Table
