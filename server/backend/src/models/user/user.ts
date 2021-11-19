@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    hash: {
+        type: String,
+        required: true,
+    }, 
     home_id: {
         type: mongoose.Types.ObjectId,
         required: true,

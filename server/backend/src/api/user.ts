@@ -2,14 +2,14 @@ import {Request, Response, NextFunction} from "express"; //Typescript types
 import response from "../models/response"; //Created pre-formatted uniform response
 import getResult from "./modules/getResult"; //Creates formmated response
 import User from "../models/user/user"; //Schema for mongodb
-import homeCtrl from "../api/home"; //Used for internally referenced home request
 import axios from "axios";
+import bcrypt from "bcrypt";
+import createToken from "../auth/createToken";
 
 /* Interface imports */
 import {userGetQuery, userPostBody, userPutBody, userSettings} from "../models/user/userInterface";
 
-
-const buildGetQuery = (req: any) => {
+const buildGetQuery = async (req: any) => {
 	//Create the get request
 	let queryType = undefined;
 	let query: any = {};
@@ -31,27 +31,31 @@ const buildGetQuery = (req: any) => {
 	}
 	return {queryType: queryType, query: query, errors: undefinedParams};
 };
-const buildPostBody = (req: any) => {
+const buildPostBody = async (req: any) => {
 	//Create the post request
 	let exists = false;
 	let undefinedParams: string[] = [];
 	let body: any = {};
-	["username", "name", "home_id"].forEach((param) => {
+	["username", "name", "home_id", "password"].forEach((param) => {
 		if (req.body[param]==undefined) undefinedParams.push(param);
 	});
 	if (undefinedParams.length == 0) { 
-		let postBody: userPostBody = {
-			username: req.body.username,
-			name: req.body.name,
-			home_id: req.body.home_id,
-			settings: {dark_mode: true, email_notifications: true},
-		};
-		body = postBody;
-		exists = true;
+		let hash = bcrypt.hashSync(req.body.password, 10);
+		if (hash!=="0"){
+			let postBody: userPostBody = {
+				username: req.body.username,
+				name: req.body.name,
+				hash: hash,
+				home_id: req.body.home_id,
+				settings: {dark_mode: true, email_notifications: true},
+			};
+			body = postBody;
+			exists = true;
+		}
 	}
 	return {exists: exists, body: body, errors: undefinedParams};
 };
-const buildPutBody = (req: any) => {
+const buildPutBody = async (req: any) => {
 	//Create the put request for the daily data array
 	let putType:string|undefined = req.query.put_type;
 	let body: any = {};
@@ -98,7 +102,7 @@ export default class userController {
 	static async apiGetUser(req: Request, res: Response, next: NextFunction) {
 		let result = new response(); //Create new standardized response
 		let user;
-		let {queryType, query, errors} = buildGetQuery(req);
+		let {queryType, query, errors} = await buildGetQuery(req);
 		switch (queryType){
 			case "all":
 				try{user = await User.find();} 
@@ -109,7 +113,7 @@ export default class userController {
 				catch (e: any) {result.errors.push("Query error", e);}
 				break;
 			case "username":
-				try {user = await User.find({username: query});}
+				try {user = await User.findOne({username: query});}
 				catch (e: any) {result.errors.push("Query error", e);}
 				break;
 			default:
@@ -120,7 +124,7 @@ export default class userController {
 	}
 	static async apiPostUser(req: Request, res: Response, next: NextFunction) {
 		let result = new response();
-		let {exists, body, errors} = buildPostBody(req);
+		let {exists, body, errors} = await buildPostBody(req);
 		let newUser;
 		if (exists) {
 			try {
@@ -137,6 +141,7 @@ export default class userController {
 						result.errors.push(...homeResult.errors);
 						result.status = homeResult.status;
 						result.response = {
+							token: await createToken({home_id: body.home_id, username: body.username, authenticated: true}),
 							userResult: newUser,
 							homeResult: homeResult.response,
 						};
@@ -145,7 +150,7 @@ export default class userController {
 						result.errors.push("Error adding user to home");
 						result.status = 400;
 						result.response = {userResult: newUser};
-					}
+					}				
 				} catch (e) {
 					result.errors.push("Error adding to home");
 					console.log(e);
@@ -160,7 +165,7 @@ export default class userController {
 	}
 	static async apiPutUser(req: Request, res: Response, next: NextFunction) {
 		let result = new response();
-		let {putType, queryObj, body, errors} = buildPutBody(req);
+		let {putType, queryObj, body, errors} = await buildPutBody(req);
 		let user;
 		if (putType){
 			try {

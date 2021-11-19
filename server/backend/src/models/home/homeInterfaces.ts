@@ -6,6 +6,7 @@ interface homeGetQuery {
 interface homePostBody {
 	//Body query interface for post request
 	name: string;
+	hash: string;
 	user: string[];
 	modules: object[];
 	settings: object;
