@@ -147,7 +147,7 @@ export default class intrudersController {
 				catch (e: any) {result.errors.push("Query error", e);}
 				break;
 			case "home_id":
-				try {intruders = await Intruders.find(query);}
+				try {intruders = await Intruders.findOne(query);}
 				catch (e: any) {result.errors.push("Query error", e);}
 				break;
 			default:

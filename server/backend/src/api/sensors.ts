@@ -163,7 +163,7 @@ export default class sensorsController {
 				catch (e: any) {result.errors.push("Query error", e);}
 				break;
 			case "home_id":
-				try {sensors = await Sensors.find(query);}
+				try {sensors = await Sensors.findOne(query);}
 				catch (e: any) {result.errors.push("Query error", e);}
 				break;
 			default:

@@ -2,9 +2,9 @@ import {Request, Response, NextFunction} from "express"; //Typescript types
 import response from "../models/response"; //Created pre-formatted uniform response
 import getResult from "./modules/getResult"; //Creates formmated response
 import User from "../models/user/user"; //Schema for mongodb
-import homeCtrl from "../api/home"; //Used for internally referenced home request
 import axios from "axios";
 import bcrypt from "bcrypt";
+import createToken from "../auth/createToken";
 
 /* Interface imports */
 import {userGetQuery, userPostBody, userPutBody, userSettings} from "../models/user/userInterface";
@@ -123,7 +123,7 @@ export default class userController {
 				catch (e: any) {result.errors.push("Query error", e);}
 				break;
 			case "username":
-				try {user = await User.find({username: query});}
+				try {user = await User.findOne({username: query});}
 				catch (e: any) {result.errors.push("Query error", e);}
 				break;
 			default:
@@ -151,6 +151,7 @@ export default class userController {
 						result.errors.push(...homeResult.errors);
 						result.status = homeResult.status;
 						result.response = {
+							token: await createToken({home_id: body.home_id, username: body.username, authenticated: true}),
 							userResult: newUser,
 							homeResult: homeResult.response,
 						};
@@ -159,7 +160,7 @@ export default class userController {
 						result.errors.push("Error adding user to home");
 						result.status = 400;
 						result.response = {userResult: newUser};
-					}
+					}				
 				} catch (e) {
 					result.errors.push("Error adding to home");
 					console.log(e);
