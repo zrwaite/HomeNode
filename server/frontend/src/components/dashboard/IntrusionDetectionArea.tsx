@@ -1,4 +1,3 @@
-// 6196f37d29168d65cb1d2adb
 import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import {
@@ -79,12 +78,29 @@ export default function IntrusionDetectionArea() {
     let minutes = date_obj.getMinutes();
     let seconds = date_obj.getSeconds();
     let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-    let months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    let months = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
     let non_24_hour_time = hours > 12 ? hours - 12 : hours;
     if (hours > 12) {
-      return `${days[date_obj.getDay()]}, ${months[month - 1]} ${day}, ${year} ${non_24_hour_time}:${minutes}:${seconds} PM`;
+      return `${days[date_obj.getDay()]}, ${
+        months[month - 1]
+      } ${day}, ${year} ${non_24_hour_time}:${minutes}:${seconds} PM`;
     } else {
-      return `${days[date_obj.getDay()]}, ${months[month - 1]} ${day}, ${year} ${non_24_hour_time}:${minutes}:${seconds} AM`;
+      return `${days[date_obj.getDay()]}, ${
+        months[month - 1]
+      } ${day}, ${year} ${non_24_hour_time}:${minutes}:${seconds} AM`;
     }
   }
 
@@ -96,57 +112,61 @@ export default function IntrusionDetectionArea() {
   });
 
   return (
-    <Table
-      w="full"
-      bg={useColorModeValue("white", "gray.800")}
-      display={{
-        base: "block",
-        md: "table",
-      }}
-      sx={{
-        "@media print": {
-          display: "table",
-        },
-      }}
-    >
-      <Thead
-        display={{
-          base: "none",
-          md: "table-header-group",
-        }}
-        sx={{
-          "@media print": {
-            display: "table-header-group",
-          },
-        }}
-      >
-        <Tr>
-          <Th key={"Date & Time"}>Date & Time</Th>
-          <Th key={"Detection"}>Detection</Th>
-          <Th key={"Alert Level"}>Alert Level</Th>
-        </Tr>
-      </Thead>
-      <Tbody
+    <div style={{ overflowY: "scroll", maxHeight: "32vh" }}>
+      <Table
+        w="full"
+        bg={useColorModeValue("white", "gray.800")}
         display={{
           base: "block",
-          lg: "table-row-group",
+          md: "table",
         }}
         sx={{
           "@media print": {
-            display: "table-row-group",
+            display: "table",
           },
         }}
       >
-        {DailyData.map((data, index) => {
-          return (
-            <Tr key={index}>
-              <Td key={"Date & Time"}>{convertDate(data.updatedAt)}</Td>
-              <Td key={"Detection"}>{data.detection}</Td>
-              <Td key={"Alert Level"}>{data.alert_level}</Td>
-            </Tr>
-          );
-        })}
-      </Tbody>
-    </Table>
+        <Thead
+          display={{
+            base: "none",
+            md: "table-header-group",
+          }}
+          sx={{
+            "@media print": {
+              display: "table-header-group",
+            },
+          }}
+          bg={useColorModeValue("white", "gray.800")}
+          style={{position: "sticky", top: 0}}
+        >
+          <Tr>
+            <Th key={"Date & Time"}>Date & Time</Th>
+            <Th key={"Detection"}>Detection</Th>
+            <Th key={"Alert Level"}>Alert Level</Th>
+          </Tr>
+        </Thead>
+        <Tbody
+          display={{
+            base: "block",
+            lg: "table-row-group",
+          }}
+          sx={{
+            "@media print": {
+              display: "table-row-group",
+            },
+          }}
+        >
+          {DailyData.map((data, index) => {
+            return (
+              <Tr key={index}>
+                <Td key={"Date & Time"}>{convertDate(data.updatedAt)}</Td>
+                <Td key={"Detection"}>{data.detection}</Td>
+                <Td key={"Alert Level"}>{data.alert_level}</Td>
+              </Tr>
+            );
+          })}
+        </Tbody>
+      </Table>
+    </div>
   );
 }
