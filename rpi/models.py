@@ -42,6 +42,7 @@ class Module: #Parent of IntruderModule and SensorModule
         self.name = None
         self.home_id = home_id
         self.sensors = [] # A dictionary where the key is the sensor_name, the value is just the object
+        self.current_data = {}
 
     def add_sensors(self,*sensors):
         # Add one or multiple sensors
@@ -99,6 +100,7 @@ class IntruderModule(Module):
         final_object['id'] = self._id
 
         response = put_intruders_data(final_object)
+        return response
 
     def get_intruder_module_id(self):
         if os.path.isfile('./data/intruder_module_id.json'):
@@ -119,11 +121,7 @@ class IntruderModule(Module):
         with open('./data/intruder_module_id.json', 'r') as f: #Store the id on 'hard storage' as a JSOn
             self._id = json.load(f)
 
-    def upload_data(self):
-        final_object = self.current_data
-        final_object['id'] = self._id
 
-        response = put_intruders_data(final_object)
 
 
 class Intruder:

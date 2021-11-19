@@ -24,20 +24,20 @@ previous_time = time() #Initialize previous time
     
 while True:
 
+    data = ""
     ser = Serial(port='/dev/ttyS0', baudrate=9600, timeout=1)
-    if (time() - previous_time > 10): #Been over 10 seconds, so we will read from sensors and upload to server
+    if time() - previous_time > 10: #Been over 10 seconds, so we will read from sensors and upload to server
         # Open Serial
-        data = ""
-        # ser.write(str.encode('1'))
-        # time.sleep(1)
-        # #while ser.in_waiting:
-        # s = ser.readline()
-        # data += s.decode('UTF-8')
+        ser.write(str.encode('1'))
+        time.sleep(1)
+        #while ser.in_waiting:
+        s = ser.readline()
+        data += s.decode('UTF-8')
 
-        # ser.write(str.encode('2'))
-        # time.sleep(1)
-        # s = ser.readline()
-        # data += s.decode('UTF-8')
+        ser.write(str.encode('2'))
+        time.sleep(1)
+        s = ser.readline()
+        data += s.decode('UTF-8')
 
         data_dict = format_serial_data(data)
 
@@ -50,16 +50,15 @@ while True:
             # if sensor data
             if key in ['temperature', 'humidity', 'light_level', 'moisture']:
                 for sensor_object in sensor_module.sensors:
-                    if sensor_object.name == key:
+                    if sensor_object.name == key: # There is a match for the sensor
                         sensor = sensor_object
-                        break
+                        sensor.load_data()
 
-                sensor.load_data()
+                        sensor.check_data_and_notify() # TODO:If something is wrong, we will send a notification
 
-                sensor.check_data_and_notify() # TODO:If something is wrong, we will send a notification
-
-                sensor.append_data(data_dict[key])
-                sensor.update_json()
+                        sensor.append_data(data_dict[key])
+                        sensor.update_json()
+                        break # No need to check the other sensors
 
 
             # If intruder data
