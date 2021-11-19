@@ -18,6 +18,37 @@ import { useHistory } from "react-router-dom";
 const SignIn = () => {
   let history = useHistory();
 
+  // function checkLogin() {
+  //   if (localStorage.getItem("token")) {
+  //     history.push("/");
+  //   }
+  // }
+
+  // function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  //   e.preventDefault();
+  //   const email = e.currentTarget.email.value;
+  //   const password = e.currentTarget.password.value;
+  //   const data = {
+  //     email,
+  //     password,
+  //   };
+    
+  //   fetch("http://localhost:5000/api/auth/signin", {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify(data),
+  //   })
+  //     .then((res) => res.json())
+  //     .then((res) => {
+  //       if (res.token) {
+  //         localStorage.setItem("token", res.token);
+  //         history.push("/");
+  //       }
+  //     });
+  // }
+
   return (
     <>
       <Navbar />
