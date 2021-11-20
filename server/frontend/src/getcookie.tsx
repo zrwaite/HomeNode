@@ -8,8 +8,10 @@ function getcookie(cookie: string, disable_alternate: boolean) {
     switch (cookie) {
       case "token":
         return "INVALID_COOKIE";
-      case "user":
-        return "GeorgeShao123@gmail.com";
+      case "name":
+        return "George"
+      case "email":
+        return "GeorgeShao246@gmail.com";
       case "home_id":
         return "61870da5d98c502cf04c576c";
       case "sensor_id":
