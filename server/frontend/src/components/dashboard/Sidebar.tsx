@@ -24,7 +24,6 @@ import { MdHome, MdKeyboardArrowRight } from "react-icons/md";
 import React, { useContext } from "react";
 import logo from "../../assets/logo.svg";
 
-import UserContext from "../../User";
 import Home from "../../pages/dashboard/Home";
 import Settings from "../../pages/dashboard/Settings";
 import WikiIntruders from "../../pages/dashboard/WikiIntruders";
@@ -32,7 +31,6 @@ import WikiPlant from "../../pages/dashboard/WikiPlant";
 import WikiSensors from "../../pages/dashboard/WikiSensors";
 
 function Sidebar() {
-  const user = useContext(UserContext);
   const sidebar = useDisclosure();
   const integrations = useDisclosure();
   let match = useRouteMatch();
