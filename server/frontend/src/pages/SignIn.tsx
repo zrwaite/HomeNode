@@ -16,10 +16,11 @@ import { useHistory } from "react-router-dom";
 import axios from "axios";
 import Cookies from "universal-cookie";
 import jwt_decode, { JwtPayload } from "jwt-decode";
+import getcookie from "../getcookie";
 
 const cookies = new Cookies();
 
-interface CustomJWT{
+interface CustomJWT {
   home_id: string;
 }
 
@@ -37,7 +38,7 @@ const SignIn = () => {
         password: Password,
       })
       .then((res: any) => {
-        cookies.set("email", res.data.username, { path: "/" });
+        cookies.set("email", Email, { path: "/" });
         const token = res.data.response.token;
         cookies.set("token", token, { path: "/" });
         try {
@@ -52,6 +53,20 @@ const SignIn = () => {
           cookies.set("home_id", "INVALID_HOMEID", { path: "/" });
         }
         history.push("/dashboard");
+      })
+      .then(() => {
+        console.log("GET NAME");
+        axios
+          .get(
+            "http://homenode.tech/api/user?username=" + getcookie("email", true),
+            getcookie("username", true)
+          )
+          .then((res: any) => {
+            cookies.set("name", res.data.response.name, { path: "/" });
+          })
+          .catch((err: any) => {
+            console.log("ERROR SIGNIN", err);
+          });
       })
       .catch((err: any) => {
         console.log("ERROR SIGNIN", err);
