@@ -3,6 +3,8 @@ import response from "../models/response"; //Created pre-formatted uniform respo
 import getResult from "./modules/getResult"; //Creates standard response
 import Sensors from "../models/sensors/sensors"; //Schema for mongodb
 import axios from "axios";
+import verifyToken from "../auth/verifyToken";
+
 
 /* Sensors Interfaces imports */ 
 import {sensorsGetQuery, sensorsPostBody, sensorsPastPutBody, sensorsDailyPutBody, sensorsDeleteBody} from "../models/sensors/sensorsInterface";
@@ -136,6 +138,9 @@ const buildDeleteBody = async (req: any) =>{
 				body = deleteBody;
 			}
 			break;
+		case "sensors":
+			deleteType = "sensors";
+			break;
 		default:
 			undefinedParams.push("delete_type");
 			break;
@@ -258,6 +263,23 @@ export default class sensorsController {
 				} catch (e: any) {
 					result.errors.push("Error creating request", e);
 				}
+				break;
+			case "sensors": 
+				try	{
+					sensors = await Sensors.findByIdAndDelete(id, {new:true});
+					console.log(sensors);
+					if (sensors) {
+						result.status = 201;
+						result.response = {deleted: id};
+						result.success = true;
+					} else {
+						result.status = 404;
+						result.errors.push("sensors module not found");
+					}
+				} catch (e:any) {
+					result.errors.push("Error deleting sensors", e);
+				}
+				break;
 			default:
 				errors.forEach((error)=> result.errors.push("missing "+error))
 		}

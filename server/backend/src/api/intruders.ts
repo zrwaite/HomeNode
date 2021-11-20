@@ -3,6 +3,8 @@ import response from "../models/response"; //Created pre-formatted uniform respo
 import getResult from "./modules/getResult"; //Creates formatted response
 import Intruders from "../models/intruders/intruders"; //Schema for mongodb
 import axios from "axios";
+import verifyToken from "../auth/verifyToken";
+
 
 /* Import interfaces */
 import {intrudersGetQuery, intrudersPostBody, intrudersDailyPutBody, intrudersPastPutBody, intrudersDeleteBody} from "../models/intruders/intudersInterface";
@@ -121,6 +123,9 @@ const buildDeleteBody = async (req: any) =>{
 				deleteType= undefined;
 			}
 			break;
+		case "intruders":
+			deleteType = "intruders";
+			break;
 		default:
 			undefinedParams.push("delete_type");
 			break;
@@ -231,10 +236,26 @@ export default class intrudersController {
 				} catch (e: any) {
 					result.errors.push("Error creating request", e);
 				}
+				break;
+			case "intruders":
+				try	{
+					intruders = await Intruders.findByIdAndDelete(id, {new:true});
+					console.log(intruders);
+					if (intruders) {
+						result.status = 201;
+						result.response = {deleted: id};
+						result.success = true;
+					} else {
+						result.status = 404;
+						result.errors.push("intruders module not found");
+					}
+				} catch (e:any) {
+					result.errors.push("Error deleting intruders", e);
+				}
+				break;
 			default:
 				errors.forEach((error)=> result.errors.push("missing "+error))
 		}
 		res.status(result.status).json(result);
-
 	}
 }
