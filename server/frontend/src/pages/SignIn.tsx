@@ -37,7 +37,7 @@ const SignIn = () => {
         history.push("/dashboard");
       })
       .catch((err: any) => {
-        console.log("ERROR COULD NOT LOGIN");
+        console.log("ERROR COULD NOT LOGIN", err);
       });
   };
 

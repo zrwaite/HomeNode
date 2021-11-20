@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
   useColorModeValue,
@@ -14,7 +14,9 @@ import {
   useColorMode,
 } from "@chakra-ui/react";
 import { AiFillEdit } from "react-icons/ai";
-import UserContext from "../../User";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 interface UserInfo {
   response: {
@@ -34,7 +36,6 @@ interface UserInfo {
 }
 
 export default function SettingsTable() {
-  const user = useContext(UserContext);
   const { colorMode, toggleColorMode } = useColorMode();
   const [EmailNotifications, setEmailNotifications] = useState(false);
   const [IntrusionDetection, setIntrusionDetection] = useState(false);
@@ -52,7 +53,7 @@ export default function SettingsTable() {
   function forceColorModeUpdate() {
     axios
       .get<UserInfo>(
-        "http://homenode.tech/api/user?username=129032699zw@gmail.com"
+        "http://homenode.tech/api/user?username=" + cookies.get("username") // username=129032699zw@gmail.com
       )
       .then((res) => {
         const { data } = res;
@@ -72,7 +73,7 @@ export default function SettingsTable() {
   function forceEmailNotificationsUpdate() {
     axios
       .get<UserInfo>(
-        "http://homenode.tech/api/user?username=129032699zw@gmail.com"
+        "http://homenode.tech/api/user?username=" + cookies.get("username") // username=129032699zw@gmail.com
       )
       .then((res) => {
         const { data } = res;
@@ -88,7 +89,7 @@ export default function SettingsTable() {
 
   function forceIntrusionDetectionUpdate() {
     axios
-      .get("http://homenode.tech/api/home?id=616c934f27eae9a51f5d6d8f")
+      .get("http://homenode.tech/api/home?id=") // id=616c934f27eae9a51f5d6d8f
       .then((res) => {
         const { data } = res;
         let received_intrusion_detection =

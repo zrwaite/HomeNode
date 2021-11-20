@@ -38,6 +38,13 @@ const SignUp = () => {
       .then((res: any) => {
         const token = res.data.response.token;
         cookies.set("token", token, { path: "/" });
+        cookies.set("email", res.data.response.userResult.username, {
+          path: "/",
+        });
+        cookies.set("name", res.data.response.userResult.name, { path: "/" });
+        cookies.set("home_id", res.data.response.userResult.home_id, {
+          path: "/",
+        });
         history.push("/dashboard");
       });
   };

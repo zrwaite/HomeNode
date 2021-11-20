@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
   useColorModeValue,
@@ -9,7 +9,6 @@ import {
   Td,
   Tbody,
 } from "@chakra-ui/react";
-import UserContext from "../../User";
 
 interface ModuleData {
   response: {
@@ -31,7 +30,6 @@ interface ModuleData {
 }
 
 export default function IntrusionDetectionArea() {
-  const user = useContext(UserContext);
   const [CurrentData, setCurrentData] = useState({
     detection: "",
     alert_level: 0,
