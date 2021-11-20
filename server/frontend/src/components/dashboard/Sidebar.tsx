@@ -23,6 +23,7 @@ import { HiCode } from "react-icons/hi";
 import { MdHome, MdKeyboardArrowRight } from "react-icons/md";
 import React, { useContext } from "react";
 import logo from "../../assets/logo.svg";
+import UserContext from "../../User"
 
 import Home from "../../pages/dashboard/Home";
 import Settings from "../../pages/dashboard/Settings";
@@ -35,6 +36,7 @@ function Sidebar() {
   const integrations = useDisclosure();
   let match = useRouteMatch();
   const history = useHistory();
+  const user = useContext(UserContext);
 
   function switchPages(page: string) {
     if (page === "wiki") {
