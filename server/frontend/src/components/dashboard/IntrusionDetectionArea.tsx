@@ -2,18 +2,13 @@ import React, { useContext, useEffect, useState } from "react";
 import axios from "axios";
 import {
   useColorModeValue,
-  ButtonGroup,
-  IconButton,
   Table,
   Thead,
   Tr,
   Th,
   Td,
   Tbody,
-  Switch,
-  useColorMode,
 } from "@chakra-ui/react";
-import { AiFillEdit } from "react-icons/ai";
 import UserContext from "../../User";
 
 interface ModuleData {

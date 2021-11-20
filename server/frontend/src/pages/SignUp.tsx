@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   chakra,
   Box,
@@ -7,16 +7,40 @@ import {
   Button,
   Center,
   Flex,
-  Icon,
   SimpleGrid,
   VisuallyHidden,
   Input,
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
 import { useHistory } from "react-router-dom";
+import axios from "axios";
+import Cookies from 'universal-cookie';
+
+const cookies = new Cookies();
 
 const SignUp = () => {
   let history = useHistory();
+  const [Name, setName] = useState("");
+  const [Email, setEmail] = useState("");
+  const [Password, setPassword] = useState("");
+  const [HomeID, setHomeID] = useState("");
+
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    console.log("POST LOGIN")
+    axios
+      .post("http://homenode.tech/api/user", {
+        username: Email,
+        name: Name,
+        password: Password,
+        home_id: HomeID,
+      })
+      .then((res: any) => {
+        const token = res.data.response.token;
+        cookies.set("token", token, { path: "/" });
+        history.push("/dashboard");
+      });
+  };
 
   return (
     <>
@@ -79,6 +103,7 @@ const SignUp = () => {
                     type="text"
                     placeholder="Name"
                     isRequired={true}
+                    onChange={(e: any) => setName(e.target.value)}
                   />
                 </Flex>
                 <Flex>
@@ -88,6 +113,7 @@ const SignUp = () => {
                     type="email"
                     placeholder="Email Address"
                     isRequired={true}
+                    onChange={(e: any) => setEmail(e.target.value)}
                   />
                 </Flex>
                 <Flex>
@@ -97,6 +123,7 @@ const SignUp = () => {
                     type="password"
                     placeholder="Password"
                     isRequired={true}
+                    onChange={(e: any) => setPassword(e.target.value)}
                   />
                 </Flex>
                 <Flex>
@@ -106,9 +133,16 @@ const SignUp = () => {
                     type="text"
                     placeholder="Home ID (given upon purchase of hardware)"
                     isRequired={true}
+                    onChange={(e: any) => setHomeID(e.target.value)}
                   />
                 </Flex>
-                <Button colorScheme="brand" w="full" py={2} type="submit">
+                <Button
+                  colorScheme="brand"
+                  w="full"
+                  py={2}
+                  type="submit"
+                  onClick={(e) => handleSubmit(e)}
+                >
                   Sign Up
                 </Button>
               </SimpleGrid>

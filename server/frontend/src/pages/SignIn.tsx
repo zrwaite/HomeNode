@@ -7,7 +7,6 @@ import {
   Button,
   Center,
   Flex,
-  Icon,
   SimpleGrid,
   VisuallyHidden,
   Input,
