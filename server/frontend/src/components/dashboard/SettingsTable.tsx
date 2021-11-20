@@ -14,9 +14,7 @@ import {
   useColorMode,
 } from "@chakra-ui/react";
 import { AiFillEdit } from "react-icons/ai";
-import Cookies from "universal-cookie";
-
-const cookies = new Cookies();
+import getcookie from "../../getcookie";
 
 interface UserInfo {
   response: {
@@ -53,7 +51,7 @@ export default function SettingsTable() {
   function forceColorModeUpdate() {
     axios
       .get<UserInfo>(
-        "http://homenode.tech/api/user?username=" + cookies.get("username") // username=129032699zw@gmail.com
+        "http://homenode.tech/api/user?username=" + getcookie("username", true)
       )
       .then((res) => {
         const { data } = res;
@@ -73,7 +71,7 @@ export default function SettingsTable() {
   function forceEmailNotificationsUpdate() {
     axios
       .get<UserInfo>(
-        "http://homenode.tech/api/user?username=" + cookies.get("username") // username=129032699zw@gmail.com
+        "http://homenode.tech/api/user?username=" + getcookie("username", true)
       )
       .then((res) => {
         const { data } = res;
@@ -89,7 +87,9 @@ export default function SettingsTable() {
 
   function forceIntrusionDetectionUpdate() {
     axios
-      .get("http://homenode.tech/api/home?id=") // id=616c934f27eae9a51f5d6d8f
+      .get(
+        "http://homenode.tech/api/home?id=" + getcookie("home_id", true)
+      )
       .then((res) => {
         const { data } = res;
         let received_intrusion_detection =
@@ -107,7 +107,7 @@ export default function SettingsTable() {
     forceColorModeUpdate();
     forceEmailNotificationsUpdate();
     forceIntrusionDetectionUpdate();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -224,7 +224,7 @@ export default function SettingsTable() {
                           .put(
                             "http://homenode.tech/api/user?put_type=settings.dark_mode",
                             {
-                              username: "129032699zw@gmail.com",
+                              username: getcookie("username", true),
                               settings: {
                                 dark_mode: getOppositeColorMode(),
                               },
@@ -246,7 +246,7 @@ export default function SettingsTable() {
                           .put(
                             "http://homenode.tech/api/user?put_type=settings.email_notifications",
                             {
-                              username: "129032699zw@gmail.com",
+                              username: getcookie("username", true),
                               settings: {
                                 email_notifications: !EmailNotifications,
                               },
@@ -268,7 +268,7 @@ export default function SettingsTable() {
                           .put(
                             "http://homenode.tech/api/home?put_type=settings.intrusion_detection",
                             {
-                              id: "616c934f27eae9a51f5d6d8f",
+                              id: getcookie("home_id", true),
                               settings: {
                                 intrusion_detection: !IntrusionDetection,
                               },

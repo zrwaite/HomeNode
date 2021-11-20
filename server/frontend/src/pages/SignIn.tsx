@@ -15,8 +15,13 @@ import Navbar from "../components/Navbar";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import Cookies from "universal-cookie";
+import jwt_decode, { JwtPayload } from "jwt-decode";
 
 const cookies = new Cookies();
+
+interface CustomJWT{
+  home_id: string;
+}
 
 const SignIn = () => {
   let history = useHistory();
@@ -32,8 +37,20 @@ const SignIn = () => {
         password: Password,
       })
       .then((res: any) => {
+        cookies.set("email", res.data.username, { path: "/" });
         const token = res.data.response.token;
         cookies.set("token", token, { path: "/" });
+        try {
+          let decoded = jwt_decode<CustomJWT>(token || "") || null;
+          console.log("DECODE TOKEN:", decoded);
+          if (decoded) {
+            cookies.set("home_id", decoded.home_id, {
+              path: "/",
+            });
+          }
+        } catch (e) {
+          cookies.set("home_id", "INVALID_HOMEID", { path: "/" });
+        }
         history.push("/dashboard");
       })
       .catch((err: any) => {
