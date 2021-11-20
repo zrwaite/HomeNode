@@ -14,7 +14,7 @@ import {
 import Navbar from "../components/Navbar";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
-import Cookies from 'universal-cookie';
+import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
 
@@ -27,7 +27,7 @@ const SignUp = () => {
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
-    console.log("POST LOGIN")
+    console.log("POST SIGNUP");
     axios
       .post("http://homenode.tech/api/user", {
         username: Email,

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   chakra,
   Box,
@@ -13,40 +13,33 @@ import {
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
 import { useHistory } from "react-router-dom";
+import axios from "axios";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 const SignIn = () => {
   let history = useHistory();
+  const [Email, setEmail] = useState("");
+  const [Password, setPassword] = useState("");
 
-  // function checkLogin() {
-  //   if (localStorage.getItem("token")) {
-  //     history.push("/");
-  //   }
-  // }
-
-  // function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-  //   e.preventDefault();
-  //   const email = e.currentTarget.email.value;
-  //   const password = e.currentTarget.password.value;
-  //   const data = {
-  //     email,
-  //     password,
-  //   };
-    
-  //   fetch("http://localhost:5000/api/auth/signin", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(data),
-  //   })
-  //     .then((res) => res.json())
-  //     .then((res) => {
-  //       if (res.token) {
-  //         localStorage.setItem("token", res.token);
-  //         history.push("/");
-  //       }
-  //     });
-  // }
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    console.log("POST SIGNIN");
+    axios
+      .post("http://homenode.tech/auth/signin", {
+        username: Email,
+        password: Password,
+      })
+      .then((res: any) => {
+        const token = res.data.response.token;
+        cookies.set("token", token, { path: "/" });
+        history.push("/dashboard");
+      })
+      .catch((err: any) => {
+        console.log("ERROR COULD NOT LOGIN");
+      });
+  };
 
   return (
     <>
@@ -110,6 +103,7 @@ const SignIn = () => {
                     type="email"
                     placeholder="Email"
                     isRequired={true}
+                    onChange={(e: any) => setEmail(e.target.value)}
                   />
                 </Flex>
                 <Flex>
@@ -119,6 +113,7 @@ const SignIn = () => {
                     type="password"
                     placeholder="Password"
                     isRequired={true}
+                    onChange={(e: any) => setPassword(e.target.value)}
                   />
                 </Flex>
                 <Button
@@ -126,7 +121,7 @@ const SignIn = () => {
                   w="full"
                   py={2}
                   type="submit"
-                  onClick={() => history.push("/dashboard/home")}
+                  onClick={(e: any) => handleSubmit(e)}
                 >
                   Sign In
                 </Button>
