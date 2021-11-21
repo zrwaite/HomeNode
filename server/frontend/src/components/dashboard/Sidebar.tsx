@@ -15,6 +15,16 @@ import {
   useColorModeValue,
   useDisclosure,
   useToast,
+  Popover,
+  PopoverTrigger,
+  Button,
+  PopoverContent,
+  PopoverHeader,
+  PopoverCloseButton,
+  PopoverBody,
+  PopoverFooter,
+  PopoverArrow,
+  ButtonGroup,
 } from "@chakra-ui/react";
 import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
 import { FaBell } from "react-icons/fa";
@@ -22,9 +32,11 @@ import { BsGearFill } from "react-icons/bs";
 import { FiMenu, FiSearch } from "react-icons/fi";
 import { HiCode } from "react-icons/hi";
 import { MdHome, MdKeyboardArrowRight } from "react-icons/md";
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import logo from "../../assets/logo.svg";
 import UserContext from "../../User";
+import getcookie from "../../getcookie";
+import Cookies from "universal-cookie";
 
 import Home from "../../pages/dashboard/Home";
 import Settings from "../../pages/dashboard/Settings";
@@ -33,12 +45,13 @@ import WikiPlant from "../../pages/dashboard/WikiPlant";
 import WikiSensors from "../../pages/dashboard/WikiSensors";
 
 function Sidebar() {
+  const cookies = new Cookies();
   const sidebar = useDisclosure();
   const integrations = useDisclosure();
   let match = useRouteMatch();
   const history = useHistory();
   const user = useContext(UserContext);
-  const toast = useToast()
+  const toast = useToast();
 
   function switchPages(page: string) {
     if (page === "wiki") {
@@ -46,8 +59,25 @@ function Sidebar() {
     } else {
       history.push(`${match.url}/${page}`);
       user.currentPage = page;
-      console.log(user.currentPage, page);
+      console.log("GOTO", user.currentPage);
     }
+  }
+
+  function goToSettingsOnPopover() {
+    history.push(`/dashboard/settings`);
+    user.currentPage = "settings";
+    console.log("GOTO", user.currentPage);
+  }
+
+  function signoutOnPopover() {
+    cookies.remove("token", { path: "/" });
+    cookies.remove("email", { path: "/" });
+    cookies.remove("home_id", { path: "/" });
+    cookies.remove("sensors_id", { path: "/" });
+    cookies.remove("intruders_id", { path: "/" });
+    cookies.remove("name", { path: "/" });
+    history.push("/");
+    console.log("LOGOUT");
   }
 
   const NavItem = (props: any) => {
@@ -195,13 +225,47 @@ function Sidebar() {
 
           <Flex align="center">
             <Icon color="gray.500" as={FaBell} cursor="pointer" />
-            <Avatar
-              ml="4"
-              size="sm"
-              name="xx"
-              src="https://avatars.githubusercontent.com/u/31512688?v=4"
-              cursor="pointer"
-            />
+            <Popover placement="bottom" closeOnBlur={false}>
+              <PopoverTrigger>
+                <Avatar
+                  ml="4"
+                  size="sm"
+                  name="xx"
+                  src="https://avatars.githubusercontent.com/u/31512688?v=4"
+                  cursor="pointer"
+                />
+              </PopoverTrigger>
+              <PopoverContent
+                color={useColorModeValue("gray.800", "white")}
+                bg={useColorModeValue("gray.50", "gray.700")}
+                borderColor="blue.800"
+              >
+                <PopoverHeader pt={4} fontWeight="bold" border="0">
+                  {getcookie("name", true)}
+                </PopoverHeader>
+                <PopoverArrow />
+                <PopoverCloseButton />
+                <PopoverBody>Welcome to HomeNode!</PopoverBody>
+                <PopoverFooter
+                  border="0"
+                  d="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  pb={4}
+                >
+                  <Box fontSize="sm">{"\0"}</Box>
+                  <ButtonGroup size="sm">
+                    <Button
+                      colorScheme="blue"
+                      onClick={() => goToSettingsOnPopover()}
+                    >
+                      Settings
+                    </Button>
+                    <Button colorScheme="red" onClick={() => signoutOnPopover()}>Sign out</Button>
+                  </ButtonGroup>
+                </PopoverFooter>
+              </PopoverContent>
+            </Popover>
           </Flex>
         </Flex>
 
