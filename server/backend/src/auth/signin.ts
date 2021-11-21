@@ -14,7 +14,11 @@ const signInController = async (req: Request, res: Response, next: NextFunction)
 	else if (password==undefined) result.errors.push("Missing password");
 	else {
 		try{
-			const userData: any = await axios.get("/api/user?username="+username);
+			let token = await createToken({username: username, authorized: true})
+			const userData: any = await axios.get("/api/user?username="+username,
+			{headers: {
+				Authorization: "Bearer "+token
+			}});
 			let userResult: any = userData.data;
 			let passwordCheck = false;
 			if (userResult.success && userResult.response.result.hash!==undefined) {
@@ -22,7 +26,8 @@ const signInController = async (req: Request, res: Response, next: NextFunction)
 			}
 			if (passwordCheck) {
 				let home_id = userResult.response.result.home_id;
-				result.response = {token: await createToken({home_id: home_id, username: username, authorized: true})};
+				token = await createToken({home_id: home_id, username: username, authorized: true})
+				result.response = {token: token};
 				result.status = 201;
 				result.success = true;
 			} else {
