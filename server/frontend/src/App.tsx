@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
+import axios from "axios";
 import "./App.css";
 import UserContext from "./User";
+import getcookie from "./getcookie";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
@@ -14,6 +16,13 @@ const user = {
 };
 
 function App() {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      axios.defaults.headers.common["authorization"] =
+        "bearer " + getcookie("token");
+    }, 500);
+    return () => clearInterval(interval);
+  }, []);
   return (
     <div className="App">
       <UserContext.Provider value={user}>
