@@ -1,4 +1,4 @@
-function randomize(min, max, skew) {
+function randomize(min: number, max: number, skew: number) {
 
     let first = 0;
     let second = 0;
@@ -22,7 +22,7 @@ function randomize(min, max, skew) {
 }
 
 
-function randomData(randomInput, min, max, skew){
+function randomData(randomInput: number, min: number, max: number, skew: number){
     if (Math.random()<=0.05){
       return (randomize(min, max, skew) + randomInput);
     }
