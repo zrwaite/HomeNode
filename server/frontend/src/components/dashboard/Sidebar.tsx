@@ -14,6 +14,7 @@ import {
   Text,
   useColorModeValue,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
 import { FaBell } from "react-icons/fa";
@@ -23,7 +24,7 @@ import { HiCode } from "react-icons/hi";
 import { MdHome, MdKeyboardArrowRight } from "react-icons/md";
 import React, { useContext } from "react";
 import logo from "../../assets/logo.svg";
-import UserContext from "../../User"
+import UserContext from "../../User";
 
 import Home from "../../pages/dashboard/Home";
 import Settings from "../../pages/dashboard/Settings";
@@ -37,6 +38,7 @@ function Sidebar() {
   let match = useRouteMatch();
   const history = useHistory();
   const user = useContext(UserContext);
+  const toast = useToast()
 
   function switchPages(page: string) {
     if (page === "wiki") {

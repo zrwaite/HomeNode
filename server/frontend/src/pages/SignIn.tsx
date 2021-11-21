@@ -10,6 +10,7 @@ import {
   SimpleGrid,
   VisuallyHidden,
   Input,
+  useToast,
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
 import { useHistory } from "react-router-dom";
@@ -28,6 +29,7 @@ const SignIn = () => {
   let history = useHistory();
   const [Email, setEmail] = useState("");
   const [Password, setPassword] = useState("");
+  const toast = useToast();
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -78,9 +80,41 @@ const SignIn = () => {
               }
             });
           });
+        toast({
+          title: "Sign In Successful!",
+          description: "Loading dashboard...",
+          status: "success",
+          duration: 1500,
+          isClosable: true,
+        });
+        setTimeout(function () {
+          toast({
+            title: "Dashboard Loaded Successfully!",
+            description: "Loading graphs...",
+            status: "success",
+            duration: 1500,
+            isClosable: true,
+          });
+          setTimeout(function () {
+            toast({
+              title: "Graphs Loaded Successfully!",
+              description: "Welcome to HomeNode!",
+              status: "success",
+              duration: 5000,
+              isClosable: true,
+            });
+          }, 1500);
+        }, 1000);
       })
       .catch((err: any) => {
         console.log("ERROR SIGNIN", err);
+        toast({
+          title: "Error Signing In",
+          description: "Invalid username or password",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
       });
   };
 

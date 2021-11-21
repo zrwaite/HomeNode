@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useToast } from "@chakra-ui/react";
 import axios from "axios";
 import GeneralLineChart from "./GeneralLineChart";
 import getcookie from "../../getcookie";
