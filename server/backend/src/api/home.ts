@@ -3,7 +3,7 @@ import response from "../models/response"; //Created pre-formatted uniform respo
 import getResult from "./modules/getResult";
 import Home from "../models/home/home"; //Schema for mongodb
 import bcrypt from "bcrypt";
-import {verifyToken} from "../auth/tokenFunctions";
+import {getToken, verifyToken} from "../auth/tokenFunctions";
 import axios from "axios";
 
 import {homeGetQuery, homePostBody, homePutBody} from "../models/home/homeInterfaces";
@@ -116,6 +116,7 @@ const buildDeleteBody = async (req: any) =>{
 	let undefinedParams: string[] = [];
 	let auth = await verifyToken(req.headers);
 	if (!auth) return {deleteType: deleteType, id: id, body: body, errors: ["authorization"]};
+	let token = await getToken(req.headers);
 	switch (req.query.delete_type){
 		case "home":
 			deleteType = "home";
@@ -131,7 +132,7 @@ const buildDeleteBody = async (req: any) =>{
 		deleteType = undefined;
 		undefinedParams.push("valid home_id in token");
 	}
-	return {deleteType: deleteType, id: id, body: body, errors: undefinedParams};
+	return {deleteType: deleteType, id: id, token: token, errors: undefinedParams};
 }
 
 /* register controller */
@@ -201,12 +202,15 @@ export default class homeController {
 	}
 	static async apiDeleteHome(req: Request, res: Response, next: NextFunction){
 		let result = new response();
-		let {deleteType, id, body, errors} = await buildDeleteBody(req);
+		let {deleteType, id, token, errors} = await buildDeleteBody(req);
 		let home;
 		switch(deleteType){
 			case "home":
 				try {
-					const homeData: any = await axios.get("/api/home?id="+id);
+					const homeData: any = await axios.get("/api/home?id="+id,{
+						headers: {Authorization: "Bearer "+token}
+					}
+					);
 					let homeResult: any = homeData.data;
 					let module;
 					if (homeResult) {
@@ -224,7 +228,10 @@ export default class homeController {
 							}	
 							if (!!deleteLink) {
 								try {
-									axios.delete(deleteLink,{ data: { id: id }})
+									axios.delete(deleteLink,{
+										data: { home_id: id },
+										headers: {Authorization: "Bearer "+token}
+									});
 									deleteData.push("deleted module with id "+id);
 								} catch (e:any) {
 									deleteData.push("Failed to delete module with id "+id);
