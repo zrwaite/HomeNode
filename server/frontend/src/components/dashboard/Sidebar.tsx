@@ -196,15 +196,14 @@ function Sidebar() {
             <Avatar
               ml="4"
               size="sm"
-              name="anubra266"
-              src="https://avatars.githubusercontent.com/u/30869823?v=4"
+              name="xx"
+              src="https://avatars.githubusercontent.com/u/31512688?v=4"
               cursor="pointer"
             />
           </Flex>
         </Flex>
 
         <Box as="main" p="4">
-          {/* Add content here, remove div below  */}
           <Switch>
             <Route path={`${match.path}/home`}>
               <Home />

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import GeneralLineChart from "./GeneralLineChart";
+import getcookie from "../../getcookie";
 
 interface ModuleData {
   response: {
@@ -49,7 +50,7 @@ function SensorGraphs() {
   function getData() {
     axios
       .get<ModuleData>(
-        "http://homenode.tech/api/sensors?id=61870da5d98c502cf04c5770"
+        "http://homenode.tech/api/sensors?id=" + getcookie("sensors_id", true)
       )
       .then((res) => {
         const { data } = res;

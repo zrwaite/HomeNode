@@ -14,7 +14,7 @@ function getcookie(cookie: string, disable_alternate: boolean) {
         return "GeorgeShao246@gmail.com";
       case "home_id":
         return "61870da5d98c502cf04c576c";
-      case "sensor_id":
+      case "sensors_id":
         return "61870da5d98c502cf04c5770";
       case "intruders_id":
         return "6196f37d29168d65cb1d2adb";

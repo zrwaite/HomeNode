@@ -15,7 +15,7 @@ import Navbar from "../components/Navbar";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import Cookies from "universal-cookie";
-import jwt_decode, { JwtPayload } from "jwt-decode";
+import jwt_decode from "jwt-decode";
 import getcookie from "../getcookie";
 
 const cookies = new Cookies();
@@ -58,14 +58,25 @@ const SignIn = () => {
         console.log("GET NAME");
         axios
           .get(
-            "http://homenode.tech/api/user?username=" + getcookie("email", true),
-            getcookie("username", true)
+            "http://homenode.tech/api/user?username=" + getcookie("email", true)
           )
           .then((res: any) => {
             cookies.set("name", res.data.response.name, { path: "/" });
           })
           .catch((err: any) => {
             console.log("ERROR SIGNIN", err);
+          });
+        axios
+          .get("http://homenode.tech/api/home?id=" + getcookie("home_id", true))
+          .then((res: any) => {
+            let module_list = res.data.response.result.modules;
+            module_list.forEach((module: any) => {
+              if (module.type === "sensors") {
+                cookies.set("sensors_id", module.module_id, { path: "/" });
+              } else if (module.type === "intruders") {
+                cookies.set("intruders_id", module.module_id, { path: "/" });
+              }
+            });
           });
       })
       .catch((err: any) => {
