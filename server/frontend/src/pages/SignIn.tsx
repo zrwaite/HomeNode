@@ -54,7 +54,6 @@ const SignIn = () => {
         } catch (e) {
           cookies.set("home_id", "INVALID_HOMEID", { path: "/" });
         }
-        history.push("/dashboard");
       })
       .then(() => {
         console.log("GET NAME");
@@ -63,23 +62,48 @@ const SignIn = () => {
             "http://homenode.tech/api/user?username=" + getcookie("email", true)
           )
           .then((res: any) => {
-            cookies.set("name", res.data.response.name, { path: "/" });
+            cookies.set("name", res.data.response.result.name, { path: "/" });
+          })
+          .then(() => {
+            axios
+              .get(
+                "http://homenode.tech/api/home?id=" + getcookie("home_id", true)
+              )
+              .then((res: any) => {
+                let module_list = res.data.response.result.modules;
+                module_list.forEach((module: any) => {
+                  if (module.type === "sensors") {
+                    cookies.set("sensors_id", module.module_id, { path: "/" });
+                  } else if (module.type === "intruders") {
+                    cookies.set("intruders_id", module.module_id, {
+                      path: "/",
+                    });
+                  }
+                });
+              })
+              .then(() => history.push("/dashboard"))
+              .catch((err: any) => {
+                console.log("ERROR SIGNIN", err);
+                toast({
+                  title: "Error Signing In",
+                  description: "Oops, please try again",
+                  status: "error",
+                  duration: 3000,
+                  isClosable: true,
+                });
+              });
           })
           .catch((err: any) => {
             console.log("ERROR SIGNIN", err);
-          });
-        axios
-          .get("http://homenode.tech/api/home?id=" + getcookie("home_id", true))
-          .then((res: any) => {
-            let module_list = res.data.response.result.modules;
-            module_list.forEach((module: any) => {
-              if (module.type === "sensors") {
-                cookies.set("sensors_id", module.module_id, { path: "/" });
-              } else if (module.type === "intruders") {
-                cookies.set("intruders_id", module.module_id, { path: "/" });
-              }
+            toast({
+              title: "Error Signing In",
+              description: "Oops, please try again",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
             });
           });
+
         toast({
           title: "Sign In Successful!",
           description: "Loading dashboard...",
@@ -181,6 +205,7 @@ const SignIn = () => {
                     placeholder="Email"
                     isRequired={true}
                     onChange={(e: any) => setEmail(e.target.value)}
+                    autocomplete="email"
                   />
                 </Flex>
                 <Flex>
@@ -191,6 +216,7 @@ const SignIn = () => {
                     placeholder="Password"
                     isRequired={true}
                     onChange={(e: any) => setPassword(e.target.value)}
+                    autocomplete="current-password"
                   />
                 </Flex>
                 <Button
