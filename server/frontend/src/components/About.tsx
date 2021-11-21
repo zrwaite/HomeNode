@@ -46,10 +46,10 @@ function About() {
           role_emoji={HiOutlineSparkles}
           image={steven}
           emoji_color="yellow"
-          role_description="Role"
+          role_description="Développeur Python"
           description="Ex-gamer and aspiring youtuber"
           university="uWaterloo Software Engineering"
-          email="userid@uwaterloo.ca"
+          email="s36gong@uwaterloo.ca"
         />
         <AboutCard
           name="Hargun Mujral"
@@ -66,11 +66,10 @@ function About() {
           role_emoji={HiOutlineSparkles}
           image={michael}
           emoji_color="yellow"
-          role_description="Role"
-          description="[Placeholder description] Full Stack maker & UI / UX Designer , love hip hop music Author of
-          Building UI."
+          role_description="Hardware & Firmware Developer"
+          description="I developed hardware and firmware. (and ex-KGB agent)"
           university="uWaterloo Software Engineering"
-          email="userid@uwaterloo.ca"
+          email="mdenissov@uwaterloo.ca"
         />
       </Flex>
     </div>

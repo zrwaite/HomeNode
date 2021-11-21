@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   chakra,
   Box,
@@ -7,47 +7,140 @@ import {
   Button,
   Center,
   Flex,
-  Icon,
   SimpleGrid,
   VisuallyHidden,
   Input,
+  useToast,
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
 import { useHistory } from "react-router-dom";
+import axios from "axios";
+import Cookies from "universal-cookie";
+import jwt_decode from "jwt-decode";
+import getcookie from "../getcookie";
+
+const cookies = new Cookies();
+
+interface CustomJWT {
+  home_id: string;
+}
 
 const SignIn = () => {
   let history = useHistory();
+  const [Email, setEmail] = useState("");
+  const [Password, setPassword] = useState("");
+  const toast = useToast();
 
-  // function checkLogin() {
-  //   if (localStorage.getItem("token")) {
-  //     history.push("/");
-  //   }
-  // }
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+    console.log("POST SIGNIN");
+    axios
+      .post("http://homenode.tech/auth/signin", {
+        username: Email,
+        password: Password,
+      })
+      .then((res: any) => {
+        cookies.set("email", Email, { path: "/" });
+        const token = res.data.response.token;
+        cookies.set("token", token, { path: "/" });
+        try {
+          let decoded = jwt_decode<CustomJWT>(token || "") || null;
+          console.log("DECODE TOKEN:", decoded);
+          if (decoded) {
+            cookies.set("home_id", decoded.home_id, {
+              path: "/",
+            });
+          }
+        } catch (e) {
+          cookies.set("home_id", "INVALID_HOMEID", { path: "/" });
+        }
+      })
+      .then(() => {
+        console.log("GET NAME");
+        axios
+          .get(
+            "http://homenode.tech/api/user?username=" + getcookie("email", true)
+          )
+          .then((res: any) => {
+            cookies.set("name", res.data.response.result.name, { path: "/" });
+          })
+          .then(() => {
+            axios
+              .get(
+                "http://homenode.tech/api/home?id=" + getcookie("home_id", true)
+              )
+              .then((res: any) => {
+                let module_list = res.data.response.result.modules;
+                module_list.forEach((module: any) => {
+                  if (module.type === "sensors") {
+                    cookies.set("sensors_id", module.module_id, { path: "/" });
+                  } else if (module.type === "intruders") {
+                    cookies.set("intruders_id", module.module_id, {
+                      path: "/",
+                    });
+                  }
+                });
+              })
+              .then(() => history.push("/dashboard"))
+              .catch((err: any) => {
+                console.log("ERROR SIGNIN", err);
+                toast({
+                  title: "Error Signing In",
+                  description: "Oops, please try again",
+                  status: "error",
+                  duration: 3000,
+                  isClosable: true,
+                });
+              });
+          })
+          .catch((err: any) => {
+            console.log("ERROR SIGNIN", err);
+            toast({
+              title: "Error Signing In",
+              description: "Oops, please try again",
+              status: "error",
+              duration: 3000,
+              isClosable: true,
+            });
+          });
 
-  // function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-  //   e.preventDefault();
-  //   const email = e.currentTarget.email.value;
-  //   const password = e.currentTarget.password.value;
-  //   const data = {
-  //     email,
-  //     password,
-  //   };
-    
-  //   fetch("http://localhost:5000/api/auth/signin", {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(data),
-  //   })
-  //     .then((res) => res.json())
-  //     .then((res) => {
-  //       if (res.token) {
-  //         localStorage.setItem("token", res.token);
-  //         history.push("/");
-  //       }
-  //     });
-  // }
+        toast({
+          title: "Sign In Successful!",
+          description: "Loading dashboard...",
+          status: "success",
+          duration: 1500,
+          isClosable: true,
+        });
+        setTimeout(function () {
+          toast({
+            title: "Dashboard Loaded Successfully!",
+            description: "Loading graphs...",
+            status: "success",
+            duration: 1500,
+            isClosable: true,
+          });
+          setTimeout(function () {
+            toast({
+              title: "Graphs Loaded Successfully!",
+              description: "Welcome to HomeNode!",
+              status: "success",
+              duration: 5000,
+              isClosable: true,
+            });
+          }, 1500);
+        }, 1000);
+      })
+      .catch((err: any) => {
+        console.log("ERROR SIGNIN", err);
+        toast({
+          title: "Error Signing In",
+          description: "Invalid username or password",
+          status: "error",
+          duration: 3000,
+          isClosable: true,
+        });
+      });
+  };
 
   return (
     <>
@@ -111,6 +204,8 @@ const SignIn = () => {
                     type="email"
                     placeholder="Email"
                     isRequired={true}
+                    onChange={(e: any) => setEmail(e.target.value)}
+                    autocomplete="email"
                   />
                 </Flex>
                 <Flex>
@@ -120,6 +215,8 @@ const SignIn = () => {
                     type="password"
                     placeholder="Password"
                     isRequired={true}
+                    onChange={(e: any) => setPassword(e.target.value)}
+                    autocomplete="current-password"
                   />
                 </Flex>
                 <Button
@@ -127,7 +224,7 @@ const SignIn = () => {
                   w="full"
                   py={2}
                   type="submit"
-                  onClick={() => history.push("/dashboard/home")}
+                  onClick={(e: any) => handleSubmit(e)}
                 >
                   Sign In
                 </Button>
