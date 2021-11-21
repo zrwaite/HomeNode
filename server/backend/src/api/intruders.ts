@@ -3,10 +3,31 @@ import response from "../models/response"; //Created pre-formatted uniform respo
 import getResult from "./modules/getResult"; //Creates formatted response
 import Intruders from "../models/intruders/intruders"; //Schema for mongodb
 import axios from "axios";
+import {verifyToken, getToken} from "../auth/tokenFunctions";
+
 
 /* Import interfaces */
 import {intrudersGetQuery, intrudersPostBody, intrudersDailyPutBody, intrudersPastPutBody, intrudersDeleteBody} from "../models/intruders/intudersInterface";
 
+const compareAuthHomeId = async (headers: any, module_id:string) => {
+	const auth = await verifyToken(headers);
+	if (!auth.authorized) return false;
+	let getLink = "/api/intruders?id="+module_id;
+	let token = await getToken(headers);
+	if (token) {
+		try{
+			const intruderData: any = await axios.get(getLink,
+				{headers: {
+					Authorization: "Bearer "+token
+				}});
+			let home_id = intruderData.data.response.result.home_id;
+			if (home_id == auth.home_id) return true;
+		} catch (e) {
+			return false;
+		}
+	}
+	return false;
+}
 
 /* Build Functions */
 
@@ -15,6 +36,8 @@ const buildGetQuery = async (req: any) => {
 	let queryType = undefined;
 	let query: any = {};
 	let undefinedParams: string[] = [];
+	let auth = await verifyToken(req.headers);
+	if (!auth) return {queryType: queryType, query: query, errors: ["Authorization"]};
 	switch (req.query.get_type){
 		case "all":
 			queryType = "all";
@@ -23,23 +46,24 @@ const buildGetQuery = async (req: any) => {
 			if (req.query.id!== undefined){
 				query = req.query.id;
 				queryType = "id";
-			} else if (req.home_id!== undefined){
-				query = req.query.home_id;
-				queryType = "home_id";
 			} else {
-				undefinedParams.push("id, home_id");
+				undefinedParams.push("id");
 			}
 	}
-	return {queryType: queryType, query: query, errors: undefinedParams};
+	return {auth: auth, queryType: queryType, query: query, errors: undefinedParams};
 };
 const buildPostBody = async (req: any) => {
 	//Create the post request
 	let exists = false;
 	let undefinedParams: string[] = [];
-	let body: any = {};
+	let body: any = {}; 
 	["name", "home_id", "current_data"].forEach((param) => {
 		if (req.body[param]==undefined) undefinedParams.push(param);
 	});
+	let auth = await verifyToken(req.headers);
+	if (!auth) return {token: "", exists: exists, body: body, errors: ["valid token"]};
+	let token = await getToken(req.headers);
+	if (!token) undefinedParams.push("token");
 	if (undefinedParams.length == 0) { 
 		let postBody: intrudersPostBody = {
 			name: req.body.name,
@@ -51,7 +75,7 @@ const buildPostBody = async (req: any) => {
 		body = postBody;
 		exists = true;
 	}
-	return {exists: exists, body: body, errors: undefinedParams};
+	return {token: token, exists: exists, body: body, errors: undefinedParams};
 };
 const buildPutBody = async (req: any) => {
 	//Create the put request for the daily data array
@@ -59,6 +83,7 @@ const buildPutBody = async (req: any) => {
 	let id = req.body.id;
 	let body: any = {};
 	let undefinedParams: string[] = [];
+	if (id === undefined) undefinedParams.push("id");
 	switch (putType) {
 		case "past_data":
 			["date", "intrusion_detections", "max_alert_level"].forEach((param) => {
@@ -93,10 +118,10 @@ const buildPutBody = async (req: any) => {
 			undefinedParams.push("put_type");
 			break;
 	}
-	if (id === undefined) {
-		putType = undefined;
-		undefinedParams.push("id");
+	if (undefinedParams.length == 0 && ! await compareAuthHomeId(req.headers, id)){
+		return {putType: undefined, id: id, body: body, errors: ["valid home_id in the token"]};
 	}
+	if (id === undefined) putType = undefined;
 	return {putType: putType, id: id, body: body, errors: undefinedParams};
 };
 
@@ -105,6 +130,8 @@ const buildDeleteBody = async (req: any) =>{
 	let id = req.body.id;
 	let body: any = {};
 	let undefinedParams: string[] = [];
+	let auth = await verifyToken(req.headers);
+	if (!auth) return {deleteType: undefined, id: id, body: body, errors: ["authorization"]};
 	switch (req.query.delete_type){
 		case "daily_data":
 			["detection", "alert_level"].forEach((param) => {
@@ -121,6 +148,9 @@ const buildDeleteBody = async (req: any) =>{
 				deleteType= undefined;
 			}
 			break;
+		case "intruders":
+			deleteType = "intruders";
+			break;
 		default:
 			undefinedParams.push("delete_type");
 			break;
@@ -128,6 +158,9 @@ const buildDeleteBody = async (req: any) =>{
 	if (id === undefined) {
 		deleteType = undefined;
 		undefinedParams.push("id");
+	} else if (! await compareAuthHomeId(req.headers, id)){
+		deleteType = undefined;
+		undefinedParams.push("Valid home_id in token");
 	}
 	return {deleteType: deleteType, id: id, body: body, errors: undefinedParams};
 }
@@ -135,8 +168,8 @@ const buildDeleteBody = async (req: any) =>{
 export default class intrudersController {
 	static async apiGetIntruders(req: Request, res: Response, next: NextFunction) {
 		let result = new response(); //Create new standardized response
-		let {queryType, query, errors} = await buildGetQuery(req);
-		let intruders;
+		let {auth, queryType, query, errors} = await buildGetQuery(req);
+		let intruders:any;
 		switch (queryType){
 			case "all":
 				try{intruders = await Intruders.find();} 
@@ -153,12 +186,16 @@ export default class intrudersController {
 			default:
 				errors.forEach((error)=> result.errors.push("missing "+error))
 		}
+		if (intruders && intruders.home_id.toString() !== auth.home_id) {
+			result.errors.push("Not authorized too access these sensors");
+			result.response = {};
+		}
 		result = getResult(intruders, "intruders", result);
 		res.status(result.status).json(result); //Return whatever result remains
 	}
 	static async apiPostIntruders(req: Request, res: Response, next: NextFunction) {
 		let result = new response();
-		let {exists, body, errors} = await buildPostBody(req);
+		let {token, exists, body, errors} = await buildPostBody(req);
 		let newIntruders;
 		if (exists) {
 			try {
@@ -172,7 +209,10 @@ export default class intrudersController {
 					}
 				}
 				try{
-					const homeData: any = await axios.put("/api/home?put_type=module", putBody);
+					const homeData: any = await axios.put("/api/home?put_type=module", putBody, 
+					{headers: {
+						Authorization: "Bearer "+token
+					}});
 					let homeResult: any = homeData.data;
 					if (homeResult) {
 						result.success = homeResult.success;
@@ -231,10 +271,26 @@ export default class intrudersController {
 				} catch (e: any) {
 					result.errors.push("Error creating request", e);
 				}
+				break;
+			case "intruders":
+				try	{
+					intruders = await Intruders.findByIdAndDelete(id, {new:true});
+					console.log(intruders);
+					if (intruders) {
+						result.status = 201;
+						result.response = {deleted: id};
+						result.success = true;
+					} else {
+						result.status = 404;
+						result.errors.push("intruders module not found");
+					}
+				} catch (e:any) {
+					result.errors.push("Error deleting intruders", e);
+				}
+				break;
 			default:
 				errors.forEach((error)=> result.errors.push("missing "+error))
 		}
 		res.status(result.status).json(result);
-
 	}
 }
