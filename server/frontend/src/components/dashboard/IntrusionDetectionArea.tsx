@@ -9,6 +9,7 @@ import {
   Td,
   Tbody,
 } from "@chakra-ui/react";
+import getcookies from "../../getcookie"
 
 interface ModuleData {
   response: {
@@ -47,7 +48,7 @@ export default function IntrusionDetectionArea() {
   function getData() {
     axios
       .get<ModuleData>(
-        "http://homenode.tech/api/intruders?id=6196f37d29168d65cb1d2adb"
+        "http://homenode.tech/api/intruders?id=" + getcookies("intruders_id", true)
       )
       .then((res) => {
         const { data } = res;
