@@ -4,8 +4,7 @@ import getResult from "./modules/getResult"; //Creates formmated response
 import User from "../models/user/user"; //Schema for mongodb
 import axios from "axios";
 import bcrypt from "bcrypt";
-import createToken from "../auth/createToken";
-import verifyToken from "../auth/verifyToken";
+import {createToken, verifyToken} from "../auth/tokenFunctions";
 
 
 /* Interface imports */
@@ -16,6 +15,8 @@ const buildGetQuery = async (req: any) => {
 	let queryType = undefined;
 	let query: any = {};
 	let undefinedParams: string[] = [];
+	let auth = await verifyToken(req.headers);
+	if (!auth) return {queryType: queryType, query: query, errors: ["Authorization"]};
 	switch (req.query.get_type){
 		case "all":
 			queryType = "all";
@@ -136,7 +137,7 @@ export default class userController {
 			try {
 				newUser = new User(body);
 				await newUser.save(); //Saves branch to mongodb
-				let token = await createToken({home_id: body.home_id, username: body.username, authenticated: true});
+				let token = await createToken({home_id: body.home_id, username: body.username, authorized: true});
 				try{
 					const homeData: any = await axios.put("/api/home?put_type=user", {
 						id: body.home_id,
