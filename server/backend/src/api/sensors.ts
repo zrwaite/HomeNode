@@ -3,17 +3,39 @@ import response from "../models/response"; //Created pre-formatted uniform respo
 import getResult from "./modules/getResult"; //Creates standard response
 import Sensors from "../models/sensors/sensors"; //Schema for mongodb
 import axios from "axios";
-import verifyToken from "../auth/verifyToken";
+import {verifyToken, getToken} from "../auth/tokenFunctions";
 
 
 /* Sensors Interfaces imports */ 
 import {sensorsGetQuery, sensorsPostBody, sensorsPastPutBody, sensorsDailyPutBody, sensorsDeleteBody} from "../models/sensors/sensorsInterface";
+
+const compareAuthHomeId = async (headers: any, module_id:string) => {
+	const auth = await verifyToken(headers);
+	if (!auth.authorized) return false;
+	let getLink = "/api/sensors?id="+module_id;
+	let token = await getToken(headers);
+	if (token) {
+		try{
+			const sensorsData: any = await axios.get(getLink, 
+				{headers: {
+					Authorization: "Bearer "+token
+				}});
+			let home_id = sensorsData.data.response.result.home_id;
+			if (home_id == auth.home_id) return true;
+		} catch (e) {
+			return false;
+		}
+	}
+	return false;
+}
 
 const buildGetQuery = async (req: any) => {
 	//Create the get request
 	let queryType = undefined;
 	let query: any = {};
 	let undefinedParams: string[] = [];
+	let auth = await verifyToken(req.headers);
+	if (!auth) return {queryType: queryType, query: query, errors: ["Authorization"]};
 	switch (req.query.get_type){
 		case "all":
 			queryType = "all";
@@ -22,14 +44,11 @@ const buildGetQuery = async (req: any) => {
 			if (req.query.id!== undefined){
 				query = req.query.id;
 				queryType = "id";
-			} else if (req.home_id!== undefined){
-				query = req.query.home_id;
-				queryType = "home_id";
 			} else {
-				undefinedParams.push("id, home_id");
+				undefinedParams.push("id");
 			}
 	}
-	return {queryType: queryType, query: query, errors: undefinedParams};
+	return {auth: auth, queryType: queryType, query: query, errors: undefinedParams};
 };
 const buildPostBody = async (req: any) => {
 	//Create the post request
@@ -39,6 +58,10 @@ const buildPostBody = async (req: any) => {
 	["name", "home_id", "current_data"].forEach((param) => {
 		if (req.body[param]==undefined) undefinedParams.push(param);
 	});
+	let auth = await verifyToken(req.headers);
+	if (!auth) return {token: "", exists: exists, body: body, errors: ["valid token"]};
+	let token = await getToken(req.headers);
+	if (!token) undefinedParams.push("token");
 	if (undefinedParams.length == 0) { 
 		let postBody: sensorsPostBody = {
 			name: req.body.name,
@@ -50,15 +73,16 @@ const buildPostBody = async (req: any) => {
 		body = postBody;
 		exists = true;
 	}
-	return {exists: exists, body: body, errors: undefinedParams};
+	return {token: token, exists: exists, body: body, errors: undefinedParams};
 };
 const buildPutBody = async (req: any) => {
 	//Create the put request for the daily data array
-	let putType = undefined;
+	let putType: string|undefined = req.query.put_type;
 	let id = req.body.id;
 	let body: any = {};
 	let undefinedParams: string[] = [];
-	switch (req.query.put_type) {
+	if (id === undefined) undefinedParams.push("id");
+	switch (putType) {
 		case "past_data":
 			["date", "average_temperature", "average_humidity", "average_light_level", "average_moisture"].forEach((param) => {
 				if (req.body[param]==undefined) undefinedParams.push(param);
@@ -71,8 +95,7 @@ const buildPutBody = async (req: any) => {
 					average_light_level: req.body.average_light_level,
 					average_moisture: req.body.average_moisture,
 				};
-				putType = "past_data";
-				body = pastBody;
+				body = {$push: {past_data: pastBody}};
 			} else {
 				putType = undefined;
 			}
@@ -110,10 +133,10 @@ const buildPutBody = async (req: any) => {
 			undefinedParams.push("put_type");
 			break;
 	}
-	if (id === undefined) {
-		putType = undefined;
-		undefinedParams.push("id");
+	if (undefinedParams.length == 0 && ! await compareAuthHomeId(req.headers, id)){
+		return {putType: undefined, id: id, body: body, errors: ["valid home_id in the token"]};
 	}
+	if (id === undefined) putType = undefined;
 	return {putType: putType, id: id, body: body, errors: undefinedParams};
 };
 
@@ -122,6 +145,8 @@ const buildDeleteBody = async (req: any) =>{
 	let id = req.body.id;
 	let body: any = {};
 	let undefinedParams: string[] = [];
+	let auth = await verifyToken(req.headers);
+	if (!auth) return {deleteType: undefined, id: id, body: body, errors: ["authorization"]};
 	switch (req.query.delete_type){
 		case "daily_data":
 			["temperature", "humidity", "light_level", "moisture"].forEach((param) => {
@@ -136,6 +161,8 @@ const buildDeleteBody = async (req: any) =>{
 				};
 				deleteType = "daily_data";
 				body = deleteBody;
+			} else {
+				deleteType = undefined;
 			}
 			break;
 		case "sensors":
@@ -148,6 +175,9 @@ const buildDeleteBody = async (req: any) =>{
 	if (id === undefined) {
 		deleteType = undefined;
 		undefinedParams.push("id");
+	} else if (id !== auth.home_id){
+		deleteType = undefined;
+		undefinedParams.push("Valid home_id in token");
 	}
 	return {deleteType: deleteType, id: id, body: body, errors: undefinedParams};
 }
@@ -156,8 +186,8 @@ const buildDeleteBody = async (req: any) =>{
 export default class sensorsController {
 	static async apiGetSensors(req: Request, res: Response, next: NextFunction) {
 		let result = new response(); //Create new standardized response
-		let sensors;
-		let {queryType, query, errors} = await buildGetQuery(req);
+		let sensors: any;
+		let {auth, queryType, query, errors} = await buildGetQuery(req);
 		switch (queryType){
 			case "all":
 				try{sensors = await Sensors.find();} 
@@ -174,12 +204,16 @@ export default class sensorsController {
 			default:
 				errors.forEach((error)=> result.errors.push("missing "+error))
 		}
+		if (sensors && sensors.home_id.toString() !== auth.home_id) {
+			result.errors.push("Not authorized too access these sensors");
+			result.response = {};
+		}
 		result = getResult(sensors, "sensors", result);
 		res.status(result.status).json(result); //Return whatever result remains
 	}
 	static async apiPostSensors(req: Request, res: Response, next: NextFunction) {
 		let result = new response();
-		let {exists, body, errors} = await buildPostBody(req);
+		let {token, exists, body, errors} = await buildPostBody(req);
 		let newSensors;
 		if (exists) {
 			try {
@@ -193,7 +227,10 @@ export default class sensorsController {
 					}
 				}
 				try{
-					const homeData: any = await axios.put("/api/home?put_type=module", putBody);
+					const homeData: any = await axios.put("/api/home?put_type=module", putBody, 
+					{headers: {
+						Authorization: "Bearer "+token
+					}});
 					let homeResult: any = homeData.data;
 					if (homeResult) {
 						result.success = homeResult.success;
@@ -221,24 +258,11 @@ export default class sensorsController {
 	static async apiPutSensors(req: Request, res: Response, next: NextFunction) {
 		let result = new response();
 		let {putType, id, body, errors} = await buildPutBody(req);
-		let updateData: any = {};
 		let sensors;
-		switch (putType){
-			case "daily_data":
-				updateData = body;
-				
-				break;
-			case "past_data":
-				updateData = {$push: {past_data: body}};
-				break;
-			default:
-				errors.forEach((error)=>result.errors.push("Missing "+error));
-				putType = undefined;
-		}
 		if (putType) {
 			try {
 				//prettier-ignore
-				sensors = await Sensors.findByIdAndUpdate(id, updateData, {new:true}); //Saves branch to mongodb
+				sensors = await Sensors.findByIdAndUpdate(id, body, {new:true}); //Saves branch to mongodb
 				result.status = 201;
 				result.response = sensors;
 				result.success = true;
@@ -246,6 +270,8 @@ export default class sensorsController {
 				result.status = 404;
 				result.errors.push("Error creating request", e);
 			}
+		} else {
+			errors.forEach((error)=>result.errors.push("Missing "+error));
 		}
 		res.status(result.status).json(result);
 	}
@@ -267,7 +293,6 @@ export default class sensorsController {
 			case "sensors": 
 				try	{
 					sensors = await Sensors.findByIdAndDelete(id, {new:true});
-					console.log(sensors);
 					if (sensors) {
 						result.status = 201;
 						result.response = {deleted: id};
