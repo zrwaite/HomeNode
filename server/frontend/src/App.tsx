@@ -19,7 +19,7 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       axios.defaults.headers.common["authorization"] =
-        "bearer " + getcookie("token");
+        "bearer " + getcookie("token", true);
     }, 500);
     return () => clearInterval(interval);
   }, []);
