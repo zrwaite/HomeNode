@@ -175,7 +175,7 @@ const buildDeleteBody = async (req: any) =>{
 	if (id === undefined) {
 		deleteType = undefined;
 		undefinedParams.push("id");
-	} else if (id !== auth.home_id){
+	} else if (! await compareAuthHomeId(req.headers, id)){
 		deleteType = undefined;
 		undefinedParams.push("Valid home_id in token");
 	}
