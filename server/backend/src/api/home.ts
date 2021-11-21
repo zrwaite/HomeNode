@@ -3,7 +3,7 @@ import response from "../models/response"; //Created pre-formatted uniform respo
 import getResult from "./modules/getResult";
 import Home from "../models/home/home"; //Schema for mongodb
 import bcrypt from "bcrypt";
-import verifyToken from "../auth/verifyToken";
+import {verifyToken} from "../auth/tokenFunctions";
 import axios from "axios";
 
 import {homeGetQuery, homePostBody, homePutBody} from "../models/home/homeInterfaces";
@@ -12,7 +12,7 @@ const buildGetQuery = async (req: any) => {
 	let queryType = undefined;
 	let query: any = {};
 	let undefinedParams: string[] = [];
-	let auth = verifyToken(req.headers);
+	let auth = await verifyToken(req.headers);
 	if (!auth) return {queryType: queryType, query: query, errors: ["Authorization"]};
 	switch (req.query.get_type){
 		case "all":
@@ -71,7 +71,7 @@ const buildPutBody = async (req: any) => {
 	let undefinedParams: string[] = [];
 	let id = req.body.id;
 	let query: any = {};
-	let auth = verifyToken(req.headers);
+	let auth = await verifyToken(req.headers);
 	if (!auth) return {putType: undefined, query: query, body: body, errors: ["authorization"]};
 	// let body: homePutBody = {}; I removed interfaces for this one
 	switch (putType){
@@ -114,7 +114,7 @@ const buildDeleteBody = async (req: any) =>{
 	let id = req.body.id;
 	let body: any = {};
 	let undefinedParams: string[] = [];
-	let auth = verifyToken(req.headers);
+	let auth = await verifyToken(req.headers);
 	if (!auth) return {deleteType: deleteType, id: id, body: body, errors: ["authorization"]};
 	switch (req.query.delete_type){
 		case "home":
