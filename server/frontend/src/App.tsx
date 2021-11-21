@@ -9,12 +9,7 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 
 const user = {
-  name: "",
-  username: "",
-  userID: "",
-  homeID: "",
   currentPage: "home",
-  darkMode: false,
   defaultValue: "",
 };
 

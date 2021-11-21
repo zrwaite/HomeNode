@@ -1,20 +1,15 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import {
   useColorModeValue,
-  ButtonGroup,
-  IconButton,
   Table,
   Thead,
   Tr,
   Th,
   Td,
   Tbody,
-  Switch,
-  useColorMode,
 } from "@chakra-ui/react";
-import { AiFillEdit } from "react-icons/ai";
-import UserContext from "../../User";
+import getcookies from "../../getcookie"
 
 interface ModuleData {
   response: {
@@ -36,7 +31,6 @@ interface ModuleData {
 }
 
 export default function IntrusionDetectionArea() {
-  const user = useContext(UserContext);
   const [CurrentData, setCurrentData] = useState({
     detection: "",
     alert_level: 0,
@@ -54,7 +48,7 @@ export default function IntrusionDetectionArea() {
   function getData() {
     axios
       .get<ModuleData>(
-        "http://homenode.tech/api/intruders?id=6196f37d29168d65cb1d2adb"
+        "http://homenode.tech/api/intruders?id=" + getcookies("intruders_id", true)
       )
       .then((res) => {
         const { data } = res;

@@ -9,6 +9,7 @@ router.route('/home')
     .get(homeCtrl.apiGetHome)
     .post(homeCtrl.apiPostHome)
     .put(homeCtrl.apiPutHome)
+    .delete(homeCtrl.apiDeleteHome)
 
 router.route('/intruders')
 	.get(intrudersCtrl.apiGetIntruders)

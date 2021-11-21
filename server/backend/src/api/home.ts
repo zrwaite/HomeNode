@@ -3,6 +3,8 @@ import response from "../models/response"; //Created pre-formatted uniform respo
 import getResult from "./modules/getResult";
 import Home from "../models/home/home"; //Schema for mongodb
 import bcrypt from "bcrypt";
+import {getToken, verifyToken} from "../auth/tokenFunctions";
+import axios from "axios";
 
 import {homeGetQuery, homePostBody, homePutBody} from "../models/home/homeInterfaces";
 
@@ -10,15 +12,25 @@ const buildGetQuery = async (req: any) => {
 	let queryType = undefined;
 	let query: any = {};
 	let undefinedParams: string[] = [];
+	let auth = await verifyToken(req.headers);
+	if (!auth) return {queryType: queryType, query: query, errors: ["Authorization"]};
 	switch (req.query.get_type){
 		case "all":
 			queryType = "all";
 			break;
 		default:
 			if (req.query.id!== undefined){
+				if (auth.home_id!== req.query.id){
+					undefinedParams.push("valid home_id in token");
+					break;
+				}
 				query = req.query.id;
 				queryType = "id";
 			} else if (req.query.username!== undefined){
+				if (auth.username!== req.query.username){
+					undefinedParams.push("valid username in token");
+					break;
+				}
 				query = req.query.username;
 				queryType = "username";
 			} else {
@@ -59,6 +71,8 @@ const buildPutBody = async (req: any) => {
 	let undefinedParams: string[] = [];
 	let id = req.body.id;
 	let query: any = {};
+	let auth = await verifyToken(req.headers);
+	if (!auth) return {putType: undefined, query: query, body: body, errors: ["authorization"]};
 	// let body: homePutBody = {}; I removed interfaces for this one
 	switch (putType){
 		case "user":
@@ -88,9 +102,39 @@ const buildPutBody = async (req: any) => {
 	if (id === undefined) {
 		putType = undefined;
 		undefinedParams.push("id");
+	} else if (id !== auth.home_id){
+		putType = undefined;
+		undefinedParams.push("Valid home_id in token");
 	}
 	return {putType: putType, query: query, body: body, errors: undefinedParams};
 };
+
+const buildDeleteBody = async (req: any) =>{
+	let deleteType = undefined;
+	let id = req.body.id;
+	let body: any = {};
+	let undefinedParams: string[] = [];
+	let auth = await verifyToken(req.headers);
+	if (!auth) return {deleteType: deleteType, id: id, body: body, errors: ["authorization"]};
+	let token = await getToken(req.headers);
+	switch (req.query.delete_type){
+		case "home":
+			deleteType = "home";
+			break;
+		default:
+			undefinedParams.push("delete_type");
+			break;
+	}
+	if (id === undefined) {
+		deleteType = undefined;
+		undefinedParams.push("id");
+	} else if (id !== auth.home_id) {
+		deleteType = undefined;
+		undefinedParams.push("valid home_id in token");
+	}
+	return {deleteType: deleteType, id: id, token: token, errors: undefinedParams};
+}
+
 /* register controller */
 export default class homeController {
 	static async apiGetHome(req: Request, res: Response, next: NextFunction) {
@@ -153,6 +197,70 @@ export default class homeController {
 			}
 		} else {
 			errors.forEach((error)=>result.errors.push("missing "+error));
+		}
+		res.status(result.status).json(result);
+	}
+	static async apiDeleteHome(req: Request, res: Response, next: NextFunction){
+		let result = new response();
+		let {deleteType, id, token, errors} = await buildDeleteBody(req);
+		let home;
+		switch(deleteType){
+			case "home":
+				try {
+					const homeData: any = await axios.get("/api/home?id="+id,{
+						headers: {Authorization: "Bearer "+token}
+					}
+					);
+					let homeResult: any = homeData.data;
+					let module;
+					if (homeResult) {
+						let modules = homeResult.response.result.modules;
+						let deleteData: any[] = [];
+						modules.forEach((module:any)=> {
+							let deleteLink = "";
+							switch (module.type){
+								case "intruders":
+									deleteLink = "/api/intruders?delete_type=intruders";
+									break;
+								case "sensors":
+									deleteLink = "/api/sensors?delete_type=sensors"
+									break;
+							}	
+							if (!!deleteLink) {
+								try {
+									axios.delete(deleteLink,{
+										data: { home_id: id },
+										headers: {Authorization: "Bearer "+token}
+									});
+									deleteData.push("deleted module with id "+id);
+								} catch (e:any) {
+									deleteData.push("Failed to delete module with id "+id);
+									result.errors.push("Failed to delete module with id "+id,e);
+								}
+							}
+						});
+					} else {
+						result.errors.push("Error getting home modules");
+					}
+				} catch (e:any) {
+					result.errors.push("Error sending home request");
+				}
+				try	{
+					home = await Home.findByIdAndDelete(id, {new:true});
+					if (home) {
+						result.status = 201;
+						result.response = {deleted: id};
+						result.success = true;
+					} else {
+						result.status = 404;
+						result.errors.push("home not found");
+					}
+				} catch (e:any) {
+					result.errors.push("Error deleting intruders", e);
+				}
+				break;
+			default:
+				errors.forEach((error)=> result.errors.push("missing "+error))
 		}
 		res.status(result.status).json(result);
 	}

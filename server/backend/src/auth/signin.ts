@@ -1,6 +1,6 @@
 import {Request, Response, NextFunction} from "express"; //Typescript types
 import response from "../models/response"; //Created pre-formatted uniform response
-import createToken from "./createToken";
+import {createToken} from "./tokenFunctions";
 import bcrypt from "bcrypt";
 import axios from "axios";
 
@@ -22,7 +22,7 @@ const signInController = async (req: Request, res: Response, next: NextFunction)
 			}
 			if (passwordCheck) {
 				let home_id = userResult.response.result.home_id;
-				result.response = {token: await createToken({home_id: home_id, username: username, authenticated: true})};
+				result.response = {token: await createToken({home_id: home_id, username: username, authorized: true})};
 				result.status = 201;
 				result.success = true;
 			} else {
