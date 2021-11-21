@@ -49,7 +49,7 @@ function About() {
           role_description="Développeur Python"
           description="Ex-gamer and aspiring youtuber"
           university="uWaterloo Software Engineering"
-          email="userid@uwaterloo.ca"
+          email="s36gong@uwaterloo.ca"
         />
         <AboutCard
           name="Hargun Mujral"
@@ -67,9 +67,9 @@ function About() {
           image={michael}
           emoji_color="yellow"
           role_description="Hardware & Firmware Developer"
-          description="I developed hardware and firmware."
+          description="I developed hardware and firmware. (and ex-KGB agent)"
           university="uWaterloo Software Engineering"
-          email="userid@uwaterloo.ca"
+          email="mdenissov@uwaterloo.ca"
         />
       </Flex>
     </div>
