@@ -189,7 +189,7 @@ const SignIn = () => {
                     placeholder="Email"
                     isRequired={true}
                     onChange={(e: any) => setEmail(e.target.value)}
-                    autocomplete="email"
+                    autoComplete="email"
                   />
                 </Flex>
                 <Flex>
@@ -200,7 +200,7 @@ const SignIn = () => {
                     placeholder="Password"
                     isRequired={true}
                     onChange={(e: any) => setPassword(e.target.value)}
-                    autocomplete="current-password"
+                    autoComplete="current-password"
                   />
                 </Flex>
                 <Button

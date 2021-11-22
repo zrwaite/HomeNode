@@ -43,7 +43,6 @@ export default function IntrusionDetectionArea() {
       updatedAt: "",
     },
   ]);
-  const header = ["key", "actions"];
 
   function getData() {
     axios

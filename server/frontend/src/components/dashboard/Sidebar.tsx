@@ -14,7 +14,6 @@ import {
   Text,
   useColorModeValue,
   useDisclosure,
-  useToast,
   Popover,
   PopoverTrigger,
   Button,
@@ -32,7 +31,7 @@ import { BsGearFill } from "react-icons/bs";
 import { FiMenu, FiSearch } from "react-icons/fi";
 import { HiCode } from "react-icons/hi";
 import { MdHome, MdKeyboardArrowRight } from "react-icons/md";
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext } from "react";
 import logo from "../../assets/logo.svg";
 import UserContext from "../../User";
 import getcookie from "../../getcookie";
@@ -51,7 +50,6 @@ function Sidebar() {
   let match = useRouteMatch();
   const history = useHistory();
   const user = useContext(UserContext);
-  const toast = useToast();
 
   function switchPages(page: string) {
     if (page === "wiki") {
