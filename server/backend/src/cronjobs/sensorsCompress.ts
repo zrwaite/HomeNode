@@ -52,6 +52,7 @@ const sensorsCompress = async () => {
 			let id: string = module._id;
 			let dailyData: [any] = module.daily_data;
 			let currentData: any = module.current_data;
+			let home_id: string = module.home_id;
 			let total_temperature = 0;
 			let total_humidity = 0;
 			let total_light_level = 0;
@@ -88,8 +89,8 @@ const sensorsCompress = async () => {
 				if (currentData[param]==undefined) success = false;
 			});
 			if (success){
-				putPastData(id, average_temperature, average_humidity, average_light_level, average_moisture);
-				deleteDailyData(id, currentData.temperature, currentData.humidity, currentData.light_level, currentData.moisture);
+				putPastData(id, average_temperature, average_humidity, average_light_level, average_moisture, home_id);
+				deleteDailyData(id, currentData.temperature, currentData.humidity, currentData.light_level, currentData.moisture, home_id);
 			}
 			else {
 				console.log("Missing current data");
