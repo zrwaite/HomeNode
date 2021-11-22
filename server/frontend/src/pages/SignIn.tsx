@@ -56,7 +56,10 @@ const SignIn = () => {
         }
       })
       .then(() => {
-        console.log("GET NAME");
+        axios.defaults.headers.common["authorization"] =
+          "bearer " + getcookie("token", true);
+      })
+      .then(() => {
         axios
           .get(
             "http://homenode.tech/api/user?username=" + getcookie("email", true)
@@ -79,6 +82,13 @@ const SignIn = () => {
                       path: "/",
                     });
                   }
+                });
+                toast({
+                  title: "Sign In Successful!",
+                  description: "Loading dashboard...",
+                  status: "success",
+                  duration: 1500,
+                  isClosable: true,
                 });
               })
               .then(() => history.push("/dashboard"))
@@ -103,32 +113,6 @@ const SignIn = () => {
               isClosable: true,
             });
           });
-
-        toast({
-          title: "Sign In Successful!",
-          description: "Loading dashboard...",
-          status: "success",
-          duration: 1500,
-          isClosable: true,
-        });
-        setTimeout(function () {
-          toast({
-            title: "Dashboard Loaded Successfully!",
-            description: "Loading graphs...",
-            status: "success",
-            duration: 1500,
-            isClosable: true,
-          });
-          setTimeout(function () {
-            toast({
-              title: "Graphs Loaded Successfully!",
-              description: "Welcome to HomeNode!",
-              status: "success",
-              duration: 5000,
-              isClosable: true,
-            });
-          }, 1500);
-        }, 1000);
       })
       .catch((err: any) => {
         console.log("ERROR SIGNIN", err);
@@ -205,7 +189,7 @@ const SignIn = () => {
                     placeholder="Email"
                     isRequired={true}
                     onChange={(e: any) => setEmail(e.target.value)}
-                    autocomplete="email"
+                    autoComplete="email"
                   />
                 </Flex>
                 <Flex>
@@ -216,7 +200,7 @@ const SignIn = () => {
                     placeholder="Password"
                     isRequired={true}
                     onChange={(e: any) => setPassword(e.target.value)}
-                    autocomplete="current-password"
+                    autoComplete="current-password"
                   />
                 </Flex>
                 <Button
