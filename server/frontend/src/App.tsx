@@ -18,8 +18,16 @@ const user = {
 function App() {
   useEffect(() => {
     const interval = setInterval(() => {
-      axios.defaults.headers.common["authorization"] =
-        "bearer " + getcookie("token", true);
+      if (getcookie("token", true) !== "INVALID_COOKIE" && getcookie("token", true) !== "") {
+        axios.defaults.headers.common["authorization"] =
+          "bearer " + getcookie("token", true);
+      } else {
+        try {
+          delete axios.defaults.headers.common["authorization"];
+        } catch (e) {
+          console.log("TOKEN DOES NOT EXIST");
+        }
+      }
     }, 500);
     return () => clearInterval(interval);
   }, []);
