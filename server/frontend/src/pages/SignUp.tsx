@@ -10,6 +10,7 @@ import {
   SimpleGrid,
   VisuallyHidden,
   Input,
+  useToast,
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
 import { useHistory } from "react-router-dom";
@@ -24,6 +25,7 @@ const SignUp = () => {
   const [Email, setEmail] = useState("");
   const [Password, setPassword] = useState("");
   const [HomeID, setHomeID] = useState("");
+  const toast = useToast();
 
   const handleSubmit = (e: any) => {
     e.preventDefault();
@@ -45,7 +47,23 @@ const SignUp = () => {
         cookies.set("home_id", res.data.response.userResult.home_id, {
           path: "/",
         });
-        history.push("/dashboard");
+        toast({
+          title: "Sign Up Successful!",
+          description: "Loading sign in page...",
+          status: "success",
+          duration: 1500,
+          isClosable: true,
+        });
+        setTimeout(function () {
+          toast({
+            title: "Sign In Page Loaded Successfully",
+            description: "Please sign in...",
+            status: "success",
+            duration: 3000,
+            isClosable: true,
+          });
+        }, 1500);
+        history.push("/signin");
       });
   };
 
