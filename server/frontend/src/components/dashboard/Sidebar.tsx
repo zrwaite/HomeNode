@@ -261,7 +261,12 @@ function Sidebar() {
                     >
                       Settings
                     </Button>
-                    <Button colorScheme="red" onClick={() => signoutOnPopover()}>Sign out</Button>
+                    <Button
+                      colorScheme="red"
+                      onClick={() => signoutOnPopover()}
+                    >
+                      Sign out
+                    </Button>
                   </ButtonGroup>
                 </PopoverFooter>
               </PopoverContent>
