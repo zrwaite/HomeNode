@@ -1,6 +1,8 @@
 import axios from "axios";
+import {getToken} from "../auth/tokenFunctions"
 
-const putPastData = async (id: string, average_temperature: number, average_humidity: number, average_light_level: number, average_moisture: number) => {
+const putPastData = async (id: string, average_temperature: number, average_humidity: number, average_light_level: number, average_moisture: number, home_id: string) => {
+	let token:string = await getToken({home_id: home_id, authorized: false})	
 	let date = new Date().toLocaleDateString().toString();
 	try {
 		const pastData: any = await axios.put("/api/sensors?put_type=past_data",{
@@ -10,7 +12,9 @@ const putPastData = async (id: string, average_temperature: number, average_humi
 			average_humidity: average_humidity,
 			average_light_level: average_light_level,
 			average_moisture: average_moisture
-		});
+		},{headers: {
+			Authorization: "Bearer "+token
+		}});
 		let result: any = pastData.data;
 		if (result) return;
 		else console.log("Error putting past data");
@@ -18,15 +22,20 @@ const putPastData = async (id: string, average_temperature: number, average_humi
 		console.log("Error putting past data", e.response.data)
 	}
 }
-const deleteDailyData = async (id: string, temperature: number, humidity: number, light_level: number, moisture: number) => {
+const deleteDailyData = async (id: string, temperature: number, humidity: number, light_level: number, moisture: number, home_id: string) => {
+	let token:string = await getToken({home_id: home_id, authorized: false})	
 	try{
-		const deleteData: any = await axios.delete("/api/sensors?delete_type=daily_data",{ data: {
-			id: id,
-			temperature: temperature,
-			humidity: humidity,
-			light_level: light_level,
-			moisture: moisture
-		}});
+		const deleteData: any = await axios.delete("/api/sensors?delete_type=daily_data",{ 
+			data: {
+				id: id,
+				temperature: temperature,
+				humidity: humidity,
+				light_level: light_level,
+				moisture: moisture
+			}, headers: {
+				Authorization: "Bearer "+token
+			}
+		});
 		let result: any = deleteData.data;
 		if (result) return;
 		else console.log("Error deleting daily data");
