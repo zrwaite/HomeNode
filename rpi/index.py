@@ -1,4 +1,4 @@
-from models import Home, Sensor, SensorModule, Intruder, IntruderModule
+from models import Home, Sensor, SensorModule, IntruderModule
 from crud import *
 from serial import Serial
 from time import perf_counter
