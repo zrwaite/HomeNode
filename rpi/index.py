@@ -1,80 +1,145 @@
 from models import Home, Sensor, SensorModule, Intruder, IntruderModule
 from crud import *
-from helper import format_serial_data
 from serial import Serial
-from time import time
+from time import perf_counter
 from datetime import date
 
+# This does something idk ask Steven
 def export_daily_data():
     current_date_string = date.today().strftime("%d-%m-%Y")
-    
-# Initialize the Home Module
-home = Home("Gongster's Home")
 
-# Initialize the Sensors Module
-sensor_module = SensorModule(home.home_id)
-temperature_sensor = Sensor('temperature')
-humidity_sensor = Sensor('humidity')
-light_sensor = Sensor('light_level')
-moisture_sensor = Sensor('moisture')
-sensor_module.add_sensors(temperature_sensor, humidity_sensor, light_sensor, moisture_sensor)
+# Returns a string of concatenated messages
+def request_messages(ser):
+	messages_buffer = ''
+	# Send ~ to lock the serial stream
+	ser.write(str.encode('~'))
+
+	# Request from every possible address
+	for i in range(5):
+		ser.write(str.encode('a'+str(i+1)))
+		buf = ser.readline()
+		messages_buffer += buf.decode('UTF-8')
+
+	# Send & to unlock the serial stream
+	ser.write(str.encode('&'))
+
+	return messages_buffer
+
+# Processes a string of messages into a dict with significant data
+def process_messages(messages):
+	# If there are no messages we don't have to do anything
+	if not messages:
+		return messages
+
+	# Clean up the messages buffer
+	messages = messages.replace('\\','').replace('\n','').replace('\r','')
+
+	# Create a messages list based on delimiter /
+	messages = messages.split('/')
+
+	# Create a dict with keys of sensor id and values of the sensor
+	data_dict = {}
+	for index, message in zip(range(int(len(messages)/2)), messages):
+		# Check if there is any sensor data
+		if messages[index * 2 + 1]:
+			data_dict[messages[index * 2]] = messages[index * 2 + 1] 
+
+	#print(data_dict)
+
+	return data_dict
+
+# Currently returns the sum of all the detected alerts and returns that as the alert level
+def read_alerts(ser, prev):
+	alerts_buffer = ''
+
+	# Get all the alerts in the buffer
+	buf = ser.readline()
+	alerts_buffer += buf.decode('UTF-8')
+
+	#print(alerts_buffer)
+
+	# Since alerts are in the same format as messages, we can use the same process functin
+	proccessed_alerts = process_messages(alerts_buffer)
+
+	print(proccessed_alerts)
+
+	# Decide on the alert level
+	alert_level = 0
+	if proccessed_alerts:
+		for key, value in proccessed_alerts.items():
+			alert_level += int(value)
+
+	return alert_level
+
+def index_main():
+
+	# Initialize the Home Module
+	home = Home("Barry McHawk Inger's Home")
+	sensor_module = SensorModule(home.home_id)
+
+	# Define serial connection
+	ser = Serial(
+		port='/dev/ttyS0', # Built-in serial port 
+		baudrate=9600, # Baudrate on the modules
+		timeout=1 # If no response in these amount of seconds, assume no data
+	)
+
+	# The main data buffer, where all the messages from the modules get stored
+	data_buffer = ''
+
+	# Time since last data request
+	request_timer = perf_counter()
+
+	thingy = "oof"
+
+	alert_level = 0
+
+	# Main loop 
+	while True:
+		
+		# Check if it is time to send a request
+		if(perf_counter() - request_timer > 3):
+
+			# Request data from the modules
+			data_buffer = request_messages(ser)
+
+			# Process the messages into a dict if there are any
+			data_dict = {}
+			if data_buffer:
+				data_dict = process_messages(data_buffer)
+
+			# Post data from non-empty dicts
+			if data_dict:
+				for key, value in data_dict.items():
+					# Register the sensor type if it has not been registered
+					if not sensor_module.registered(key):
+						sensor_module.register_sensor(key)
+
+					sensor = sensor_module.get_sensor(key)
+					# Upload data
+					sensor.load_data()
+
+					#sensor.check_data_and_notify() # TODO:If something is wrong, we will send a notification
+
+					sensor.append_data(value)
+					sensor.update_json()
+
+					#print("Sent: "+str(value))
+
+					#sensor_module.update_current_data()
+					#sensor_module.upload_data()
+
+			print(data_buffer)
+			request_timer = perf_counter()
+
+		# Check if there has been any alerts sent
+		# Alerts are important messages that need to be proccessed right away
+		temp_alert = 0
+		while ser.in_waiting:
+			temp_alert += read_alerts(ser, alert_level)
+			print('current: '+str(temp_alert))
+		alert_level = temp_alert
+
+index_main()
 
 
-previous_time = time() #Initialize previous time
-    
-while True:
-
-    data = ""
-    ser = Serial(port='/dev/ttyS0', baudrate=9600, timeout=1)
-    if time() - previous_time > 10: #Been over 10 seconds, so we will read from sensors and upload to server
-        # Open Serial
-        ser.write(str.encode('1'))
-        time.sleep(1)
-        #while ser.in_waiting:
-        s = ser.readline()
-        data += s.decode('UTF-8')
-
-        ser.write(str.encode('2'))
-        time.sleep(1)
-        s = ser.readline()
-        data += s.decode('UTF-8')
-
-        data_dict = format_serial_data(data)
-
-        
-        """At a high level, we will all each sensor data be an object instance (stored as a python dict 
-        but modeled as a class. It will be stored physically on a JSON file."""
-        
-        # Go over each of the sensor data and put it into the right JSON file
-        for key in data_dict:
-            # if sensor data
-            if key in ['temperature', 'humidity', 'light_level', 'moisture']:
-                for sensor_object in sensor_module.sensors:
-                    if sensor_object.name == key: # There is a match for the sensor
-                        sensor = sensor_object
-                        sensor.load_data()
-
-                        sensor.check_data_and_notify() # TODO:If something is wrong, we will send a notification
-
-                        sensor.append_data(data_dict[key])
-                        sensor.update_json()
-                        break # No need to check the other sensors
-
-
-            # If intruder data
-            if key in ['intruder']:
-                print("This is intruder data, I don't know how to handle it yet")
-                
-
-        sensor_module.update_current_data()
-        sensor_module.upload_data()
-        #TODO: Create Daily Data export function to send to server
-        #TODO: Separate Data Handling and Send to server
-    
-    else: #Read intruder things from serial line
-        previous_time = time() #Update time
-
-        s = ser.readline()
-        data += s.decode('UTF-8')
-
-        data_dict = format_serial_data(data)
