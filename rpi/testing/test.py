@@ -96,7 +96,7 @@ class TestIntegrationMethods(unittest.TestCase):
         print(self.sensor_module.sensors[0].get_most_recent_data())
         response = self.sensor_module.check_data_and_notify()
         self.assertEqual(response.json()['success'], True)
-        self.assertEqual(response.json()['response']['notifications'][0]['title'], "Your house is not overheating!")
+        self.assertEqual(response.json()['response']['notifications'][0]['title'], "Your house is overheating!")
 
 
 if __name__ == '__main__':
