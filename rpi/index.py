@@ -1,4 +1,4 @@
-from models import Home, Sensor, SensorModule, Intruder, IntruderModule
+from models import Home, Sensor, SensorModule, IntruderModule
 from crud import *
 from helper import format_serial_data
 from serial import Serial
@@ -18,6 +18,9 @@ humidity_sensor = Sensor('humidity')
 light_sensor = Sensor('light_level')
 moisture_sensor = Sensor('moisture')
 sensor_module.add_sensors(temperature_sensor, humidity_sensor, light_sensor, moisture_sensor)
+
+# TODO: Initialize the Intruders Module
+intruder_module = IntruderModule(home.home_id)
 
 
 previous_time = time() #Initialize previous time

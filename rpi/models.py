@@ -8,6 +8,8 @@ class Home:
     def __init__(self, name):
         self.name = name
         self.home_id = None
+        self.password = None
+        self.auth_token = None
 
         self.get_home_id() #Either gets the home_id or creates it
 
@@ -15,26 +17,43 @@ class Home:
 
     def get_home_id(self):
         if os.path.isfile('./data/home_id.json'):
-            self.load_home_id_from_json()
+            self.load_home_from_json()
         else:
             self.initialize_new_home_on_server()
 
-    def load_home_id_from_json(self):
-        with open('./data/home_id.json', 'r') as f: #Store the id on 'hard storage' as a JSOn
+
+    def load_home_from_json(self):
+        with open('./data/home_id.json', 'r') as f: #Store the id on 'hard storage' as a JSON
             self.home_id = json.load(f)
+
+        with open('./data/password.json', 'r') as f: #Store the id on 'hard storage' as a JSON
+            self.password = json.load(f)
+
+        with open('./data/auth_token.json', 'r') as f: #Store the id on 'hard storage' as a JSON
+            self.auth_token = json.load(f)
 
     def initialize_new_home_on_server(self):
         response = post_home_data({'name': self.name})
-        self.home_id = response.json()["response"]["_id"]
+        self.home_id = response.json()["response"]["home"]["_id"]
+        self.password = response.json()["response"]["password"]
         self.store_home_id()
-
+        self.store_password()
+        self.auth_token = get_auth_token(self.home_id, self.password)
+        self.store_auth_token()
 
     def store_home_id(self):
         if not os.path.isdir('./data'):
             os.mkdir('./data')
-        with open('./data/home_id.json', 'w+') as f: #Store the id on 'hard storage' as a JSOn
+        with open('./data/home_id.json', 'w+') as f:
             json.dump(self.home_id, f)
 
+    def store_password(self):
+        with open('./data/password.json', 'w+') as f:
+            json.dump(self.password, f)
+
+    def store_auth_token(self):
+        with open('./data/auth_token.json', 'w+') as f:
+            json.dump(self.auth_token, f)
 
 class Module: #Parent of IntruderModule and SensorModule
     def __init__(self, home_id):
@@ -43,6 +62,15 @@ class Module: #Parent of IntruderModule and SensorModule
         self.home_id = home_id
         self.sensors = [] # A dictionary where the key is the sensor_name, the value is just the object
         self.current_data = {}
+        self.auth_token = None
+
+        self.load_auth_token()
+
+
+    def load_auth_token(self):
+        with open('./data/auth_token.json', 'r') as f:
+            self.auth_token = json.load(f)
+
 
     def add_sensors(self,*sensors):
         # Add one or multiple sensors
@@ -60,34 +88,45 @@ class Module: #Parent of IntruderModule and SensorModule
     
 
     def check_data_and_notify(self):
-        #TODO: Make sure the numbers are right
+        #TODO: Make sure the numbers are right, and test out notifications
         for sensor in self.sensors:
             title = ""
             info = ""
-            if sensor.name == 'temperature':
-                if sensor.get_most_recent_data() > 25:
-                    title = "Your house is overheating!"
-                    info = "Your house is reaching a temperature of {}! This is quite high.".format(sensor.get_most_recent_data())
             
-            elif sensor.name == 'humidity':
-                if sensor.get_most_recent_data() > 70:
-                    title = "High humidity detected!"
-                    info = "Humidity of {}".format(sensor.get_most_recent_data())
+            # Logic for detecting anomalies in the sensors
+            if sensor.get_most_recent_data():
+                if sensor.name == 'temperature':
+                    if sensor.get_most_recent_data() > 25:
+                        title = "Your house is overheating!"
+                        info = "Your house is reaching a temperature of {}! This is quite high.".format(sensor.get_most_recent_data())
 
-        
-            elif sensor.name == 'light_level':
-                if sensor.get_most_recent_data() > 20:
-                    title = "High light level detected!"
-                    info = "Light level of {}".format(sensor.get_most_recent_data())
+                elif sensor.name == 'humidity':
+                    if sensor.get_most_recent_data() > 70:
+                        title = "High humidity detected!"
+                        info = "Humidity of {}".format(sensor.get_most_recent_data())
 
 
-            elif sensor.name == 'moisture':
-                if sensor.get_most_recent_data() > 30:
-                    title = "High moisture detected!"
-                    info = "You have a moisture of level {}".format(sensor.get_most_recent_data())
+                elif sensor.name == 'light_level':
+                    if sensor.get_most_recent_data() > 20:
+                        title = "High light level detected!"
+                        info = "Light level of {}".format(sensor.get_most_recent_data())
 
-            if title != "" and info != "": #If there is a notification to be sent
-                put_notification_data({'id': self.home_id, 'notification': {'title': title, 'module_id': self._id, 'info': info}})
+
+                elif sensor.name == 'moisture':
+                    if sensor.get_most_recent_data() > 30:
+                        title = "High moisture detected!"
+                        info = "You have a moisture of level {}".format(sensor.get_most_recent_data())
+
+                # Logic for detecting intruders
+                elif sensor.name == "x":
+                    if sensor.get_most_recent_data() == 1:
+                        title = "EMERGENCY: Intruder Detected"
+                        info = "There is an intruder in your house. Please alert local emergency"
+
+
+                if title != "" and info != "": #If there is a notification to be sent
+                    response = put_notification_data({'id': self.home_id, 'notification': {'title': title, 'module_id': self._id, 'info': info}}, self.auth_token)
+                    return response
 
 class IntruderModule(Module):
     # Noise Sensor, Motion, door is open,
@@ -95,11 +134,15 @@ class IntruderModule(Module):
         super().__init__(home_id) #Initialize parent class
         self.name = "Gongster's Intruder Module"
 
+        self.get_intruder_module_id()
+
+        print("Initialized intuder module, with id", self._id)
+
     def upload_data(self):
         final_object = self.current_data
         final_object['id'] = self._id
 
-        response = put_intruders_data(final_object)
+        response = put_intruders_data(final_object, self.auth_token)
         return response
 
     def get_intruder_module_id(self):
@@ -109,7 +152,7 @@ class IntruderModule(Module):
             self.initialize_new_intruder_module_on_server()
 
     def initialize_new_intruder_module_on_server(self):
-        response = post_intruders_data({'name': self.name,'home_id': self.home_id, 'current_data': self.current_data})
+        response = post_intruders_data({'name': self.name,'home_id': self.home_id, 'current_data': self.current_data}, self.auth_token)
         self._id = response.json()["response"]["intruderResult"]["_id"]
         self.store_intruder_module_id()
 
@@ -121,14 +164,7 @@ class IntruderModule(Module):
         with open('./data/intruder_module_id.json', 'r') as f: #Store the id on 'hard storage' as a JSOn
             self._id = json.load(f)
 
-
-
-
-class Intruder:
-    def __init__(self, name):
-        self.name = name
     
-    #We eventually want to detect when theres intrudders
 
 class SensorModule(Module): 
     # Includes Light Level, Humidity, Temperature, and Moisture Sensor
@@ -148,7 +184,7 @@ class SensorModule(Module):
             self.initialize_new_sensor_module_on_server()
 
     def initialize_new_sensor_module_on_server(self):
-        response = post_sensors_data({'name': self.name,'home_id': self.home_id, 'current_data': self.current_data})
+        response = post_sensors_data({'name': self.name,'home_id': self.home_id, 'current_data': self.current_data}, self.auth_token)
         self._id = response.json()["response"]["sensorResult"]["_id"]
         self.store_sensor_module_id()
 
@@ -164,9 +200,10 @@ class SensorModule(Module):
         final_object = self.current_data
         final_object['id'] = self._id
 
-        response = put_sensors_data(final_object)
+        response = put_sensors_data(final_object, self.auth_token)
+        return response
 
-class Sensor:
+class Sensor: # This also includes the detection of intruders
     def __init__(self, name):
         self.name = name
         self.data = None
@@ -195,6 +232,7 @@ class Sensor:
         if self.data is None:
             self.data = []
         self.data.append({'timestamp': current_unix_time, 'data': data})
+        self.update_json()
         
     def update_json(self):
         with open('./data/sensors/' + self.name + '.json', 'w+') as f:
