@@ -8,8 +8,11 @@ import {
   Th,
   Td,
   Tbody,
+  Box,
 } from "@chakra-ui/react";
-import getcookies from "../../getcookie"
+import LiveDetection from "./LiveDetection";
+import getcookie from "../../getcookie";
+import Cookies from "universal-cookie";
 
 interface ModuleData {
   response: {
@@ -47,7 +50,8 @@ export default function IntrusionDetectionArea() {
   function getData() {
     axios
       .get<ModuleData>(
-        "http://homenode.tech/api/intruders?id=" + getcookies("intruders_id", true)
+        "http://homenode.tech/api/intruders?id=" +
+          getcookie("intruders_id", true)
       )
       .then((res) => {
         const { data } = res;
@@ -86,14 +90,29 @@ export default function IntrusionDetectionArea() {
       "Dec",
     ];
     let non_24_hour_time = hours > 12 ? hours - 12 : hours;
+    let actual_hr = "";
+    let actual_min = "";
+    let actual_sec = "";
     if (hours > 12) {
+      let actual_hr = non_24_hour_time.toString();
+      let actual_min = minutes.toString();
+      let actual_sec = seconds.toString();
+      if (hours < 10) {
+        actual_hr = "0" + non_24_hour_time;
+      }
+      if (minutes < 10) {
+        actual_min = "0" + minutes;
+      }
+      if (seconds < 10) {
+        actual_sec = "0" + seconds;
+      }
       return `${days[date_obj.getDay()]}, ${
         months[month - 1]
-      } ${day}, ${year} ${non_24_hour_time}:${minutes}:${seconds} PM`;
+      } ${day}, ${year} ${actual_hr}:${actual_min}:${actual_sec} PM`;
     } else {
       return `${days[date_obj.getDay()]}, ${
         months[month - 1]
-      } ${day}, ${year} ${non_24_hour_time}:${minutes}:${seconds} AM`;
+      } ${day}, ${year} ${actual_hr}:${actual_min}:${actual_sec} AM`;
     }
   }
 
@@ -105,61 +124,69 @@ export default function IntrusionDetectionArea() {
   });
 
   return (
-    <div style={{ overflowY: "scroll", maxHeight: "32vh" }}>
-      <Table
-        w="full"
-        bg={useColorModeValue("white", "gray.800")}
-        display={{
-          base: "block",
-          md: "table",
-        }}
-        sx={{
-          "@media print": {
-            display: "table",
-          },
-        }}
-      >
-        <Thead
-          display={{
-            base: "none",
-            md: "table-header-group",
-          }}
-          sx={{
-            "@media print": {
-              display: "table-header-group",
-            },
-          }}
+    <>
+      <LiveDetection
+        date={convertDate(CurrentData.updatedAt)}
+        detection_level={CurrentData.detection}
+        alert_level={CurrentData.alert_level}
+      />
+      <Box style={{ overflowY: "scroll", maxHeight: "32vh" }} rounded="lg"
+        shadow="lg">
+        <Table
+          w="full"
           bg={useColorModeValue("white", "gray.800")}
-          style={{position: "sticky", top: 0}}
-        >
-          <Tr>
-            <Th key={"Date & Time"}>Date & Time</Th>
-            <Th key={"Detection"}>Detection</Th>
-            <Th key={"Alert Level"}>Alert Level</Th>
-          </Tr>
-        </Thead>
-        <Tbody
           display={{
             base: "block",
-            lg: "table-row-group",
+            md: "table",
           }}
           sx={{
             "@media print": {
-              display: "table-row-group",
+              display: "table",
             },
           }}
         >
-          {DailyData.map((data, index) => {
-            return (
-              <Tr key={index}>
-                <Td key={"Date & Time"}>{convertDate(data.updatedAt)}</Td>
-                <Td key={"Detection"}>{data.detection}</Td>
-                <Td key={"Alert Level"}>{data.alert_level}</Td>
-              </Tr>
-            );
-          })}
-        </Tbody>
-      </Table>
-    </div>
+          <Thead
+            display={{
+              base: "none",
+              md: "table-header-group",
+            }}
+            sx={{
+              "@media print": {
+                display: "table-header-group",
+              },
+            }}
+            bg={useColorModeValue("white", "gray.800")}
+            style={{ position: "sticky", top: 0 }}
+          >
+            <Tr>
+              <Th key={"Date & Time"}>Date & Time</Th>
+              <Th key={"Detection"}>Detection</Th>
+              <Th key={"Alert Level"}>Alert Level</Th>
+            </Tr>
+          </Thead>
+          <Tbody
+            display={{
+              base: "block",
+              lg: "table-row-group",
+            }}
+            sx={{
+              "@media print": {
+                display: "table-row-group",
+              },
+            }}
+          >
+            {DailyData.map((data, index) => {
+              return (
+                <Tr key={index}>
+                  <Td key={"Date & Time"}>{convertDate(data.updatedAt)}</Td>
+                  <Td key={"Detection"}>{data.detection}</Td>
+                  <Td key={"Alert Level"}>{data.alert_level}</Td>
+                </Tr>
+              );
+            })}
+          </Tbody>
+        </Table>
+      </Box>
+    </>
   );
 }

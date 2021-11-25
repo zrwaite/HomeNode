@@ -7,7 +7,7 @@ function getcookie(cookie: string, disable_alternate: boolean) {
   } else if (!disable_alternate) {
     switch (cookie) {
       case "token":
-        return "INVALID_COOKIE";
+        return "Loading...";
       case "name":
         return "George"
       case "email":
@@ -19,10 +19,10 @@ function getcookie(cookie: string, disable_alternate: boolean) {
       case "intruders_id":
         return "6196f37d29168d65cb1d2adb";
       default:
-        return "INVALID_COOKIE";
+        return "Loading...";
     }
   } else {
-    return "INVALID_COOKIE";
+    return "Loading...";
   }
 }
 

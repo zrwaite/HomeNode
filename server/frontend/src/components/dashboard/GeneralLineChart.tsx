@@ -14,6 +14,8 @@ function GeneralLineChart(props: any) {
   return (
     <Table
       w="full"
+      rounded="lg"
+      shadow="lg"
       bg={useColorModeValue("white", "gray.800")}
       display={{
         base: "block",
