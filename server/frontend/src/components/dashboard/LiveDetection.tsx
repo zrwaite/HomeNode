@@ -83,7 +83,6 @@ const LiveDetection = (props: any) => {
       justifyContent="center"
     >
       <Box
-        mx={4}
         px={8}
         py={4}
         rounded="lg"
@@ -209,7 +208,6 @@ const LiveDetection = (props: any) => {
         </Flex>
       </Box>
       <Box
-        mx={4}
         px={8}
         py={4}
         rounded="lg"
