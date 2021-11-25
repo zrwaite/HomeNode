@@ -18,7 +18,7 @@ const user = {
 function App() {
   useEffect(() => {
     const interval = setInterval(() => {
-      if (getcookie("token", true) !== "INVALID_COOKIE" && getcookie("token", true) !== "") {
+      if (getcookie("token", true) !== "Loading..." && getcookie("token", true) !== "") {
         axios.defaults.headers.common["authorization"] =
           "bearer " + getcookie("token", true);
       } else {

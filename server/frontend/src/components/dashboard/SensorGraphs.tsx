@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import GeneralLineChart from "./GeneralLineChart";
 import getcookie from "../../getcookie";
+import Cookies from "universal-cookie";
 
 interface ModuleData {
   response: {
@@ -25,6 +26,8 @@ interface ModuleData {
     };
   };
 }
+
+const cookies = new Cookies();
 
 function SensorGraphs() {
   const [CurrentData, setCurrentData] = useState([
@@ -63,6 +66,10 @@ function SensorGraphs() {
           "updatedAt": current_data.updatedAt,
         };
         let daily_data = data.response.result.daily_data;
+        cookies.set("sensors_temperature", current_data.temperature);
+        cookies.set("sensors_humidity", current_data.humidity);
+        cookies.set("sensors_light_level", current_data.light_level);
+        cookies.set("sensors_moisture", current_data.moisture);
         console.log("GET SENSORMODULEDATA: ", current_data, daily_data);
         setCurrentData([...CurrentData, updated_data]);
         if (CurrentData.length > 10) {
