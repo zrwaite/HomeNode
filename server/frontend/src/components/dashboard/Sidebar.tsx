@@ -34,7 +34,7 @@ import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
 import { BsGearFill } from "react-icons/bs";
 import { FiMenu, FiSearch } from "react-icons/fi";
 import { HiCode } from "react-icons/hi";
-import { MdHome, MdKeyboardArrowRight, MdNotifications } from "react-icons/md";
+import { MdHome, MdKeyboardArrowRight, MdNotifications, MdPerson } from "react-icons/md";
 import React, { useContext, useState, useEffect } from "react";
 import logo from "../../assets/logo.svg";
 import UserContext from "../../User";
@@ -280,7 +280,7 @@ function Sidebar() {
           <Flex align="center">
             <Popover placement="bottom" closeOnBlur={false}>
               <PopoverTrigger>
-                <Button>
+                <Button mr={2}>
                   <Icon as={MdNotifications} color="gray.500" size="sm" />
                 </Button>
               </PopoverTrigger>
@@ -323,13 +323,9 @@ function Sidebar() {
             </Popover>
             <Popover placement="bottom" closeOnBlur={false}>
               <PopoverTrigger>
-                <Avatar
-                  ml="4"
-                  size="sm"
-                  name="xx"
-                  src="https://avatars.githubusercontent.com/u/31512688?v=4"
-                  cursor="pointer"
-                />
+                <Button>
+                  <Icon as={MdPerson} color="gray.500" size="sm" />
+                </Button>
               </PopoverTrigger>
               <PopoverContent
                 color={useColorModeValue("gray.800", "white")}
