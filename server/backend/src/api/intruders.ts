@@ -275,7 +275,6 @@ export default class intrudersController {
 			case "intruders":
 				try	{
 					intruders = await Intruders.findByIdAndDelete(id, {new:true});
-					console.log(intruders);
 					if (intruders) {
 						result.status = 201;
 						result.response = {deleted: id};
