@@ -10,6 +10,11 @@ import {
 } from "@chakra-ui/react";
 import getcookie from "../../getcookie";
 import { useHistory } from "react-router-dom";
+import axios from "axios";
+
+interface PlantModuleData {
+  current_data: {};
+}
 
 const LiveDetection = (props: any) => {
   let history = useHistory();
@@ -73,6 +78,27 @@ const LiveDetection = (props: any) => {
     var handledate = setInterval(GetCurrentDateTime, 500);
     return () => {
       clearInterval(handledate);
+    };
+  });
+  
+  // fix this
+
+  const getPlantModuleData = () => {
+    console.log("BBB", getcookie("plants_id", true));
+    // axios.get("http://homenode.tech/api/plants?id=" + getcookie("plants_id", true)).then((res) => {
+    //   console.log("GET PLANTSMODULEDATA", res);
+    // }).catch((err) => {
+    //   console.log("GET PLANTSMODULEDATA ERROR", err);
+    // });
+  };
+
+  // fix this
+
+  useEffect(() => {
+    console.log("AAA", getcookie("plants_id", true))
+    var handleplants = setInterval(getPlantModuleData, 2500);
+    return () => {
+      clearInterval(handleplants);
     };
   });
 
