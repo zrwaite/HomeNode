@@ -3,6 +3,7 @@ import homeCtrl from '../api/home';
 import intrudersCtrl from '../api/intruders';
 import sensorsCtrl from '../api/sensors';
 import userCtrl from '../api/user';
+import plantsCtrl from '../api/plants';
 const router = express.Router();
 
 router.route('/home')
@@ -27,5 +28,11 @@ router.route('/user')
     .get(userCtrl.apiGetUser)
     .post(userCtrl.apiPostUser)
     .put(userCtrl.apiPutUser)
+
+router.route('/plants')
+    .get(plantsCtrl.apiGetPlants)
+    .post(plantsCtrl.apiPostPlants)
+    .put(plantsCtrl.apiPutPlants)
+    .delete(plantsCtrl.apiDeletePlants)
 
 export default router;
