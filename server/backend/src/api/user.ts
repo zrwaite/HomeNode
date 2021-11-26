@@ -74,6 +74,7 @@ const buildPostBody = async (req: any) => {
 				hash: hash,
 				home_id: req.body.home_id,
 				settings: {dark_mode: true, email_notifications: true},
+				safety_level: 5,
 			};
 			body = postBody;
 			exists = true;
@@ -117,6 +118,10 @@ const buildPutBody = async (req: any) => {
 		case "settings.email_notifications": case "email_notifications":
 			if (req.body.settings.email_notifications==undefined) undefinedParams.push("settings.email_notifications");
 			else body = {"settings.email_notifications":req.body.settings.email_notifications}
+			break;
+		case "settings.safety_level": case "safety_level":
+			if (req.body.settings.safety_level==undefined) undefinedParams.push("settings.safety_level");
+			else body = {"settings.safety_level": req.body.settings.safety_level};
 			break;
 		case "home": case "home_id":
 			if (req.body.home_id==undefined) undefinedParams.push("home_id");

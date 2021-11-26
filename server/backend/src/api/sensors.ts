@@ -101,6 +101,7 @@ const buildPutBody = async (req: any) => {
 			}
 			break;
 		case "daily_data":
+			putType = undefined;
 			let bodyParts: any = [];
 			let dailyBody: sensorsDailyPutBody = {};
 			if (req.body.temperature !== undefined) {
@@ -204,7 +205,7 @@ export default class sensorsController {
 			default:
 				errors.forEach((error)=> result.errors.push("missing "+error))
 		}
-		if (sensors && sensors.home_id.toString() !== auth.home_id) {
+		if (queryType !== "all" && sensors && sensors.home_id.toString() !== auth.home_id) {
 			result.errors.push("Not authorized too access these sensors");
 			result.response = {};
 		}

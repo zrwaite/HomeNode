@@ -8,6 +8,10 @@ const userSettingsSchema = new mongoose.Schema({
     email_notifications : {
         type: Boolean,
         required: true,
+    },
+    safety_level : {
+        type: Number,
+        required: true,
     }
 }, {timestamps: true});
 
