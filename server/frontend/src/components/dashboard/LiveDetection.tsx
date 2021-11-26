@@ -6,11 +6,14 @@ import {
   useColorModeValue,
   Link,
   CircularProgress,
+  Button,
 } from "@chakra-ui/react";
 import getcookie from "../../getcookie";
 import Cookies from "universal-cookie";
+import { useHistory } from "react-router-dom";
 
 const LiveDetection = (props: any) => {
+  let history = useHistory();
   const [DateTime, setDateTime] = useState("");
   const GetCurrentDateTime = () => {
     const date_obj = new Date();
@@ -113,16 +116,16 @@ const LiveDetection = (props: any) => {
             Sensors Module Live Data
           </Link>
           <chakra.p mt={2} color={useColorModeValue("gray.600", "gray.300")}>
-            Temperature: {getcookie("sensors_temperature", true)}&nbsp;&nbsp;&nbsp; Humidity:{" "}
-            {getcookie("sensors_humidity", true)}
+            Temperature: {getcookie("sensors_temperature", true)}
+            &nbsp;&nbsp;&nbsp; Humidity: {getcookie("sensors_humidity", true)}
           </chakra.p>
           <chakra.p
             mt={2}
             color={useColorModeValue("gray.600", "gray.300")}
           ></chakra.p>
           <chakra.p mt={2} color={useColorModeValue("gray.600", "gray.300")}>
-            Light Level: {getcookie("sensors_light_level", true)}&nbsp;&nbsp;&nbsp; Moisture:{" "}
-            {getcookie("sensors_moisture", true)}
+            Light Level: {getcookie("sensors_light_level", true)}
+            &nbsp;&nbsp;&nbsp; Moisture: {getcookie("sensors_moisture", true)}
           </chakra.p>
           <chakra.p
             mt={2}
@@ -130,13 +133,13 @@ const LiveDetection = (props: any) => {
           ></chakra.p>
         </Box>
 
-        <Flex justifyContent="space-between" alignItems="center" mt={4}>
-          <Link
+        <Flex justifyContent="space-between" alignItems="center" mt={6} ml={-2} onClick={() => history.push("/dashboard/wiki/module/sensors")}>
+          <Button
             color={useColorModeValue("brand.600", "brand.400")}
-            _hover={{ textDecor: "underline" }}
+            variant="ghost"
           >
-            What does this mean?
-          </Link>
+            Learn more
+          </Button>
 
           <Flex alignItems="center">
             <CircularProgress
@@ -181,20 +184,24 @@ const LiveDetection = (props: any) => {
             Intruders Module Live Data
           </Link>
           <chakra.p mt={2} color={useColorModeValue("gray.600", "gray.300")}>
-            {props.alert_level !== "None" ? `Alert Level: ${props.alert_level}` : `Alert Level: Loading...`}
+            {props.alert_level !== "None"
+              ? `Alert Level: ${props.alert_level}`
+              : `Alert Level: Loading...`}
           </chakra.p>
           <chakra.p mt={2} color={useColorModeValue("gray.600", "gray.300")}>
-            {props.detection_level !== "" ? `Reason: detected a ${props.detection_level}` : `Reason: Loading...`}
+            {props.detection_level !== ""
+              ? `Reason: detected a ${props.detection_level}`
+              : `Reason: Loading...`}
           </chakra.p>
         </Box>
 
-        <Flex justifyContent="space-between" alignItems="center" mt={4}>
-          <Link
+        <Flex justifyContent="space-between" alignItems="center" mt={6} ml={-2} onClick={() => history.push("/dashboard/wiki/module/intruders")}>
+          <Button
             color={useColorModeValue("brand.600", "brand.400")}
-            _hover={{ textDecor: "underline" }}
+            variant="ghost"
           >
-            What does this mean?
-          </Link>
+            Learn more
+          </Button>
 
           <Flex alignItems="center">
             <CircularProgress
@@ -238,22 +245,24 @@ const LiveDetection = (props: any) => {
             Plant Module Live Data
           </Link>
           <chakra.p mt={2} color={useColorModeValue("gray.600", "gray.300")}>
-            Moisture: {getcookie("moisture_light_level", true)} Light Status:{" "}
+            Moisture: {getcookie("moisture_light_level", true)}
+            &nbsp;&nbsp;&nbsp; Light Status:{" "}
             {getcookie("plant_light_status", true)}
           </chakra.p>
           <chakra.p mt={2} color={useColorModeValue("gray.600", "gray.300")}>
-            Light Level: {getcookie("plant_light_level", true)} Times Watered:{" "}
+            Light Level: {getcookie("plant_light_level", true)}
+            &nbsp;&nbsp;&nbsp; Times Watered:{" "}
             {getcookie("plant_times_watered", true)}
           </chakra.p>
         </Box>
 
-        <Flex justifyContent="space-between" alignItems="center" mt={4}>
-          <Link
+        <Flex justifyContent="space-between" alignItems="center" mt={6} ml={-2} onClick={() => history.push("/dashboard/wiki/module/plant")}>
+          <Button
             color={useColorModeValue("brand.600", "brand.400")}
-            _hover={{ textDecor: "underline" }}
+            variant="ghost"
           >
-            What does this mean?
-          </Link>
+            Learn more
+          </Button>
 
           <Flex alignItems="center">
             <CircularProgress
