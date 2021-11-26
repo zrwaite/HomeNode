@@ -2,13 +2,15 @@
 	"current_data": {
 		"moisture": 30,
 		"light_level": 20,
-		"num_waters": 3
+		"num_waters": 3,
+		"light_on": true
 	},
 	"daily_data": [
 		{
 			"moisture": 20,
 			"light_level": 20,
-			"num_waters": 1
+			"num_waters": 1,
+			"light_on": true
 		},
 		{
 			"moisture": 10,
@@ -25,7 +27,7 @@
 		{
 			"date": "10/01/2021",
 			"average_moisture": 20,
-			"average_lightlevel": 20,
+			"average_light_level": 20,
 			"num_waters": 4
 		}		
 	]
