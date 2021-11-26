@@ -16,6 +16,16 @@ interface PlantModuleData {
   current_data: {};
 }
 
+function GetPlantModuleData(){
+  console.log("BBB", getcookie("plants_id", true));
+  axios.get("http://homenode.tech/api/plants?id=" + getcookie("plants_id", true)).then((res) => {
+    console.log("GET PLANTSMODULEDATA", res);
+  }).catch((err) => {
+    console.log("GET PLANTSMODULEDATA ERROR", err);
+  });
+  return 0;
+};
+
 const LiveDetection = (props: any) => {
   let history = useHistory();
   const [DateTime, setDateTime] = useState("");
@@ -80,23 +90,10 @@ const LiveDetection = (props: any) => {
       clearInterval(handledate);
     };
   });
-  
-  // fix this
-
-  const getPlantModuleData = () => {
-    console.log("BBB", getcookie("plants_id", true));
-    // axios.get("http://homenode.tech/api/plants?id=" + getcookie("plants_id", true)).then((res) => {
-    //   console.log("GET PLANTSMODULEDATA", res);
-    // }).catch((err) => {
-    //   console.log("GET PLANTSMODULEDATA ERROR", err);
-    // });
-  };
-
-  // fix this
 
   useEffect(() => {
-    console.log("AAA", getcookie("plants_id", true))
-    var handleplants = setInterval(getPlantModuleData, 2500);
+    // console.log("AAA", getcookie("plants_id", true));
+    var handleplants = setInterval(GetPlantModuleData, 1000);
     return () => {
       clearInterval(handleplants);
     };
