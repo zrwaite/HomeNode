@@ -186,7 +186,7 @@ export default class intrudersController {
 			default:
 				errors.forEach((error)=> result.errors.push("missing "+error))
 		}
-		if (intruders && intruders.home_id.toString() !== auth.home_id) {
+		if (queryType !== "all" && intruders && intruders.home_id.toString() !== auth.home_id) {
 			result.errors.push("Not authorized too access these sensors");
 			result.response = {};
 		}
