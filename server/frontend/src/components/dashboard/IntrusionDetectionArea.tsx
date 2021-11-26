@@ -12,7 +12,6 @@ import {
 } from "@chakra-ui/react";
 import LiveDetection from "./LiveDetection";
 import getcookie from "../../getcookie";
-import Cookies from "universal-cookie";
 
 interface ModuleData {
   response: {
@@ -130,8 +129,11 @@ export default function IntrusionDetectionArea() {
         detection_level={CurrentData.detection}
         alert_level={CurrentData.alert_level}
       />
-      <Box style={{ overflowY: "scroll", maxHeight: "32vh" }} rounded="lg"
-        shadow="lg">
+      <Box
+        style={{ overflowY: "scroll", maxHeight: "32vh" }}
+        rounded="lg"
+        shadow="lg"
+      >
         <Table
           w="full"
           bg={useColorModeValue("white", "gray.800")}

@@ -9,7 +9,6 @@ import {
   Button,
 } from "@chakra-ui/react";
 import getcookie from "../../getcookie";
-import Cookies from "universal-cookie";
 import { useHistory } from "react-router-dom";
 
 const LiveDetection = (props: any) => {
@@ -133,7 +132,13 @@ const LiveDetection = (props: any) => {
           ></chakra.p>
         </Box>
 
-        <Flex justifyContent="space-between" alignItems="center" mt={6} ml={-2} onClick={() => history.push("/dashboard/wiki/module/sensors")}>
+        <Flex
+          justifyContent="space-between"
+          alignItems="center"
+          mt={6}
+          ml={-2}
+          onClick={() => history.push("/dashboard/wiki/module/sensors")}
+        >
           <Button
             color={useColorModeValue("brand.600", "brand.400")}
             variant="ghost"
@@ -190,12 +195,18 @@ const LiveDetection = (props: any) => {
           </chakra.p>
           <chakra.p mt={2} color={useColorModeValue("gray.600", "gray.300")}>
             {props.detection_level !== ""
-              ? `Reason: detected a ${props.detection_level}`
+              ? `Reason: ${props.detection_level}`
               : `Reason: Loading...`}
           </chakra.p>
         </Box>
 
-        <Flex justifyContent="space-between" alignItems="center" mt={6} ml={-2} onClick={() => history.push("/dashboard/wiki/module/intruders")}>
+        <Flex
+          justifyContent="space-between"
+          alignItems="center"
+          mt={6}
+          ml={-2}
+          onClick={() => history.push("/dashboard/wiki/module/intruders")}
+        >
           <Button
             color={useColorModeValue("brand.600", "brand.400")}
             variant="ghost"
@@ -256,7 +267,13 @@ const LiveDetection = (props: any) => {
           </chakra.p>
         </Box>
 
-        <Flex justifyContent="space-between" alignItems="center" mt={6} ml={-2} onClick={() => history.push("/dashboard/wiki/module/plant")}>
+        <Flex
+          justifyContent="space-between"
+          alignItems="center"
+          mt={6}
+          ml={-2}
+          onClick={() => history.push("/dashboard/wiki/module/plant")}
+        >
           <Button
             color={useColorModeValue("brand.600", "brand.400")}
             variant="ghost"

@@ -24,24 +24,36 @@ import {
   PopoverFooter,
   PopoverArrow,
   ButtonGroup,
+  Table,
+  Tbody,
+  Tr,
+  Td,
+  useToast,
 } from "@chakra-ui/react";
 import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
-import { FaBell } from "react-icons/fa";
 import { BsGearFill } from "react-icons/bs";
 import { FiMenu, FiSearch } from "react-icons/fi";
 import { HiCode } from "react-icons/hi";
-import { MdHome, MdKeyboardArrowRight } from "react-icons/md";
-import React, { useContext } from "react";
+import { MdHome, MdKeyboardArrowRight, MdNotifications } from "react-icons/md";
+import React, { useContext, useState, useEffect } from "react";
 import logo from "../../assets/logo.svg";
 import UserContext from "../../User";
 import getcookie from "../../getcookie";
 import Cookies from "universal-cookie";
+import axios from "axios";
 
 import Home from "../../pages/dashboard/Home";
 import Settings from "../../pages/dashboard/Settings";
 import WikiIntruders from "../../pages/dashboard/WikiIntruders";
 import WikiPlant from "../../pages/dashboard/WikiPlant";
 import WikiSensors from "../../pages/dashboard/WikiSensors";
+
+interface Notification {
+  id: string;
+  title: string;
+  info: string;
+  read: boolean;
+}
 
 function Sidebar() {
   const cookies = new Cookies();
@@ -50,6 +62,8 @@ function Sidebar() {
   let match = useRouteMatch();
   const history = useHistory();
   const user = useContext(UserContext);
+  const toast = useToast();
+  const [Notifications, setNotifications] = useState<Notification[]>([]);
 
   function switchPages(page: string) {
     if (page === "wiki") {
@@ -77,6 +91,48 @@ function Sidebar() {
     history.push("/");
     console.log("LOGOUT");
   }
+
+  function getNotifications() {
+    axios
+      .get("http://homenode.tech/api/home?id=" + getcookie("home_id", true))
+      .then((res) => {
+        const { data } = res;
+        let received_notifs = data.response.result.notifications;
+        setNotifications(received_notifs);
+        received_notifs.map((notif: Notification) => {
+          if (notif.read === false) {
+            toast({
+              title: notif.title,
+              description: notif.info,
+              status: "success",
+              duration: 5000,
+              isClosable: true,
+            });
+          }
+          return 0;
+        });
+        console.log("GET NOTIFS: ", received_notifs);
+      })
+      .then((res) => {
+        axios
+          .put("http://homenode.tech/api/home?put_type=notification", {
+            id: getcookie("home_id", true),
+          })
+          .then((res) => {
+            console.log("PUT NOTIFSREAD:", res);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  useEffect(() => {
+    var handlenotifs = setInterval(getNotifications, 5000);
+    return () => {
+      clearInterval(handlenotifs);
+    };
+  });
 
   const NavItem = (props: any) => {
     const { icon, children, ...rest } = props;
@@ -222,7 +278,49 @@ function Sidebar() {
           </InputGroup>
 
           <Flex align="center">
-            <Icon color="gray.500" as={FaBell} cursor="pointer" />
+            <Popover placement="bottom" closeOnBlur={false}>
+              <PopoverTrigger>
+                <Button>
+                  <Icon as={MdNotifications} color="gray.500" size="sm" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent
+                color={useColorModeValue("gray.800", "white")}
+                bg={useColorModeValue("gray.50", "gray.700")}
+                borderColor="blue.800"
+              >
+                <PopoverHeader pt={4} fontWeight="bold" border="0">
+                  Notifications
+                </PopoverHeader>
+                <PopoverArrow />
+                <PopoverCloseButton />
+                <PopoverBody>
+                  <Table variant="simple">
+                    <Tbody>
+                      {Notifications.map((notification: any) => (
+                        <Tr key={notification._id}>
+                          <Td>
+                            <Text fontSize="sm">{notification.title}</Text>
+                          </Td>
+                          <Td>
+                            <Text fontSize="sm">{notification.info}</Text>
+                          </Td>
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </Table>
+                </PopoverBody>
+                <PopoverFooter
+                  border="0"
+                  d="flex"
+                  alignItems="center"
+                  justifyContent="space-between"
+                  pb={4}
+                >
+                  <Box fontSize="sm">{"\0"}</Box>
+                </PopoverFooter>
+              </PopoverContent>
+            </Popover>
             <Popover placement="bottom" closeOnBlur={false}>
               <PopoverTrigger>
                 <Avatar
