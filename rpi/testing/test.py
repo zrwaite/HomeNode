@@ -59,6 +59,35 @@ class TestModels(unittest.TestCase):
         sensor.update_json()
         self.assertEqual(sensor.get_most_recent_data(), 50)
 
+    def test_intruder_sensor_append_data(self):
+        # 'motion', 'door', 'window'
+        sensor = IntruderSensor('motion')
+        sensor.append_data("1")
+        sensor.update_json()
+        self.assertEqual(sensor.get_most_recent_data(), True)
+
+    def test_intruder_sensor_alert_level(self):
+        sensor = IntruderSensor('motion')
+        self.intruder_module.add_sensors(sensor)
+        sensor.append_data("1")
+        self.intruder_module.update_alert_level()
+        self.assertEqual(self.intruder_module.alert_level, 4)
+        self.assertEqual(self.intruder_module.previous_alert_level, 0)
+
+        sensor.append_data("0")
+        self.intruder_module.update_alert_level()
+        self.assertEqual(self.intruder_module.alert_level, 0)
+        self.assertEqual(self.intruder_module.previous_alert_level, 4)
+
+        window_sensor = IntruderSensor('window')
+        self.intruder_module.add_sensors(window_sensor)
+        sensor.append_data("1")
+        window_sensor.append_data("1")
+        self.intruder_module.update_alert_level()
+        self.assertEqual(self.intruder_module.alert_level, 6)
+        self.assertEqual(self.intruder_module.previous_alert_level, 0)
+
+
 class TestIntegrationMethods(unittest.TestCase):
     '''
     Conduct integration testing. This makes sure every feature works together.
@@ -84,19 +113,30 @@ class TestIntegrationMethods(unittest.TestCase):
 
         # Initialize Intruders Module
         self.intruder_module = IntruderModule(self.home.home_id)
-        self.motion_sensor = Sensor('motion')
-        self.intruder_module.add_sensors(self.motion_sensor)
+        self.motion_sensor = IntruderSensor('motion')
+        self.window_sensor = IntruderSensor('window')
+        self.door_sensor = IntruderSensor('door')
+        self.intruder_module.add_sensors(self.motion_sensor, self.window_sensor, self.door_sensor)
 
     def tearDown(self):
         delete_home_data(self.home.home_id, self.home.auth_token)
         shutil.rmtree('./data')
 
-    def testPushNotificationToServer(self):
-        self.temperature_sensor.append_data(100)
+    def testSensorPushNotificationToServer(self):
+        self.temperature_sensor.append_data(50)
         print(self.sensor_module.sensors[0].get_most_recent_data())
         response = self.sensor_module.check_data_and_notify()
         self.assertEqual(response.json()['success'], True)
         self.assertEqual(response.json()['response']['notifications'][0]['title'], "Your house is overheating!")
+
+    # def testIntruderSensorPushNotificationToServer(self):
+    #     self.motion_sensor.append_data("1")
+    #     notify = self.intruder_module.upload_data()
+    #     response = self.intruder_module.check_data_and_notify()
+    #     self.assertEqual(response.json()['success'], True)
+    #     self.assertEqual(response.json()['response']['notifications'][0]['title'], "Your house is overheating!")
+
+    # def testThreatElimination(self):
 
 
 if __name__ == '__main__':
