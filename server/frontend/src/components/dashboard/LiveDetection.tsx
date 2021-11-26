@@ -110,7 +110,7 @@ const LiveDetection = (props: any) => {
             fontWeight="700"
             _hover={{
               color: useColorModeValue("gray.600", "gray.200"),
-              textDecor: "underline",
+              textDecor: undefined,
             }}
           >
             Sensors Module Live Data
@@ -178,7 +178,7 @@ const LiveDetection = (props: any) => {
             fontWeight="700"
             _hover={{
               color: useColorModeValue("gray.600", "gray.200"),
-              textDecor: "underline",
+              textDecor: undefined,
             }}
           >
             Intruders Module Live Data
@@ -239,7 +239,7 @@ const LiveDetection = (props: any) => {
             fontWeight="700"
             _hover={{
               color: useColorModeValue("gray.600", "gray.200"),
-              textDecor: "underline",
+              textDecor: undefined,
             }}
           >
             Plant Module Live Data
