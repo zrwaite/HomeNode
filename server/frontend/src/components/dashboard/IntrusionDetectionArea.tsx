@@ -177,15 +177,17 @@ export default function IntrusionDetectionArea() {
               },
             }}
           >
-            {DailyData.map((data, index) => {
-              return (
-                <Tr key={index}>
-                  <Td key={"Date & Time"}>{convertDate(data.updatedAt)}</Td>
-                  <Td key={"Detection"}>{data.detection}</Td>
-                  <Td key={"Alert Level"}>{data.alert_level}</Td>
-                </Tr>
-              );
-            })}
+            {DailyData.map((item) => item)
+              .reverse()
+              .map((data, index) => {
+                return (
+                  <Tr key={index}>
+                    <Td key={"Date & Time"}>{convertDate(data.updatedAt)}</Td>
+                    <Td key={"Detection"}>{data.detection}</Td>
+                    <Td key={"Alert Level"}>{data.alert_level}</Td>
+                  </Tr>
+                );
+              })}
           </Tbody>
         </Table>
       </Box>

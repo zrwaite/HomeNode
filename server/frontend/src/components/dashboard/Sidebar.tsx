@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Collapse,
   Drawer,
@@ -27,14 +26,18 @@ import {
   Table,
   Tbody,
   Tr,
-  Td,
   useToast,
 } from "@chakra-ui/react";
 import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
 import { BsGearFill } from "react-icons/bs";
 import { FiMenu, FiSearch } from "react-icons/fi";
 import { HiCode } from "react-icons/hi";
-import { MdHome, MdKeyboardArrowRight, MdNotifications, MdPerson } from "react-icons/md";
+import {
+  MdHome,
+  MdKeyboardArrowRight,
+  MdNotifications,
+  MdPerson,
+} from "react-icons/md";
 import React, { useContext, useState, useEffect } from "react";
 import logo from "../../assets/logo.svg";
 import UserContext from "../../User";
@@ -288,6 +291,9 @@ function Sidebar() {
                 color={useColorModeValue("gray.800", "white")}
                 bg={useColorModeValue("gray.50", "gray.700")}
                 borderColor="blue.800"
+                style={{ overflowY: "scroll", maxHeight: "75vh" }}
+                rounded="lg"
+                shadow="lg"
               >
                 <PopoverHeader pt={4} fontWeight="bold" border="0">
                   Notifications
@@ -297,16 +303,17 @@ function Sidebar() {
                 <PopoverBody>
                   <Table variant="simple">
                     <Tbody>
-                      {Notifications.map((notification: any) => (
-                        <Tr key={notification._id}>
-                          <Td>
-                            <Text fontSize="sm">{notification.title}</Text>
-                          </Td>
-                          <Td>
+                      {Notifications.map((item) => item)
+                        .reverse()
+                        .map((notification: any) => (
+                          <Tr key={notification._id}>
+                            <Text fontSize="sm" style={{ fontWeight: "bold" }}>
+                              {notification.title}
+                            </Text>
                             <Text fontSize="sm">{notification.info}</Text>
-                          </Td>
-                        </Tr>
-                      ))}
+                            <br />
+                          </Tr>
+                        ))}
                     </Tbody>
                   </Table>
                 </PopoverBody>
