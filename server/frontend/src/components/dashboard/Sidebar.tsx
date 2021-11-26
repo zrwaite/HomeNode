@@ -338,6 +338,8 @@ function Sidebar() {
                 color={useColorModeValue("gray.800", "white")}
                 bg={useColorModeValue("gray.50", "gray.700")}
                 borderColor="blue.800"
+                rounded="lg"
+                shadow="lg"
               >
                 <PopoverHeader pt={4} fontWeight="bold" border="0">
                   {getcookie("name", true)}
