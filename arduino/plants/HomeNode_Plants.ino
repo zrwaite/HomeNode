@@ -45,6 +45,9 @@ void setup() {
   init_array(Moisture_sensor.data, MEASURING_DATAPOINTS);
   init_array(Light_sensor.measurements, COMPARING_DATAPOINTS);
   init_array(Moisture_sensor.measurements, COMPARING_DATAPOINTS);
+
+  // Initialize sensor pins
+  // However no initialization is necessary since analog pins are only input
 }
 
 // Raw data from sensors are on a scale of 0-1024, which we convert to 0-100
