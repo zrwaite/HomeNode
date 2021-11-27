@@ -7,6 +7,7 @@ import {getToken, verifyToken} from "../auth/tokenFunctions";
 import axios from "axios";
 
 import {homeGetQuery, homePostBody, homePutBody} from "../models/home/homeInterfaces";
+import { createNamedExports } from "typescript";
 
 const buildGetQuery = async (req: any) => {
 	let queryType = undefined;
@@ -93,6 +94,10 @@ const buildPutBody = async (req: any) => {
 		case "notification":
 			if (req.body.notification==undefined) undefinedParams.push("notification");
 			body = {$push: {notifications: req.body.notification}};
+			query = {_id: id};
+			break;
+		case "read_notification": 
+			body = {$set: {"notifications.$[].read": true}};
 			query = {_id: id};
 			break;
 		default:
@@ -225,15 +230,19 @@ export default class homeController {
 								case "sensors":
 									deleteLink = "/api/sensors?delete_type=sensors"
 									break;
+								case "plants":
+									deleteLink = "/api/plants?delete_type=plants"
+									break;
 							}	
 							if (!!deleteLink) {
 								try {
 									axios.delete(deleteLink,{
-										data: { home_id: id },
+										data: { id: module._id},
 										headers: {Authorization: "Bearer "+token}
 									});
 									deleteData.push("deleted module with id "+id);
 								} catch (e:any) {
+									console.log("Zac you messed up");
 									deleteData.push("Failed to delete module with id "+id);
 									result.errors.push("Failed to delete module with id "+id,e);
 								}

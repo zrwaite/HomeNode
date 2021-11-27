@@ -1,26 +1,26 @@
 import {Request, Response, NextFunction} from "express"; //Typescript types
 import response from "../models/response"; //Created pre-formatted uniform response
 import getResult from "./modules/getResult"; //Creates standard response
-import Sensors from "../models/sensors/sensors"; //Schema for mongodb
+import Plants from "../models/plants/plants"; //Schema for mongodb
 import axios from "axios";
 import {verifyToken, getToken} from "../auth/tokenFunctions";
 
 
 /* Sensors Interfaces imports */ 
-import {sensorsGetQuery, sensorsPostBody, sensorsPastPutBody, sensorsDailyPutBody, sensorsDeleteBody} from "../models/sensors/sensorsInterface";
+import {plantsPostBody, plantsDailyPutBody, plantsPastPutBody, plantsDeleteBody} from "../models/plants/plantsInterface";
 
 const compareAuthHomeId = async (headers: any, module_id:string) => {
 	const auth = await verifyToken(headers);
 	if (!auth.authorized) return false;
-	let getLink = "/api/sensors?id="+module_id;
+	let getLink = "/api/plants?id="+module_id;
 	let token = await getToken(headers);
 	if (token) {
 		try{
-			const sensorsData: any = await axios.get(getLink, 
+			const plantsData:any = await axios.get(getLink, 
 				{headers: {
 					Authorization: "Bearer "+token
 				}});
-			let home_id = sensorsData.data.response.result.home_id;
+			let home_id = plantsData.data.response.result.home_id;
 			if (home_id == auth.home_id) return true;
 		} catch (e) {
 			return false;
@@ -63,7 +63,7 @@ const buildPostBody = async (req: any) => {
 	let token = await getToken(req.headers);
 	if (!token) undefinedParams.push("token");
 	if (undefinedParams.length == 0) { 
-		let postBody: sensorsPostBody = {
+		let postBody: plantsPostBody = {
 			name: req.body.name,
 			home_id: req.body.home_id,
 			current_data: req.body.current_data,
@@ -84,15 +84,15 @@ const buildPutBody = async (req: any) => {
 	if (id === undefined) undefinedParams.push("id");
 	switch (putType) {
 		case "past_data":
-			["date", "average_temperature", "average_humidity", "average_light_level"].forEach((param) => {
+			["date", "num_waters", "average_light_level", "average_moisture"].forEach((param) => {
 				if (req.body[param]==undefined) undefinedParams.push(param);
 			});
 			if (undefinedParams.length == 0) { 
-				let pastBody: sensorsPastPutBody = {
+				let pastBody: plantsPastPutBody = {
 					date: req.body.date,
-					average_temperature: req.body.average_temperature,
-					average_humidity: req.body.average_humidity,
-					average_light_level: req.body.average_light_level
+					num_waters: req.body.num_waters,
+					average_light_level: req.body.average_light_level,
+					average_moisture: req.body.average_moisture,
 				};
 				body = {$push: {past_data: pastBody}};
 			} else {
@@ -102,15 +102,10 @@ const buildPutBody = async (req: any) => {
 		case "daily_data":
 			putType = undefined;
 			let bodyParts: any = [];
-			let dailyBody: sensorsDailyPutBody = {};
-			if (req.body.temperature !== undefined) {
-				dailyBody.temperature = req.body.temperature;
-				bodyParts.push({"current_data.temperature": req.body.temperature});
-				putType = "daily_data";
-			}
-			if (req.body.humidity !== undefined) {
-				dailyBody.humidity = req.body.humidity;
-				bodyParts.push({"current_data.humidity": req.body.humidity});
+			let dailyBody: plantsDailyPutBody = {};
+			if (req.body.num_waters !== undefined) {
+				dailyBody.num_waters = req.body.num_waters;
+				bodyParts.push({"current_data.num_waters": req.body.num_waters});
 				putType = "daily_data";
 			}
 			if (req.body.light_level !== undefined) {
@@ -118,7 +113,17 @@ const buildPutBody = async (req: any) => {
 				bodyParts.push({"current_data.light_level": req.body.light_level});
 				putType = "daily_data";
 			}
-			if (!putType) undefinedParams.push("temperature, humidity or light_level");
+			if (req.body.moisture !== undefined) {
+				dailyBody.moisture = req.body.moisture;
+				bodyParts.push({"current_data.moisture": req.body.moisture});
+				putType = "daily_data";
+			}
+			if (req.body.light_on !== undefined) {
+				dailyBody.light_on = req.body.light_on;
+				bodyParts.push({"current_data.light_on": req.body.light_on});
+				putType = "daily_data";
+			}
+			if (!putType) undefinedParams.push("num_waters, light_on, moisture or light_level");
 			else {
 				body = {$push: {daily_data: dailyBody}};
 				bodyParts.forEach((part: object) => body = {...body, ...part});
@@ -144,14 +149,15 @@ const buildDeleteBody = async (req: any) =>{
 	if (!auth) return {deleteType: undefined, id: id, body: body, errors: ["authorization"]};
 	switch (req.query.delete_type){
 		case "daily_data":
-			["temperature", "humidity", "light_level"].forEach((param) => {
+			["num_waters", "light_level", "moisture", "light_on"].forEach((param) => {
 				if (req.body[param]==undefined) undefinedParams.push(param);
 			});
 			if (undefinedParams.length == 0) { 
-				let deleteBody: sensorsDeleteBody = {
-					temperature: req.body.temperature,
-					humidity: req.body.humidity,
-					light_level: req.body.light_level
+				let deleteBody: plantsDeleteBody = {
+					num_waters: req.body.num_waters,
+					light_level: req.body.light_level,
+					moisture: req.body.moisture,
+					light_on: req.body.light_on
 				};
 				deleteType = "daily_data";
 				body = deleteBody;
@@ -159,8 +165,8 @@ const buildDeleteBody = async (req: any) =>{
 				deleteType = undefined;
 			}
 			break;
-		case "sensors":
-			deleteType = "sensors";
+		case "plants":
+			deleteType = "plants";
 			break;
 		default:
 			undefinedParams.push("delete_type");
@@ -177,47 +183,47 @@ const buildDeleteBody = async (req: any) =>{
 }
 
 /* sensors controller */
-export default class sensorsController {
-	static async apiGetSensors(req: Request, res: Response, next: NextFunction) {
+export default class plantsController {
+	static async apiGetPlants(req: Request, res: Response, next: NextFunction) {
 		let result = new response(); //Create new standardized response
-		let sensors: any;
+		let plants: any;
 		let {auth, queryType, query, errors} = await buildGetQuery(req);
 		switch (queryType){
 			case "all":
-				try{sensors = await Sensors.find();} 
+				try{plants = await Plants.find();} 
 				catch (e: any) {result.errors.push("Query error", e);}
 				break;
 			case "id":
-				try {sensors = await Sensors.findById(query);} 
+				try {plants = await Plants.findById(query);} 
 				catch (e: any) {result.errors.push("Query error", e);}
 				break;
 			case "home_id":
-				try {sensors = await Sensors.findOne(query);}
+				try {plants = await Plants.findOne(query);}
 				catch (e: any) {result.errors.push("Query error", e);}
 				break;
 			default:
 				errors.forEach((error)=> result.errors.push("missing "+error))
 		}
-		if (queryType !== "all" && sensors && sensors.home_id.toString() !== auth.home_id) {
+		if (queryType !== "all" && plants && plants.home_id.toString() !== auth.home_id) {
 			result.errors.push("Not authorized too access these sensors");
 			result.response = {};
 		}
-		result = getResult(sensors, "sensors", result);
+		result = getResult(plants, "plants", result);
 		res.status(result.status).json(result); //Return whatever result remains
 	}
-	static async apiPostSensors(req: Request, res: Response, next: NextFunction) {
+	static async apiPostPlants(req: Request, res: Response, next: NextFunction) {
 		let result = new response();
 		let {token, exists, body, errors} = await buildPostBody(req);
-		let newSensors;
+		let newPlants;
 		if (exists) {
 			try {
-				newSensors = new Sensors(body);
-				await newSensors.save(); //Saves branch to mongodb
+				newPlants = new Plants(body);
+				await newPlants.save(); //Saves branch to mongodb
 				let putBody = {
 					id: body.home_id,
 					module: {
-						type: 'sensors',
-						module_id: newSensors._id.toString()
+						type: 'plants',
+						module_id: newPlants._id.toString()
 					}
 				}
 				try{
@@ -231,12 +237,12 @@ export default class sensorsController {
 						result.errors.push(...homeResult.errors);
 						result.status = homeResult.status;
 						result.response = {
-							sensorResult: newSensors,
+							sensorResult: newPlants,
 							homeResult: homeResult.response,
 						};
 					} else {
 						result.errors.push("Error adding user to home");
-						result.response = {sensorResult: newSensors};
+						result.response = {sensorResult: newPlants};
 					}
 				} catch (e:any) {
 					result.errors.push("Error creating home request", e);
@@ -249,16 +255,16 @@ export default class sensorsController {
 		}
 		res.status(result.status).json(result);
 	}
-	static async apiPutSensors(req: Request, res: Response, next: NextFunction) {
+	static async apiPutPlants(req: Request, res: Response, next: NextFunction) {
 		let result = new response();
 		let {putType, id, body, errors} = await buildPutBody(req);
-		let sensors;
+		let plants;
 		if (putType) {
 			try {
 				//prettier-ignore
-				sensors = await Sensors.findByIdAndUpdate(id, body, {new:true}); //Saves branch to mongodb
+				plants = await Plants.findByIdAndUpdate(id, body, {new:true}); //Saves branch to mongodb
 				result.status = 201;
-				result.response = sensors;
+				result.response = plants;
 				result.success = true;
 			} catch (e: any) {
 				result.status = 404;
@@ -269,25 +275,25 @@ export default class sensorsController {
 		}
 		res.status(result.status).json(result);
 	}
-	static async apiDeleteSensors(req: Request, res: Response, next: NextFunction){
+	static async apiDeletePlants(req: Request, res: Response, next: NextFunction){
 		let result = new response();
 		let {deleteType, id, body, errors} = await buildDeleteBody(req);
-		let sensors;
+		let plants;
 		switch(deleteType){
 			case "daily_data":
 				try{
-					sensors = await Sensors.findByIdAndUpdate(id, {daily_data: [body]}, {new:true}); //Saves branch to mongodb
+					plants = await Plants.findByIdAndUpdate(id, {daily_data: [body]}, {new:true}); //Saves branch to mongodb
 					result.status = 201;
-					result.response = sensors;
+					result.response = plants;
 					result.success = true;
 				} catch (e: any) {
 					result.errors.push("Error creating request", e);
 				}
 				break;
-			case "sensors": 
+			case "plants": 
 				try	{
-					sensors = await Sensors.findByIdAndDelete(id, {new:true});
-					if (sensors) {
+					plants = await Plants.findByIdAndDelete(id, {new:true});
+					if (plants) {
 						result.status = 201;
 						result.response = {deleted: id};
 						result.success = true;

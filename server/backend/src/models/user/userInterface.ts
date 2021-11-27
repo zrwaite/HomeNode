@@ -10,6 +10,7 @@ interface userPostBody {
 	hash: string;
 	home_id: string;
 	settings: object;
+	safety_level?: number;
 }
 interface userPutBody {
 	//Body query interface for put request
@@ -19,6 +20,7 @@ interface userPutBody {
 interface userSettings {
 	dark_mode?: boolean;
 	email_notifications?: boolean;
+	safety_level?: boolean;
 }
 
 export {userGetQuery, userPostBody, userPutBody, userSettings}

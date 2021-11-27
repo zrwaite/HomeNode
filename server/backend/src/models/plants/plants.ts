@@ -1,11 +1,26 @@
 import mongoose from 'mongoose';
 //user schema that defines the entity
-const sensorsUpdateSchema = new mongoose.Schema({
-    temperature : {
-        type: Number,
-        required: false,
+const plantsDailySchema = new mongoose.Schema({
+    date: {
+        type: String,
+        required: true,
     },
-    humidity : {
+    average_moisture : {
+        type: Number,
+        required: true,
+    },
+    average_light_level : {
+        type: Number,
+        required: true,
+    },
+    num_waters : {
+        type: Number,
+        required: true,
+    },
+}, {timestamps: true});
+
+const plantsUpdateSchema = new mongoose.Schema({
+    moisture : {
         type: Number,
         required: false,
     },
@@ -13,28 +28,17 @@ const sensorsUpdateSchema = new mongoose.Schema({
         type: Number,
         required: false,
     },
+    num_waters : {
+        type: Number,
+        required: false,
+    },
+    light_on: {
+        type: Boolean,
+        required: false,
+    }
 }, {timestamps: true});
 
-const sensorsDailySchema = new mongoose.Schema({
-    date: {
-        type: String,
-        required: true,
-    },
-    average_temperature : {
-        type: Number,
-        required: false,
-    },
-    average_humidity : {
-        type: Number,
-        required: false,
-    },
-    average_light_level : {
-        type: Number,
-        required: false,
-    },
-}, {timestamps: true});
-
-const sensorsSchema = new mongoose.Schema({
+const plantsSchema = new mongoose.Schema({
     // define type, required (the most important)
     name: {
         type: String,
@@ -44,22 +48,22 @@ const sensorsSchema = new mongoose.Schema({
         type: mongoose.Types.ObjectId,
         required: true,
         unique: true,
-    },  
+    },
     current_data: {
-        type: sensorsUpdateSchema,
-        required: false,
+        type: plantsUpdateSchema,
+        required: true,
         default: {},
     },
     daily_data: {
-        type: [sensorsUpdateSchema],
-        required: false,
+        type: [plantsUpdateSchema],
+        required: true,
         default: [],
     },
     past_data: {
-        type: [sensorsDailySchema],
-        required: false,
+        type: [plantsDailySchema],
+        required: true,
         default: [],
     },
 }, { timestamps: true});
 
-export default mongoose.model('Sensors', sensorsSchema); //Export data formatting
+export default mongoose.model('Plants', plantsSchema); //Export data formatting
