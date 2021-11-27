@@ -277,26 +277,26 @@ class IntruderModule(Module):
         self.alert_level = 0
         for sensor in self.sensors:
             if sensor.get_most_recent_data(): #That sensor returned true
-                if sensor.get_name() == 'window':
+                if sensor.get_name() == 'intruders_window':
                     self.alert_level += 2
 
-                elif sensor.get_name() == 'door':
+                elif sensor.get_name() == 'intruders_door':
                     self.alert_level += 4
 
-                elif sensor.get_name() == 'motion':
+                elif sensor.get_name() == 'intruders_motion':
                     self.alert_level += 4
 
     def create_detection_message(self):
         i = [0,0,0]
         for sensor in self.sensors:
             if sensor.get_most_recent_data(): #That sensor returned true
-                if sensor.get_name() == 'window':
+                if sensor.get_name() == 'intruders_window':
                     i[0] = 1
 
-                elif sensor.get_name() == 'door':
+                elif sensor.get_name() == 'intruders_door':
                     i[1] = 1
 
-                elif sensor.get_name() == 'motion':
+                elif sensor.get_name() == 'intruders_motion':
                     i[2] = 1
 
         message = ""

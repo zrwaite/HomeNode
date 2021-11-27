@@ -133,10 +133,9 @@ def index_main():
 
 		# Check if there has been any alerts sent
 		# Alerts are important messages that need to be proccessed right away
-		temp_alert = 0
 		while ser.in_waiting:
-			temp_alert += read_alerts(ser, intruder_module)
-			print('current: '+str(temp_alert))
+			read_alerts(ser, intruder_module)
+			print('current: '+str(intruder_module.alert_level))
 
 if __name__ == "__main__":
 	index_main()
