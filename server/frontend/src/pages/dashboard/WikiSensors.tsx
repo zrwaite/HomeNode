@@ -35,13 +35,6 @@ function WikiSensors() {
       </Text>
       <Text>It returns the light level in %.</Text>
       <br />
-      <Heading size="l">Moisture Sensor</Heading>
-      <Text>
-        This sensor is used to get the moisture of the system. A typical value
-        for moisture is 35-60%.
-      </Text>
-      <Text>It returns the moisture in %.</Text>
-      <br />
     </Flex>
   );
 }
