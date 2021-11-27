@@ -111,7 +111,8 @@ void loop() {
         for(int j = 0; j < COMPARING_DATAPOINTS; ++j){
           if(abs(sensors[i]->measurements[current_measurement] - 
               sensors[i]->measurements[current_measurement-j]) >= TOLERANCE ||
-              sensors[i]->active_data == 0.00){
+              abs(sensors[i]->measurements[current_measurement] - 
+              sensors[i]->active_data) >= TOLERANCE){
             // The current datapoint is significant
             sensors[i]->significant_flag = 1;
             break;
