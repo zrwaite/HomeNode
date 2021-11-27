@@ -90,7 +90,6 @@ const LiveDetection = (props: any) => {
   };
 
   function GetPlantModuleData() {
-    console.log("BBB", getcookie("plants_id", true));
     axios
       .get<PlantModuleData>(
         "http://homenode.tech/api/plants?id=" + getcookie("plants_id", true)
@@ -121,7 +120,6 @@ const LiveDetection = (props: any) => {
   });
 
   useEffect(() => {
-    // console.log("AAA", getcookie("plants_id", true));
     var handleplants = setInterval(GetPlantModuleData, 1000);
     return () => {
       clearInterval(handleplants);
