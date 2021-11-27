@@ -1,13 +1,12 @@
+// Hardcoded parameters
 #define MEASURE_INTERVAL 100  // How long in milliseconds before the module checks sensors again
 #define UPDATE_INTERVAL 5000  // How long in milliseconds before the modules sends a status update
 #define SENSORS_NUM 3         // Number of sensors on the module
 #define ADDRESS 3             // Address of the module
 
-float update_timer = 0; // Timer for sending data
-float sensors_timer = 0; // Timer for reading sensors
+// Global data storage variables:
 
-const char address = ADDRESS + '0';
-
+// Sensor data struct
 typedef struct {
   int pin;              // Pin number of the sensor
   String tag;           // Id of the sensor
@@ -20,6 +19,10 @@ IntrudersSensor IR_sensor = {4, "intruders_door", false, false};
 IntrudersSensor reed_sensor = {5, "intruders_window", false, false};
 
 IntrudersSensor *sensors[] = {&PIR_sensor, &IR_sensor, &reed_sensor};
+
+float update_timer = 0; // Timer for sending data
+float sensors_timer = 0; // Timer for reading sensors
+const char address = ADDRESS; // Address of the module
 
 // Lock character:    ~
 // Unlock character:  &
