@@ -21,6 +21,7 @@ interface homePutBody {
 }
 interface homeSettings {
 	intrusion_detection?: boolean;
+	safety_level?: number;
 }
 interface homeModule {
 	type: string;

@@ -83,6 +83,9 @@ const buildPutBody = async (req: any) => {
 	let id = req.body.id;
 	let body: any = {};
 	let undefinedParams: string[] = [];
+	let token = await getToken(req.headers);
+	if (!token) undefinedParams.push("token");
+	let alertLevel = null;
 	if (id === undefined) undefinedParams.push("id");
 	switch (putType) {
 		case "past_data":
@@ -109,10 +112,14 @@ const buildPutBody = async (req: any) => {
 					detection: req.body.detection,
 					alert_level: req.body.alert_level
 				};
+				alertLevel = req.body.alert_level;
 				body = {$push: {daily_data: dailyBody}, current_data: dailyBody};
 			} else {
 				putType = undefined;
 			}
+			break;
+		case "image": 
+			
 			break;
 		default:
 			undefinedParams.push("put_type");
@@ -122,7 +129,7 @@ const buildPutBody = async (req: any) => {
 		return {putType: undefined, id: id, body: body, errors: ["valid home_id in the token"]};
 	}
 	if (id === undefined) putType = undefined;
-	return {putType: putType, id: id, body: body, errors: undefinedParams};
+	return {putType: putType, id: id, body: body, errors: undefinedParams, alertLevel: alertLevel, token: token};
 };
 
 const buildDeleteBody = async (req: any) =>{
@@ -239,15 +246,41 @@ export default class intrudersController {
 	}
 	static async apiPutIntruders(req: Request, res: Response, next: NextFunction) {
 		let result = new response();
-		let {putType, id, body, errors} = await buildPutBody(req);
-		let intruders;
+		let {putType, id, body, errors, alertLevel, token} = await buildPutBody(req);
+		let intruders:any;
 		if (putType) {
 			try {
 				//prettier-ignore
 				intruders = await Intruders.findByIdAndUpdate(id, body, {new:true}); //Saves branch to mongodb
-				result.status = 201;
-				result.response = intruders;
-				result.success = true;
+				try{
+					let home_id = intruders.home_id;
+					console.log("/api/home?id="+home_id.toString());
+					const homeData: any = await axios.get("/api/home?id="+home_id.toString(),
+					{headers: {
+						Authorization: "Bearer "+token
+					}});
+					console.log(homeData);
+					let homeResult: any = homeData.data;
+					if (homeResult) {
+						let notify = false;
+						let safetyLevel = homeResult.response.result.settings.safety_level;
+						console.log(homeResult)
+						result.success = homeResult.success;
+						result.errors.push(...homeResult.errors);
+						result.status = homeResult.status;
+						if (safetyLevel+alertLevel >=10) notify = true;
+						result.response = {
+							intruderResult: intruders,
+							homeResult: homeResult.response,
+							notify: notify
+						};
+					} else {
+						result.errors.push("Error getting home data");
+						result.response = {intruderResult: intruders, notify: false};
+					}
+				} catch (e: any){
+					result.errors.push("Error adding to home", e);
+				}
 			} catch (e: any) {
 				result.status = 404;
 				result.errors.push("Error creating request", e);
