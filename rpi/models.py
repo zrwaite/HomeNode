@@ -1,4 +1,3 @@
-#TODO: Convert these JSON objects into Python Classes and objects
 import json
 from datetime import datetime
 from crud import *
@@ -84,11 +83,11 @@ class Sensor:
         if self.data is None:
             self.data = []
         self.data.append({'timestamp': current_unix_time, 'data': data})
+        self.update_json()
         
     def update_json(self):
         with open('./data/sensors/' + self.name + '.json', 'w+') as f:
             json.dump(self.data, f)
-
 
     def get_most_recent_data(self):
         try:
@@ -98,6 +97,20 @@ class Sensor:
 
     def get_name(self):
         return self.name
+
+class IntruderSensor(Sensor): # The Intruder Sensor is just another sensor with extra functionalities. All sensors read either 0 or 1
+    def append_data(self,data): # Overwrite original Sensor function
+        current_unix_time = int(datetime.strftime(datetime.utcnow(), "%s"))
+        if self.data is None:
+            self.data = []
+
+        if data == "0":
+            data = False
+
+        elif data == "1":
+            data = True
+        self.data.append({'timestamp': current_unix_time, 'data': data})
+
 
 class Module: #Parent of IntruderModule and SensorModule
     def __init__(self, home_id):
@@ -123,7 +136,11 @@ class Module: #Parent of IntruderModule and SensorModule
 
     # Add a new sensor the sensors list with the new sensor_key
     def register_sensor(self, sensor_key):
-        new_sensor = temperature_sensor = Sensor(sensor_key)
+        new_sensor = Sensor(sensor_key)
+        self.sensors.append(new_sensor)
+
+    def register_intruder_sensor(self, sensor_key):
+        new_sensor = IntruderSensor(sensor_key)
         self.sensors.append(new_sensor)
 
     # Check if the sensor_key has already been registered
@@ -144,12 +161,8 @@ class Module: #Parent of IntruderModule and SensorModule
             if sensor.get_most_recent_data(): #If the recent data is not none
                 self.current_data[sensor.name] = sensor.get_most_recent_data()
 
-    def export_daily_data(self): #The daily data is all of the data in a given day, the raspberry pi wipes the data every day
-        for sensor in self.sensors:
-            print(sensor)
-    
 
-    def check_data_and_notify(self):
+    def check_data_and_notify(self):#TODO: MAKE SURE NOT TO NOTIFY 100 times
         #TODO: Make sure the numbers are right, and test out notifications
         for sensor in self.sensors:
             title = ""
@@ -158,16 +171,19 @@ class Module: #Parent of IntruderModule and SensorModule
             # Logic for detecting anomalies in the sensors
             if sensor.get_most_recent_data():
                 if sensor.name == 'temperature':
-                    if sensor.get_most_recent_data() > 25:
+                    if float(sensor.get_most_recent_data()) > 30:
                         title = "Your house is overheating!"
-                        info = "Your house is reaching a temperature of {}! This is quite high.".format(sensor.get_most_recent_data())
+                        info = "Your house is reaching a temperature of {}! Please check if it is on fire.".format(sensor.get_most_recent_data())
 
                 elif sensor.name == 'humidity':
-                    if sensor.get_most_recent_data() > 70:
+                    if float(sensor.get_most_recent_data()) > 70:
                         title = "High humidity detected!"
-                        info = "Humidity of {}".format(sensor.get_most_recent_data())
+                        info = "Your house has reached a humidity above 70%, make sure to lower it"
+                    elif float(sensor.get_most_recent_data()) < 30:
+                        title = "Low humidity detected!"
+                        info = "Your house has reached a humidity below 30%, make sure to increase it!"
 
-
+                """
                 elif sensor.name == 'light_level':
                     if sensor.get_most_recent_data() > 20:
                         title = "High light level detected!"
@@ -178,34 +194,61 @@ class Module: #Parent of IntruderModule and SensorModule
                     if sensor.get_most_recent_data() > 30:
                         title = "High moisture detected!"
                         info = "You have a moisture of level {}".format(sensor.get_most_recent_data())
-
-                # Logic for detecting intruders
-                elif sensor.name == "x":
-                    if sensor.get_most_recent_data() == 1:
-                        title = "EMERGENCY: Intruder Detected"
-                        info = "There is an intruder in your house. Please alert local emergency"
+                """
 
 
                 if title != "" and info != "": #If there is a notification to be sent
                     response = put_notification_data({'id': self.home_id, 'notification': {'title': title, 'module_id': self._id, 'info': info}}, self.auth_token)
                     return response
 
-class IntruderModule(Module):
-    # Noise Sensor, Motion, door is open,
+class PlantModule(Module):
     def __init__(self, home_id):
-        super().__init__(home_id) #Initialize parent class
-        self.name = "Barry McHawk Inger's Intruder Module"
+        super().__init__(home_id)
+        self.name = "Barry McHawk Inger's Plant Module"
 
-        self.get_intruder_module_id()
+        self.get_plant_module_id()
 
-        print("Initialized intuder module, with id", self._id)
+        print("Initialized plant module, with id", self._id)
+
+    def get_plant_module_id(self):
+        if os.path.isfile('./data/plant_module_id.json'):
+            self.load_plant_module_id_from_json()
+        else:
+            self.initialize_new_plant_module_on_server()
+
+    def initialize_new_plant_module_on_server(self):
+        response = post_plant_data({'name': self.name,'home_id': self.home_id, 'current_data': self.current_data}, self.auth_token)
+        print(response.json())
+        self._id = response.json()["response"]["sensorResult"]["_id"]
+        self.store_plant_module_id()
+
+    def store_plant_module_id(self):
+        with open('./data/plant_module_id.json', 'w+') as f: #Store the id on 'hard storage' as a JSOn
+            json.dump(self._id, f)
+
+    def load_plant_module_id_from_json(self):
+        with open('./data/plant_module_id.json', 'r') as f: #Store the id on 'hard storage' as a JSOn
+            self._id = json.load(f)
 
     def upload_data(self):
         final_object = self.current_data
         final_object['id'] = self._id
 
-        response = put_intruders_data(final_object, self.auth_token)
+        response = put_plant_data(final_object, self.auth_token)
         return response
+
+
+class IntruderModule(Module):
+    # Noise Sensor, Motion, door is open,
+    def __init__(self, home_id):
+        super().__init__(home_id) #Initialize parent class
+        self.name = "Barry McHawk Inger's Intruder Module"
+        self.previous_alert_level = 0 # Needed to detect transition
+        self.alert_level = 0
+
+        self.get_intruder_module_id()
+
+        print("Initialized intruder module, with id", self._id)
 
     def get_intruder_module_id(self):
         if os.path.isfile('./data/intruder_module_id.json'):
@@ -226,10 +269,73 @@ class IntruderModule(Module):
         with open('./data/intruder_module_id.json', 'r') as f: #Store the id on 'hard storage' as a JSOn
             self._id = json.load(f)
 
-class Intruder:
-    def __init__(self, name):
-        self.name = name
-    
+    def notify(self):
+        response = put_notification_data({'id': self.home_id, 'notification': {'title': 'Intrusion Detection!', 'module_id': self._id, 'info': self.create_detection_message()}}, self.auth_token)
+        return response
+
+    def update_alert_level(self):
+        self.previous_alert_level = self.alert_level
+        self.alert_level = 0
+        for sensor in self.sensors:
+            if sensor.get_most_recent_data(): #That sensor returned true
+                if sensor.get_name() == 'window':
+                    self.alert_level += 2
+
+                elif sensor.get_name() == 'door':
+                    self.alert_level += 4
+
+                elif sensor.get_name() == 'motion':
+                    self.alert_level += 4
+
+    def create_detection_message(self):
+        i = [0,0,0]
+        for sensor in self.sensors:
+            if sensor.get_most_recent_data(): #That sensor returned true
+                if sensor.get_name() == 'window':
+                    i[0] = 1
+
+                elif sensor.get_name() == 'door':
+                    i[1] = 1
+
+                elif sensor.get_name() == 'motion':
+                    i[2] = 1
+
+        message = ""
+        if i[0] and i[1] and i[2]:
+            message = "URGENT! Someone broke into your house!"
+
+        elif i[0] and i[1]:
+            message = "URGENT! There is a high chance someone into your house!"
+
+        elif i[0] and i[2]:
+            message = "URGENT! There is a high chance someone broke into your house!"
+
+        elif i[0]:
+            message = "Warning! Your window is open."
+
+        else:
+            message = "The threat has been eliminated."
+
+        return message
+
+    def upload_data(self): #Unlike the SensorModule, the IntruderModule only uploads data in certain cases
+        # Case 1: The alert level is > 1
+        # Case 2: The alert level just changed to 0
+
+        # To prevent uploading 100 times, we check that there is a change in the alert level
+        if (self.alert_level == 0 and self.previous_alert_level > 0) or self.previous_alert_level != self.alert_level and self.alert_level > 0:
+            final_object = dict()
+            final_object['id'] = self._id
+            final_object['alert_level'] = self.alert_level
+            final_object['detection'] = self.create_detection_message()
+
+            response = put_intruders_data(final_object, self.auth_token)
+            print(response.json())
+            if response.json()['notifications']: # TODO: Change this to relevant
+                return True
+
+        return False
+
 
 class SensorModule(Module): 
     # Includes Light Level, Humidity, Temperature, and Moisture Sensor
@@ -268,44 +374,5 @@ class SensorModule(Module):
         response = put_sensors_data(final_object, self.auth_token)
         return response
 
-class Sensor: # This also includes the detection of intruders
-    def __init__(self, name):
-        self.name = name
-        self.data = None
-
-        self.load_data()
-        
-    def reset_json(self):
-        #Since all of the data is already stored on the MongoDB server, we don't need to save more. Only enough locally
-        #so we know we are not sending duplicates
-        os.remove('./data/sensors/' + self.name + '.json')
-
-    def load_data(self):
-        # If data exists, load it 
-        if os.path.isfile('./data/sensors/' + self.name + '.json'):
-            with open('./data/sensors/' + self.name + '.json', 'r') as f:
-                self.data = json.load(f)
-        
-        else: #Create the file
-            if not os.path.isdir('./data/sensors'):
-                os.mkdir('./data/sensors/')
-            self.data = []
-            self.update_json()
-            
-    def append_data(self,data):
-        current_unix_time = int(datetime.strftime(datetime.utcnow(), "%s"))
-        if self.data is None:
-            self.data = []
-        self.data.append({'timestamp': current_unix_time, 'data': data})
-        self.update_json()
-        
-    def update_json(self):
-        with open('./data/sensors/' + self.name + '.json', 'w+') as f:
-            json.dump(self.data, f)
 
 
-    def get_most_recent_data(self):
-        try:
-            return self.data[-1]['data']
-        except:
-            return None

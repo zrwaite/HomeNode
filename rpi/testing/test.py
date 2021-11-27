@@ -22,10 +22,32 @@ class TestCrud(unittest.TestCase):
         self.home = Home('New Test Home')
         self.sensor_module = SensorModule(self.home.home_id)
         self.intruder_module = IntruderModule(self.home.home_id)
+        self.plant_module = PlantModule(self.home.home_id)
+
+        if not os.path.isdir('./data'):
+            os.mkdir('./data')
+
+        if not os.path.isdir('./images'):
+            os.mkdir('./images')
+
+        #Download random image from the internet
+        with open('./images/picture.jpg', 'w') as handle:
+            response = requests.get("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/640px-Image_created_with_a_mobile_phone.jpg", stream=True)
+            if not response.ok:
+                print(response)
+            for block in response.iter_content(1024):
+                if not block:
+                    handle.write(block)
 
     def tearDown(self) -> None:
         delete_home_data(self.home.home_id, self.home.auth_token)
         shutil.rmtree('./data')
+        shutil.rmtree('./images')
+
+
+    # def testImageUpload(self):
+    #     response = post_image()
+    #     self.assertEqual(response.json().status, '200')
 
     def testHomeInitialization(self):
         self.assertIsNotNone(self.home.home_id)
@@ -44,6 +66,7 @@ class TestModels(unittest.TestCase):
         self.home = Home('New Test Home')
         self.sensor_module = SensorModule(self.home.home_id)
         self.intruder_module = IntruderModule(self.home.home_id)
+        self.plant_module = PlantModule(self.home.home_id)
 
         # Set up the directory
         if not os.path.isdir('./data'):
@@ -107,9 +130,7 @@ class TestIntegrationMethods(unittest.TestCase):
         self.sensor_module = SensorModule(self.home.home_id)
         self.temperature_sensor = Sensor('temperature')
         self.humidity_sensor = Sensor('humidity')
-        self.light_sensor = Sensor('light_level')
-        self.moisture_sensor = Sensor('moisture')
-        self.sensor_module.add_sensors(self.temperature_sensor, self.humidity_sensor, self.light_sensor, self.moisture_sensor)
+        self.sensor_module.add_sensors(self.temperature_sensor, self.humidity_sensor)
 
         # Initialize Intruders Module
         self.intruder_module = IntruderModule(self.home.home_id)
@@ -117,6 +138,13 @@ class TestIntegrationMethods(unittest.TestCase):
         self.window_sensor = IntruderSensor('window')
         self.door_sensor = IntruderSensor('door')
         self.intruder_module.add_sensors(self.motion_sensor, self.window_sensor, self.door_sensor)
+
+        # Initialize Plant Module
+        self.plant_module = PlantModule(self.home.home_id)
+        self.light_sensor = Sensor('plant_light_level')
+        self.moisture_sensor = Sensor('plant_moisture')
+        self.watering_sensor = Sensor('plant_watering')
+        self.light_switch_sensor = Sensor('plant_light_switch')
 
     def tearDown(self):
         delete_home_data(self.home.home_id, self.home.auth_token)
@@ -129,12 +157,12 @@ class TestIntegrationMethods(unittest.TestCase):
         self.assertEqual(response.json()['success'], True)
         self.assertEqual(response.json()['response']['notifications'][0]['title'], "Your house is overheating!")
 
-    # def testIntruderSensorPushNotificationToServer(self):
-    #     self.motion_sensor.append_data("1")
-    #     notify = self.intruder_module.upload_data()
-    #     response = self.intruder_module.check_data_and_notify()
-    #     self.assertEqual(response.json()['success'], True)
-    #     self.assertEqual(response.json()['response']['notifications'][0]['title'], "Your house is overheating!")
+    def testIntruderSensorPushNotificationToServer(self):
+        self.motion_sensor.append_data("1")
+        notify = self.intruder_module.upload_data()
+        response = self.intruder_module.check_data_and_notify()
+        self.assertEqual(response.json()['success'], True)
+        self.assertEqual(response.json()['response']['notifications'][0]['title'], "Your house is overheating!")
 
     # def testThreatElimination(self):
 
