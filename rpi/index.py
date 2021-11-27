@@ -110,7 +110,7 @@ def index_main():
 			# Post data from non-empty dicts
 			if data_dict:
 				for key, value in data_dict.items():
-					if "plants" in key:
+					if "plant" in key:
 						if not plant_module.registered(key):
 							plant_module.register_sensor(key)
 						sensor = plant_module.get_sensor(key)
