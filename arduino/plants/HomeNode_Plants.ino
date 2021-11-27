@@ -111,8 +111,7 @@ void loop() {
         for(int j = 0; j < COMPARING_DATAPOINTS; ++j){
           if(abs(sensors[i]->measurements[current_measurement] - 
               sensors[i]->measurements[current_measurement-j]) >= TOLERANCE ||
-              abs(sensors[i]->measurements[current_measurement] - 
-              sensors[i]->active_data) >= TOLERANCE){
+              sensors[i]->active_data == 0.00){
             // The current datapoint is significant
             sensors[i]->significant_flag = 1;
             break;
@@ -133,21 +132,26 @@ void loop() {
     char c = Serial.read();
 
     if(c == address){
-      // Send data for all the sensors
+      // Create the message
+      String message = "";
+      
       for(int i = 0; i < SENSORS_NUM; ++i){
         // Send sensor id
-        Serial.print(sensors[i]->tag);
-        Serial.print("/");
+        message += sensors[i]->tag + "/";
 
         // Check there is any data to be sent
         if(sensors[i]->active_data != sensors[i]->sent_data){
-          Serial.print(sensors[i]->active_data);
+          String active_data = String(sensors[i]->active_data, 2);
+          message += active_data;
           sensors[i]->sent_data = sensors[i]->active_data;
         }
+        message += "/";
       }
 
-      Serial.print("\\\n\r");
-      
+      message[message.length() - 1] = '\\'; // Last character needs to be the end character
+      message += "\n\r";
+
+      Serial.print(message);
     }
   }
 }

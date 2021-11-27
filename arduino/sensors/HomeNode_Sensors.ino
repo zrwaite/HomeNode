@@ -142,21 +142,26 @@ void loop() {
     char c = Serial.read();
 
     if(c == address){
-      // Send data for all the sensors
+      // Create the message
+      String message = "";
+      
       for(int i = 0; i < SENSORS_NUM; ++i){
         // Send sensor id
-        Serial.print(sensors[i]->tag);
-        Serial.print("/");
+        message += sensors[i]->tag + "/";
 
         // Check there is any data to be sent
         if(sensors[i]->active_data != sensors[i]->sent_data){
-          Serial.print(sensors[i]->active_data);
+          String active_data = String(sensors[i]->active_data, 2);
+          message += active_data;
           sensors[i]->sent_data = sensors[i]->active_data;
         }
+        message += "/";
       }
 
-      Serial.print("\\\n\r");
-      
+      message[message.length() - 1] = '\\'; // Last character needs to be the end character
+      message += "\n\r";
+
+      Serial.print(message);
     }
   }
 }
