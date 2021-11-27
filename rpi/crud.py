@@ -51,7 +51,6 @@ def get_all_data():
   response = get_data("/sensors?all=true")
   return response
 
-
 # To do: check put
 def put_data(python_dict, sub_url, auth_token=None):
   if auth_token:
@@ -61,7 +60,6 @@ def put_data(python_dict, sub_url, auth_token=None):
     response = requests.put(SERVER_ADDRESS + sub_url, json=python_dict)
 
   return response
-
 
 def delete_home_data(home_id, auth_token):
   headers = {'Authorization': 'Bearer ' + str(auth_token)}
@@ -90,4 +88,12 @@ def post_intruders_data(python_dict, auth_token):
 
 def put_intruders_data(python_dict, auth_token):
   response = put_data(python_dict, "/intruders?put_type=daily_data", auth_token)
+  return response
+
+def post_plant_data(python_dict, auth_token):
+  response = post_data(python_dict, "/plants", auth_token)
+  return response
+
+def put_plant_data(python_dict, auth_token):
+  response = put_data(python_dict, "/plants?put_type=daily_data", auth_token)
   return response

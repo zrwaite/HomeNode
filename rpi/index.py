@@ -1,12 +1,7 @@
-from models import Home, Sensor, SensorModule, IntruderModule
-from crud import *
+from models import Home, SensorModule, IntruderModule, PlantModule
 from serial import Serial
 from time import perf_counter
 from datetime import date
-
-# This does something idk ask Steven
-def export_daily_data():
-    current_date_string = date.today().strftime("%d-%m-%Y")
 
 # Returns a string of concatenated messages
 def request_messages(ser):
@@ -44,38 +39,48 @@ def process_messages(messages):
 		if messages[index * 2 + 1]:
 			data_dict[messages[index * 2]] = messages[index * 2 + 1] 
 
-	#print(data_dict)
 
 	return data_dict
 
 # Currently returns the sum of all the detected alerts and returns that as the alert level
-def read_alerts(ser, prev):
+def read_alerts(ser, intruder_module):
 	alerts_buffer = ''
 
 	# Get all the alerts in the buffer
 	buf = ser.readline()
 	alerts_buffer += buf.decode('UTF-8')
 
-	#print(alerts_buffer)
+	# Since alerts are in the same format as messages, we can use the same process function
+	data_dict = process_messages(alerts_buffer)
 
-	# Since alerts are in the same format as messages, we can use the same process functin
-	proccessed_alerts = process_messages(alerts_buffer)
+	if data_dict:
+		intruder_module.alert_level = 0
+		for key, value in data_dict.items():
+			# Register the sensor type if it has not been registered
+			if not intruder_module.registered(key):
+				intruder_module.register_sensor(key)
 
-	print(proccessed_alerts)
+			sensor = intruder_module.get_sensor(key)
+			# Upload data
+			sensor.load_data()
 
-	# Decide on the alert level
-	alert_level = 0
-	if proccessed_alerts:
-		for key, value in proccessed_alerts.items():
-			alert_level += int(value)
+			sensor.append_data(value)
+			sensor.check_data_and_notify() # TODO:If something is wrong, we will send a notification. TO Talk with Michael about the actual numbers
 
-	return alert_level
+		intruder_module.update_current_data()
+		intruder_module.update_alert_level()
+
+		notify = intruder_module.upload_data()
+		if notify:
+			intruder_module.check_data_and_notify()
 
 def index_main():
 
 	# Initialize the Home Module
 	home = Home("Barry McHawk Inger's Home")
 	sensor_module = SensorModule(home.home_id)
+	intruder_module = IntruderModule(home.home_id)
+	plant_module = PlantModule(home.home_id)
 
 	# Define serial connection
 	ser = Serial(
@@ -84,21 +89,15 @@ def index_main():
 		timeout=1 # If no response in these amount of seconds, assume no data
 	)
 
-	# The main data buffer, where all the messages from the modules get stored
-	data_buffer = ''
 
 	# Time since last data request
 	request_timer = perf_counter()
-
-	thingy = "oof"
-
-	alert_level = 0
 
 	# Main loop 
 	while True:
 		
 		# Check if it is time to send a request
-		if(perf_counter() - request_timer > 3):
+		if perf_counter() - request_timer > 3:
 
 			# Request data from the modules
 			data_buffer = request_messages(ser)
@@ -111,23 +110,26 @@ def index_main():
 			# Post data from non-empty dicts
 			if data_dict:
 				for key, value in data_dict.items():
-					# Register the sensor type if it has not been registered
-					if not sensor_module.registered(key):
-						sensor_module.register_sensor(key)
+					if "plants" in key:
+						if not plant_module.registered(key):
+							plant_module.register_sensor(key)
+						sensor = plant_module.get_sensor(key)
 
-					sensor = sensor_module.get_sensor(key)
+					else:
+						if not sensor_module.registered(key):
+							sensor_module.register_sensor(key)
+						sensor = sensor_module.get_sensor(key)
+
 					# Upload data
-					sensor.load_data()
-
-					#sensor.check_data_and_notify() # TODO:If something is wrong, we will send a notification
-
 					sensor.append_data(value)
-					sensor.update_json()
 
-					#print("Sent: "+str(value))
+				sensor_module.update_current_data()
+				sensor_module.upload_data()
+				sensor_module.check_data_and_notify()
 
-					#sensor_module.update_current_data()
-					#sensor_module.upload_data()
+				plant_module.update_current_data()
+				plant_module.upload_data()
+				plant_module.check_data_and_notify()
 
 			print(data_buffer)
 			request_timer = perf_counter()
@@ -136,10 +138,8 @@ def index_main():
 		# Alerts are important messages that need to be proccessed right away
 		temp_alert = 0
 		while ser.in_waiting:
-			temp_alert += read_alerts(ser, alert_level)
+			temp_alert += read_alerts(ser, intruder_module)
 			print('current: '+str(temp_alert))
-		alert_level = temp_alert
 
-index_main()
-
-
+if __name__ == "__main__":
+	index_main()

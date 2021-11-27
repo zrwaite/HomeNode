@@ -22,6 +22,7 @@ class TestCrud(unittest.TestCase):
         self.home = Home('New Test Home')
         self.sensor_module = SensorModule(self.home.home_id)
         self.intruder_module = IntruderModule(self.home.home_id)
+        self.plant_module = PlantModule(self.home.home_id)
 
     def tearDown(self) -> None:
         delete_home_data(self.home.home_id, self.home.auth_token)
@@ -44,6 +45,7 @@ class TestModels(unittest.TestCase):
         self.home = Home('New Test Home')
         self.sensor_module = SensorModule(self.home.home_id)
         self.intruder_module = IntruderModule(self.home.home_id)
+        self.plant_module = PlantModule(self.home.home_id)
 
         # Set up the directory
         if not os.path.isdir('./data'):
@@ -107,9 +109,7 @@ class TestIntegrationMethods(unittest.TestCase):
         self.sensor_module = SensorModule(self.home.home_id)
         self.temperature_sensor = Sensor('temperature')
         self.humidity_sensor = Sensor('humidity')
-        self.light_sensor = Sensor('light_level')
-        self.moisture_sensor = Sensor('moisture')
-        self.sensor_module.add_sensors(self.temperature_sensor, self.humidity_sensor, self.light_sensor, self.moisture_sensor)
+        self.sensor_module.add_sensors(self.temperature_sensor, self.humidity_sensor)
 
         # Initialize Intruders Module
         self.intruder_module = IntruderModule(self.home.home_id)
@@ -117,6 +117,13 @@ class TestIntegrationMethods(unittest.TestCase):
         self.window_sensor = IntruderSensor('window')
         self.door_sensor = IntruderSensor('door')
         self.intruder_module.add_sensors(self.motion_sensor, self.window_sensor, self.door_sensor)
+
+        # Initialize Plant Module
+        self.plant_module = PlantModule(self.home.home_id)
+        self.light_sensor = Sensor('plant_light_level')
+        self.moisture_sensor = Sensor('plant_moisture')
+        self.watering_sensor = Sensor('plant_watering')
+        self.light_switch_sensor = Sensor('plant_light_switch')
 
     def tearDown(self):
         delete_home_data(self.home.home_id, self.home.auth_token)
