@@ -1,5 +1,6 @@
 import json
 import requests
+import os
 
 SERVER_ADDRESS = "http://homenode.tech/api"
 
@@ -7,6 +8,18 @@ HOME_URL = "/home"
 SENSORS_URL = "/sensors"
 INTRUDERS_URL = "/intruders?put_type=daily_data"
 USER_URL = "/user"
+
+
+IMAGE_URL = "/rpicamera"
+path_img = './images/picture.jpg'
+
+def post_image():
+  with open(path_img, 'rb') as img:
+    name_img= os.path.basename(path_img)
+    files= {'image': (name_img,img,'multipart/form-data',{'Expires': '0'}) }
+    with requests.Session() as s:
+      response = s.post(SERVER_ADDRESS + IMAGE_URL,files=files)
+      print(response.json())
 
 def parse_to_json(python_object):
   return json.dumps(python_object, separators=(',', ':'))

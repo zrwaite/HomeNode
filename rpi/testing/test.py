@@ -24,9 +24,25 @@ class TestCrud(unittest.TestCase):
         self.intruder_module = IntruderModule(self.home.home_id)
         self.plant_module = PlantModule(self.home.home_id)
 
+
+    #Download random image from the internet
+    with open('./images/picture.jpg', 'wb') as handle:
+        response = requests.get("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/640px-Image_created_with_a_mobile_phone.jpg", stream=True)
+        if not response.ok:
+            print(response)
+        for block in response.iter_content(1024):
+            if not block:
+                handle.write(block)
+
     def tearDown(self) -> None:
         delete_home_data(self.home.home_id, self.home.auth_token)
         shutil.rmtree('./data')
+        shutil.rmtree('./images')
+
+
+    # def testImageUpload(self):
+    #     response = post_image()
+    #     self.assertEqual(response.json().status, '200')
 
     def testHomeInitialization(self):
         self.assertIsNotNone(self.home.home_id)
