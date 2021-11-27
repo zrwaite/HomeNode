@@ -12,9 +12,15 @@ import {
   Tbody,
   Switch,
   useColorMode,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
 } from "@chakra-ui/react";
 import { AiFillEdit } from "react-icons/ai";
 import getcookie from "../../getcookie";
+import Cookies from "universal-cookie";
 
 interface UserInfo {
   response: {
@@ -35,12 +41,16 @@ export default function SettingsTable() {
   const { colorMode, toggleColorMode } = useColorMode();
   const [EmailNotifications, setEmailNotifications] = useState(false);
   const [IntrusionDetection, setIntrusionDetection] = useState(false);
+  const [SafetyLevel, setSafetyLevel] =
+    useState(5);
   const header = ["key", "actions"];
   const data = [
     { key: "Dark Mode" },
     { key: "Email Notifications" },
     { key: "Intrusion Detection" },
+    { key: "Safety Level" },
   ];
+  const cookies = new Cookies();
 
   function getOppositeColorMode() {
     return colorMode === "dark" ? "false" : "true";
@@ -90,9 +100,16 @@ export default function SettingsTable() {
         const { data } = res;
         let received_intrusion_detection =
           data.response.result.settings.intrusion_detection;
+        let received_safety_level =
+          data.response.result.settings.safety_level;
 
-        console.log("GET INTRUSIONDETECTION: ", received_intrusion_detection);
+        console.log(
+          "GET INTRUSIONDETECTION: ",
+          received_intrusion_detection,
+          received_safety_level,
+        );
         setIntrusionDetection(received_intrusion_detection);
+        setSafetyLevel(received_safety_level);
       })
       .catch((err) => {
         console.log(err);
@@ -279,9 +296,38 @@ export default function SettingsTable() {
                     />
                   </ButtonGroup>
                 )}
+                {data[tid]["key"] === "Safety Level" && (
+                  <NumberInput
+                    size="sm"
+                    width="75px"
+                    defaultValue={getcookie("safety_level", true) || SafetyLevel}
+                    min={1}
+                    max={10}
+                    onChange={(val) =>
+                      // console.log("SAFETY LEVEL: ", val)
+                      axios.put(
+                        "http://homenode.tech/api/home?put_type=settings.safety_level",
+                        {
+                          id: getcookie("home_id", true),
+                          settings: {
+                            safety_level: val,
+                          },
+                        }
+                      ).then(() => cookies.set("safety_level", val))
+                    }
+                  >
+                    <NumberInputField />
+                    <NumberInputStepper>
+                      <NumberIncrementStepper />
+                      <NumberDecrementStepper />
+                    </NumberInputStepper>
+                  </NumberInput>
+                )}
+
                 {data[tid]["key"] !== "Dark Mode" &&
                   data[tid]["key"] !== "Email Notifications" &&
-                  data[tid]["key"] !== "Intrusion Detection" && (
+                  data[tid]["key"] !== "Intrusion Detection" &&
+                  data[tid]["key"] !== "Safety Level" && (
                     <ButtonGroup variant="solid" size="sm" spacing={3}>
                       <IconButton
                         colorScheme="green"
