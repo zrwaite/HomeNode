@@ -27,7 +27,7 @@ def process_messages(messages):
 		return messages
 
 	# Clean up the messages buffer
-	messages = messages.replace('\\','').replace('\n','').replace('\r','')
+	messages = messages.replace('\\','/').replace('\n','').replace('\r','')
 
 	# Create a messages list based on delimiter /
 	messages = messages.split('/')
