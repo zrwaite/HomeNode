@@ -155,16 +155,30 @@ class TestIntegrationMethods(unittest.TestCase):
         print(self.sensor_module.sensors[0].get_most_recent_data())
         response = self.sensor_module.check_data_and_notify()
         self.assertEqual(response.json()['success'], True)
-        self.assertEqual(response.json()['response']['notifications'][0]['title'], "Your house is overheating!")
+        self.assertEqual(response.json()['response']['notifications'][-1]['title'], "Your house is overheating!")
 
     def testIntruderSensorPushNotificationToServer(self):
         self.motion_sensor.append_data("1")
+        self.window_sensor.append_data("1")
+        self.intruder_module.update_current_data()
         notify = self.intruder_module.upload_data()
-        response = self.intruder_module.check_data_and_notify()
+        self.assertEqual(notify, True)
+        self.assertEqual(self.intruder_module.alert_level, 6)
+        response = self.intruder_module.notify()
         self.assertEqual(response.json()['success'], True)
-        self.assertEqual(response.json()['response']['notifications'][0]['title'], "Your house is overheating!")
-
-    # def testThreatElimination(self):
+        self.assertEqual(response.json()['response']['notifications'][-1]['title'], "Intruder Detection Triggered!")
+        self.assertEqual(response.json()['response']['notifications'][-1]['info'], "URGENT! There is a high chance someone broke into your house!")
+        self.motion_sensor.append_data("0")
+        self.window_sensor.append_data("0")
+        self.intruder_module.update_current_data()
+        self.assertEqual(self.intruder_module.alert_level, 0)
+        self.assertEqual(self.intruder_module.previous_alert_level, 6)
+        notify = self.intruder_module.upload_data()
+        self.assertEqual(notify, True)
+        response = self.intruder_module.notify()
+        self.assertEqual(response.json()['success'], True)
+        self.assertEqual(response.json()['response']['notifications'][-1]['title'], "Intruder Gone")
+        self.assertEqual(response.json()['response']['notifications'][-1]['info'], "The threat has been eliminated.")
 
 
 if __name__ == '__main__':

@@ -218,7 +218,6 @@ class PlantModule(Module):
 
     def initialize_new_plant_module_on_server(self):
         response = post_plant_data({'name': self.name,'home_id': self.home_id, 'current_data': self.current_data}, self.auth_token)
-        print(response.json())
         self._id = response.json()["response"]["sensorResult"]["_id"]
         self.store_plant_module_id()
 
@@ -269,9 +268,9 @@ class IntruderModule(Module):
         with open('./data/intruder_module_id.json', 'r') as f: #Store the id on 'hard storage' as a JSOn
             self._id = json.load(f)
 
-    def notify(self):
-        response = put_notification_data({'id': self.home_id, 'notification': {'title': 'Intrusion Detection!', 'module_id': self._id, 'info': self.create_detection_message()}}, self.auth_token)
-        return response
+    def update_current_data(self):
+        super(IntruderModule, self).update_current_data()
+        self.update_alert_level()
 
     def update_alert_level(self):
         self.previous_alert_level = self.alert_level
@@ -331,10 +330,22 @@ class IntruderModule(Module):
 
             response = put_intruders_data(final_object, self.auth_token)
             print(response.json())
-            if response.json()['notifications']: # TODO: Change this to relevant
+            if (self.alert_level == 0 and self.previous_alert_level > 0) or response.json()['response']['notify']: # TODO: Change this to relevant
                 return True
 
         return False
+
+    def notify(self):
+        info = self.create_detection_message()
+        print(info)
+        if info == "The threat has been eliminated.":
+            title = "Intruder Gone"
+        else:
+            title = "Intruder Detection Triggered!"
+        response = put_notification_data({'id': self.home_id, 'notification': {'title': title, 'module_id': self._id, 'info': info}}, self.auth_token)
+        return response
+
+
 
 
 class SensorModule(Module): 

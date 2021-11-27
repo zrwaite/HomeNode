@@ -65,11 +65,8 @@ def read_alerts(ser, intruder_module):
 			sensor.load_data()
 
 			sensor.append_data(value)
-			sensor.check_data_and_notify() # TODO:If something is wrong, we will send a notification. TO Talk with Michael about the actual numbers
 
 		intruder_module.update_current_data()
-		intruder_module.update_alert_level()
-
 		notify = intruder_module.upload_data()
 		if notify:
 			intruder_module.check_data_and_notify()
