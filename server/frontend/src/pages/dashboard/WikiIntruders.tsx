@@ -1,5 +1,6 @@
 import React from "react";
 import { Flex, Heading, Text, SimpleGrid, Image } from "@chakra-ui/react";
+import imageintruders1 from "../../assets/imageintruders1.jpg";
 
 function WikiIntruders() {
   return (
@@ -31,6 +32,9 @@ function WikiIntruders() {
       <br />
       <Heading size="xl">Image Gallery</Heading>
       <br />
+      <SimpleGrid columns={3} spacing={10}>
+        <Image src={imageintruders1} alt="Intruder" height="500px" />
+      </SimpleGrid>
     </Flex>
   );
 }

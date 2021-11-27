@@ -1,5 +1,6 @@
 import React from "react";
-import { Flex, Heading, Text } from "@chakra-ui/react";
+import { Flex, Heading, Text, SimpleGrid, Image } from "@chakra-ui/react";
+import imagesensors1 from "../../assets/imagesensors1.jpg";
 
 function WikiSensors() {
   return (
@@ -37,6 +38,9 @@ function WikiSensors() {
       <br />
       <Heading size="xl">Image Gallery</Heading>
       <br />
+      <SimpleGrid columns={3} spacing={10}>
+        <Image src={imagesensors1} alt="Intruder" height="500px" />
+      </SimpleGrid>
     </Flex>
   );
 }
