@@ -35,6 +35,8 @@ function WikiSensors() {
       </Text>
       <Text>It returns the light level in %.</Text>
       <br />
+      <Heading size="xl">Image Gallery</Heading>
+      <br />
     </Flex>
   );
 }

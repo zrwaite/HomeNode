@@ -1,5 +1,11 @@
 import React from "react";
-import { Flex, Heading, Text } from "@chakra-ui/react";
+import { Flex, Heading, Text, SimpleGrid, Image } from "@chakra-ui/react";
+import imageplant1 from "../../assets/imageplant1.jpg";
+import imageplant2 from "../../assets/imageplant2.jpg";
+import imageplant3 from "../../assets/imageplant3.jpg";
+import imageplant4 from "../../assets/imageplant4.jpg";
+import imageplant5 from "../../assets/imageplant5.jpg";
+import imageplant6 from "../../assets/imageplant6.jpg";
 
 function WikiPlant() {
   return (
@@ -37,6 +43,16 @@ function WikiPlant() {
         A simple light switch that turns on and off the light near the plant.
       </Text>
       <br />
+      <Heading size="xl">Image Gallery</Heading>
+      <br />
+      <SimpleGrid columns={3} spacing={10}>
+        <Image src={imageplant3} alt="Intruder" height="500px" />
+        <Image src={imageplant1} alt="Intruder" height="500px" />
+        <Image src={imageplant2} alt="Intruder" height="500px" />
+        <Image src={imageplant4} alt="Intruder" height="500px" />
+        <Image src={imageplant5} alt="Intruder" height="500px" />
+        <Image src={imageplant6} alt="Intruder" height="500px" />
+      </SimpleGrid>
     </Flex>
   );
 }

@@ -1,12 +1,5 @@
 import React from "react";
 import { Flex, Heading, Text, SimpleGrid, Image } from "@chakra-ui/react";
-import imageintruders1 from "../../assets/imageintruders1.jpg";
-import imageintruders2 from "../../assets/imageintruders2.jpg";
-import imageintruders3 from "../../assets/imageintruders3.jpg";
-import imageintruders4 from "../../assets/imageintruders4.jpg";
-import imageintruders5 from "../../assets/imageintruders5.jpg";
-import imageintruders6 from "../../assets/imageintruders6.jpg";
-
 
 function WikiIntruders() {
   return (
@@ -36,40 +29,8 @@ function WikiIntruders() {
       <Text>This sensor detects whether a door has been opened or closed.</Text>
       <Text>It returns a boolean (true/false) value.</Text>
       <br />
-      <Heading size="xl">Components</Heading>
+      <Heading size="xl">Image Gallery</Heading>
       <br />
-      <SimpleGrid columns={3} spacing={10}>
-      <Image
-          src={imageintruders1}
-          alt="Intruder"
-          height="500px"
-        />
-        <Image
-          src={imageintruders2}
-          alt="Intruder"
-          height="500px"
-        />
-        <Image
-          src={imageintruders3}
-          alt="Intruder"
-          height="500px"
-        />
-        <Image
-          src={imageintruders4}
-          alt="Intruder"
-          height="500px"
-        />
-        <Image
-          src={imageintruders5}
-          alt="Intruder"
-          height="500px"
-        />
-        <Image
-          src={imageintruders6}
-          alt="Intruder"
-          height="500px"
-        />
-      </SimpleGrid>
     </Flex>
   );
 }
