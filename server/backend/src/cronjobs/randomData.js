@@ -1,3 +1,6 @@
+"use strict";
+exports.__esModule = true;
+exports.getIntruderData = exports.getPlantData = exports.getSensorData = void 0;
 function randomize(min, max, skew) {
     var first = 0;
     var second = 0;
@@ -17,6 +20,7 @@ function randomize(min, max, skew) {
         output *= max - min;
         output += min;
     }
+    //console.log(Math.round(output))
     return output;
 }
 function randomData(randomInput, min, max, skew) {
@@ -28,10 +32,10 @@ function randomData(randomInput, min, max, skew) {
 var randomInput = 21;
 for (var i = 0; i < 1000; i++) {
     randomInput = randomData(randomInput, -1, 1, 1);
-    console.log(randomInput);
+    //console.log(randomInput);
 }
 var tempData = function (pastTemp) {
-    var temp = randomData(pastTemp, -2, 2, 1);
+    var temp = randomData(pastTemp, -3, 3, 1);
     return temp;
 };
 var lightData = function (pastLight) {
@@ -46,25 +50,56 @@ var moistureData = function (pastMoisture) {
     var moisture = randomData(pastMoisture, -5, 5, 1);
     return moisture;
 };
-var getData = function (pastData) {
-    var temperature = tempData(pastData.temperature);
-    var light = tempData(pastData.light);
-    var humidity = tempData(pastData.humidity);
-    var moisture = tempData(pastData.moisture);
-    var valuesToAdd = [];
-    if (!temperature == pastData.temperature) {
-        valuesToAdd.push({ temperature: temperature });
+var waterCounter = function (pastWaterCounter) {
+    var waterCount = randomData(pastWaterCounter, -1, 1, 1);
+    while (waterCount < 0) {
+        waterCount = randomData(pastWaterCounter, -1, 1, 1);
     }
-    if (!light == pastData.light) {
-        valuesToAdd.push({ light: light });
-    }
-    if (!humidity == pastData.humidity) {
-        valuesToAdd.push({ humidity: humidity });
-    }
-    if (!moisture == pastData.moisture) {
-        valuesToAdd.push({ moisture: moisture });
-    }
-    //repeat
-    // body = comination of values to add
-    // return body;
+    return waterCount;
 };
+var alertLevel = function (pastAlert) {
+    var alert = randomData(pastAlert, -3, 3, 1);
+    while (alert < 1 || alert > 10) {
+        alert = randomData(pastAlert, -3, 3, 1);
+    }
+    return alert;
+};
+var getSensorData = function (pastData) {
+    var temperature = tempData(pastData.temperature);
+    var humidity = humidityData(pastData.humidity);
+    var valuesToAdd = {};
+    if (temperature !== pastData.temperature) {
+        valuesToAdd.temperature = Math.round(temperature);
+    }
+    if (humidity !== pastData.humidity) {
+        valuesToAdd.humidity = Math.round(humidity);
+    }
+    return valuesToAdd;
+};
+exports.getSensorData = getSensorData;
+var getPlantData = function (pastData) {
+    var light = lightData(pastData.light);
+    var moisture = moistureData(pastData.moisture);
+    var waterCount = waterCounter(pastData.waterCount);
+    var valuesToAdd = {};
+    if (light !== pastData.light) {
+        valuesToAdd.light = Math.round(light);
+    }
+    if (moisture !== pastData.moisture) {
+        valuesToAdd.moisture = Math.round(moisture);
+    }
+    if (waterCount !== pastData.waterCount) {
+        valuesToAdd.waterCount = Math.round(waterCount);
+    }
+    return valuesToAdd;
+};
+exports.getPlantData = getPlantData;
+var getIntruderData = function (pastData) {
+    var alert = alertLevel(pastData.alert);
+    var valuesToAdd = {};
+    if (alert !== pastData.alert) {
+        valuesToAdd.alert = Math.round(alert);
+    }
+    return valuesToAdd;
+};
+exports.getIntruderData = getIntruderData;

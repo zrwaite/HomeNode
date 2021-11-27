@@ -1,3 +1,4 @@
+
 function randomize(min: number, max: number, skew: number) {
 
     let first = 0;
@@ -18,6 +19,7 @@ function randomize(min: number, max: number, skew: number) {
       output *= max - min;
       output += min;
     }
+	//console.log(Math.round(output))
     return output;
 }
 
@@ -33,12 +35,12 @@ let randomInput = 21;
 
 for(let i = 0; i < 1000; i++){
     randomInput = randomData(randomInput, -1, 1, 1);
-    console.log(randomInput);
+    //console.log(randomInput);
 }
 
 
 const tempData = (pastTemp: number) => {
-	let temp:number = randomData(pastTemp, -2, 2, 1);
+	let temp:number = randomData(pastTemp, -3, 3, 1);
 	return temp;
 }
 const lightData = (pastLight: number) => {
@@ -53,33 +55,70 @@ const moistureData = (pastMoisture: number) => {
 	let moisture:number = randomData(pastMoisture, -5, 5, 1);
 	return moisture;
 }
-
-const getData = (pastData:any) => {
-	let temperature = tempData(pastData.temperature);
-	let light = lightData(pastData.light);
-	let humidity = humidityData(pastData.humidity);
-	let moisture = moistureData(pastData.moisture);
-
-	let valuesToAdd = []
-	if (!temperature == pastData.temperature){
-		valuesToAdd.push({temperature: temperature});
+const waterCounter = (pastWaterCounter: number) => {
+	let waterCount:number = randomData(pastWaterCounter, -1, 1, 1);
+	while(waterCount < 0){
+		waterCount = randomData(pastWaterCounter, -1, 1, 1);
 	}
-	if (!light == pastData.light){
-		valuesToAdd.push({light: light});
+	return waterCount;
+}
+const alertLevel = (pastAlert: number) => {
+	let alert:number = randomData(pastAlert, -3, 3, 1);
+	while(alert < 1 || alert > 10){
+		alert = randomData(pastAlert, -3, 3, 1);
 	}
-	if (!humidity == pastData.humidity){
-		valuesToAdd.push({humidity: humidity});
-	}
-	if (!moisture == pastData.moisture){
-		valuesToAdd.push({moisture: moisture});
-	}
-
-	var body:any;
-	body.temperature = valuesToAdd[0];
-	body.light = valuesToAdd[1];
-	body.humidity = valuesToAdd[2];
-	body.moisture = valuesToAdd[3];
-	// body = comination of values to add
-	return body;
+	return alert;
 }
 
+
+
+
+const getSensorData = (pastData:any) => {
+	let temperature = tempData(pastData.temperature);
+	let humidity = humidityData(pastData.humidity);
+
+	let valuesToAdd:any = {}
+	if (temperature !== pastData.temperature){
+		valuesToAdd.temperature = Math.round(temperature);
+	}
+	
+	if (humidity !== pastData.humidity){
+		valuesToAdd.humidity = Math.round(humidity);
+	}
+	return valuesToAdd;
+}
+
+
+const getPlantData = (pastData:any) => {
+	let light = lightData(pastData.light);
+	let moisture = moistureData(pastData.moisture);
+	let waterCount = waterCounter(pastData.waterCount)
+
+	let valuesToAdd:any = {}
+	
+	if (light !== pastData.light){
+		valuesToAdd.light = Math.round(light);
+	}
+	if (moisture !== pastData.moisture){
+		valuesToAdd.moisture = Math.round(moisture);
+	}
+	if (waterCount !== pastData.waterCount){
+		valuesToAdd.waterCount = Math.round(waterCount);
+	}
+	return valuesToAdd;
+}
+
+const getIntruderData = (pastData:any) => {
+	let alert = alertLevel(pastData.alert);
+
+	let valuesToAdd:any = {}
+	
+	if (alert !== pastData.alert){
+		valuesToAdd.alert = Math.round(alert);
+	}
+	
+	return valuesToAdd;
+}
+
+
+export {getSensorData, getPlantData, getIntruderData};
