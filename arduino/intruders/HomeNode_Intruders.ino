@@ -1,11 +1,12 @@
 #define MEASURE_INTERVAL 100  // How long in milliseconds before the module checks sensors again
 #define UPDATE_INTERVAL 5000  // How long in milliseconds before the modules sends a status update
 #define SENSORS_NUM 3         // Number of sensors on the module
+#define ADDRESS 3             // Address of the module
 
 float update_timer = 0; // Timer for sending data
 float sensors_timer = 0; // Timer for reading sensors
 
-const char address = '3';
+const char address = ADDRESS + '0';
 
 typedef struct {
   int pin;              // Pin number of the sensor
