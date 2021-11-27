@@ -43,7 +43,17 @@ function WikiPlant() {
         A simple light switch that turns on and off the light near the plant.
       </Text>
       <br />
-      <Heading size="xl">Image Gallery</Heading>
+      <Heading size="xl">Video & Image Gallery</Heading>
+      <br />
+      <iframe
+        width="560"
+        height="315"
+        src="https://www.youtube-nocookie.com/embed/-wechVphMZE"
+        title="YouTube video player"
+        frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+      ></iframe>
       <br />
       <SimpleGrid columns={3} spacing={10}>
         <Image src={imageplant3} alt="Intruder" height="500px" />
