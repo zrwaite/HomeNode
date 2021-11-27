@@ -84,7 +84,7 @@ const buildPutBody = async (req: any) => {
 	if (id === undefined) undefinedParams.push("id");
 	switch (putType) {
 		case "past_data":
-			["date", "average_temperature", "average_humidity", "average_light_level", "average_moisture"].forEach((param) => {
+			["date", "average_temperature", "average_humidity", "average_light_level"].forEach((param) => {
 				if (req.body[param]==undefined) undefinedParams.push(param);
 			});
 			if (undefinedParams.length == 0) { 
@@ -92,8 +92,7 @@ const buildPutBody = async (req: any) => {
 					date: req.body.date,
 					average_temperature: req.body.average_temperature,
 					average_humidity: req.body.average_humidity,
-					average_light_level: req.body.average_light_level,
-					average_moisture: req.body.average_moisture,
+					average_light_level: req.body.average_light_level
 				};
 				body = {$push: {past_data: pastBody}};
 			} else {
@@ -119,12 +118,7 @@ const buildPutBody = async (req: any) => {
 				bodyParts.push({"current_data.light_level": req.body.light_level});
 				putType = "daily_data";
 			}
-			if (req.body.moisture !== undefined) {
-				dailyBody.moisture = req.body.moisture;
-				bodyParts.push({"current_data.moisture": req.body.moisture});
-				putType = "daily_data";
-			}
-			if (!putType) undefinedParams.push("temperature, humidity, moisture or light_level");
+			if (!putType) undefinedParams.push("temperature, humidity or light_level");
 			else {
 				body = {$push: {daily_data: dailyBody}};
 				bodyParts.forEach((part: object) => body = {...body, ...part});
@@ -150,15 +144,14 @@ const buildDeleteBody = async (req: any) =>{
 	if (!auth) return {deleteType: undefined, id: id, body: body, errors: ["authorization"]};
 	switch (req.query.delete_type){
 		case "daily_data":
-			["temperature", "humidity", "light_level", "moisture"].forEach((param) => {
+			["temperature", "humidity", "light_level"].forEach((param) => {
 				if (req.body[param]==undefined) undefinedParams.push(param);
 			});
 			if (undefinedParams.length == 0) { 
 				let deleteBody: sensorsDeleteBody = {
 					temperature: req.body.temperature,
 					humidity: req.body.humidity,
-					light_level: req.body.light_level,
-					moisture: req.body.moisture
+					light_level: req.body.light_level
 				};
 				deleteType = "daily_data";
 				body = deleteBody;

@@ -1,7 +1,7 @@
 import axios from "axios";
 import {getToken} from "../auth/tokenFunctions"
 
-const putPastData = async (id: string, average_temperature: number, average_humidity: number, average_light_level: number, average_moisture: number, home_id: string) => {
+const putPastData = async (id: string, average_temperature: number, average_humidity: number, average_light_level: number, home_id: string) => {
 	let token:string = await getToken({home_id: home_id, authorized: false})	
 	let date = new Date().toLocaleDateString().toString();
 	try {
@@ -10,8 +10,7 @@ const putPastData = async (id: string, average_temperature: number, average_humi
 			date: date,
 			average_temperature: average_temperature,
 			average_humidity: average_humidity,
-			average_light_level: average_light_level,
-			average_moisture: average_moisture
+			average_light_level: average_light_level
 		},{headers: {
 			Authorization: "Bearer "+token
 		}});
@@ -22,7 +21,7 @@ const putPastData = async (id: string, average_temperature: number, average_humi
 		console.log("Error putting past data", e.response.data)
 	}
 }
-const deleteDailyData = async (id: string, temperature: number, humidity: number, light_level: number, moisture: number, home_id: string) => {
+const deleteDailyData = async (id: string, temperature: number, humidity: number, light_level: number, home_id: string) => {
 	let token:string = await getToken({home_id: home_id, authorized: false})	
 	try{
 		const deleteData: any = await axios.delete("/api/sensors?delete_type=daily_data",{ 
@@ -30,8 +29,7 @@ const deleteDailyData = async (id: string, temperature: number, humidity: number
 				id: id,
 				temperature: temperature,
 				humidity: humidity,
-				light_level: light_level,
-				moisture: moisture
+				light_level: light_level
 			}, headers: {
 				Authorization: "Bearer "+token
 			}
@@ -56,11 +54,9 @@ const sensorsCompress = async () => {
 			let total_temperature = 0;
 			let total_humidity = 0;
 			let total_light_level = 0;
-			let total_moisture = 0;
 			let num_temperatures = 0;
 			let num_humidities = 0;
 			let num_light_levels = 0;
-			let num_moistures = 0;
 			dailyData.forEach(data =>{
 				if (data.temperature) {
 					total_temperature += data.temperature;
@@ -74,14 +70,9 @@ const sensorsCompress = async () => {
 					total_light_level += data.light_level;
 					num_light_levels ++;
 				}
-				if (data.moisture) {
-					total_moisture += data.moisture;
-					num_moistures ++;
-				}
 			});
 			let average_light_level = Math.round(total_light_level/num_light_levels);
 			let average_humidity = Math.round(total_humidity/num_humidities);
-			let average_moisture = Math.round(total_moisture/num_moistures);
 			let average_temperature = Math.round(total_temperature/num_temperatures);
 
 			let success = true;
@@ -89,8 +80,8 @@ const sensorsCompress = async () => {
 				if (currentData[param]==undefined) success = false;
 			});
 			if (success){
-				putPastData(id, average_temperature, average_humidity, average_light_level, average_moisture, home_id);
-				deleteDailyData(id, currentData.temperature, currentData.humidity, currentData.light_level, currentData.moisture, home_id);
+				putPastData(id, average_temperature, average_humidity, average_light_level, home_id);
+				deleteDailyData(id, currentData.temperature, currentData.humidity, currentData.light_level, home_id);
 			}
 			else {
 				console.log("Missing current data");
