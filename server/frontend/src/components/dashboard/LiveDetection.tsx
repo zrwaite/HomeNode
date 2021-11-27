@@ -171,7 +171,10 @@ const LiveDetection = (props: any) => {
         shadow="lg"
         bg={useColorModeValue("white", "gray.800")}
         width="full"
-        height={250}
+        // height={250}
+        minHeight="250px"
+        overflowY="hidden"
+        overflowX="hidden"
       >
         <Flex justifyContent="space-between" alignItems="center">
           <chakra.span
@@ -326,7 +329,8 @@ const LiveDetection = (props: any) => {
         shadow="lg"
         bg={useColorModeValue("white", "gray.800")}
         width="full"
-        height={250}
+        // height={250}
+        minHeight="250px"
       >
         <Flex justifyContent="space-between" alignItems="center">
           <chakra.span
@@ -447,7 +451,8 @@ const LiveDetection = (props: any) => {
         shadow="lg"
         bg={useColorModeValue("white", "gray.800")}
         width="full"
-        height={250}
+        // height={250}
+        minHeight="250px"
       >
         <Flex justifyContent="space-between" alignItems="center">
           <chakra.span
