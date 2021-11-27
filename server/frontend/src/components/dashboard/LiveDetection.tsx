@@ -13,22 +13,27 @@ import { useHistory } from "react-router-dom";
 import axios from "axios";
 
 interface PlantModuleData {
-  current_data: {};
+  response: {
+    result: {
+      current_data: {
+        light_level: number;
+        light_on: boolean;
+        moisture: number;
+        num_waters: number;
+      };
+    };
+  };
 }
-
-function GetPlantModuleData(){
-  console.log("BBB", getcookie("plants_id", true));
-  axios.get("http://homenode.tech/api/plants?id=" + getcookie("plants_id", true)).then((res) => {
-    console.log("GET PLANTSMODULEDATA", res);
-  }).catch((err) => {
-    console.log("GET PLANTSMODULEDATA ERROR", err);
-  });
-  return 0;
-};
 
 const LiveDetection = (props: any) => {
   let history = useHistory();
   const [DateTime, setDateTime] = useState("");
+  const [PlantModuleData, setPlantModuleData] = useState({
+    light_level: 0,
+    light_on: false,
+    moisture: 0,
+    num_waters: 0,
+  });
   const GetCurrentDateTime = () => {
     const date_obj = new Date();
     let day = date_obj.getDate();
@@ -83,6 +88,30 @@ const LiveDetection = (props: any) => {
     }
     return 0;
   };
+
+  function GetPlantModuleData() {
+    console.log("BBB", getcookie("plants_id", true));
+    axios
+      .get<PlantModuleData>(
+        "http://homenode.tech/api/plants?id=" + getcookie("plants_id", true)
+      )
+      .then((res) => {
+        const { data } = res;
+        console.log("GET PLANTSMODULEDATA", data);
+        let current_data = data.response.result.current_data;
+        let updated_data = {
+          light_level: current_data.light_level,
+          light_on: current_data.light_on,
+          moisture: current_data.moisture,
+          num_waters: current_data.num_waters,
+        };
+        setPlantModuleData(updated_data);
+      })
+      .catch((err) => {
+        console.log("GET PLANTSMODULEDATA ERROR", err);
+      });
+    return 0;
+  }
 
   useEffect(() => {
     var handledate = setInterval(GetCurrentDateTime, 500);
@@ -279,14 +308,14 @@ const LiveDetection = (props: any) => {
             Plant Module Live Data
           </Link>
           <chakra.p mt={2} color={useColorModeValue("gray.600", "gray.300")}>
-            Moisture: {getcookie("moisture_light_level", true)}
+            Moisture: {PlantModuleData.moisture || getcookie("moisture_light_level", true)}
             &nbsp;&nbsp;&nbsp; Light Status:{" "}
-            {getcookie("plant_light_status", true)}
+            {(PlantModuleData.light_on ? "ON" : "OFF") || getcookie("plant_light_status", true)}
           </chakra.p>
           <chakra.p mt={2} color={useColorModeValue("gray.600", "gray.300")}>
-            Light Level: {getcookie("plant_light_level", true)}
+            Light Level: {PlantModuleData.light_level || getcookie("plant_light_level", true)}
             &nbsp;&nbsp;&nbsp; Times Watered:{" "}
-            {getcookie("plant_times_watered", true)}
+            {PlantModuleData.num_waters || getcookie("plant_times_watered", true)}
           </chakra.p>
         </Box>
 
