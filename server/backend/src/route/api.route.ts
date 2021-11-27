@@ -4,6 +4,7 @@ import intrudersCtrl from '../api/intruders';
 import sensorsCtrl from '../api/sensors';
 import userCtrl from '../api/user';
 import plantsCtrl from '../api/plants';
+import imageCtrl from "../api/images";
 const router = express.Router();
 
 router.route('/home')

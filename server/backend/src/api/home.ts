@@ -7,7 +7,6 @@ import {getToken, verifyToken} from "../auth/tokenFunctions";
 import axios from "axios";
 
 import {homeGetQuery, homePostBody, homePutBody} from "../models/home/homeInterfaces";
-import { createNamedExports } from "typescript";
 
 const buildGetQuery = async (req: any) => {
 	let queryType = undefined;
@@ -57,7 +56,7 @@ const buildPostBody = async (req: any) => {
 			hash: hash,
 			user: [],
 			modules: [],
-			settings: {intrusion_detection: true},
+			settings: {intrusion_detection: true, safety_level: 5},
 			notifications: [],
 		};
 		body = postBody;
@@ -81,9 +80,14 @@ const buildPutBody = async (req: any) => {
 			else body = {$addToSet: {users: req.body.user}};
 			query = {_id: id};
 			break;
-		case "settings.intrusion_detection":
+		case "settings.intrusion_detection": case "intrusion_detection":
 			if (req.body.settings.intrusion_detection==undefined) undefinedParams.push("intrusion_detection");
-			body = {"settings.intrusion_detection": req.body.settings.intrusion_detection};
+			else body = {"settings.intrusion_detection": req.body.settings.intrusion_detection};
+			query = {_id: id};
+			break;
+		case "settings.safety_level": case "safety_level":
+			if (req.body.settings.safety_level==undefined) undefinedParams.push("settings.safety_level");
+			else body = {"settings.safety_level": req.body.settings.safety_level};
 			query = {_id: id};
 			break;
 		case "module":
@@ -194,8 +198,8 @@ export default class homeController {
 				//prettier-ignore
 				home = await Home.findByIdAndUpdate(query, body, {new: true}); //Saves branch to mongodb
 				result.status = 201;
-				result.response = home;
 				result.success = true;
+				result.response = home;
 			} catch (e: any) {
 				result.status = 404;
 				result.errors.push("Home not found, or trying to add duplicate value", e);

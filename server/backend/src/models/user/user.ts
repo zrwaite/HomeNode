@@ -9,10 +9,6 @@ const userSettingsSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
     },
-    safety_level : {
-        type: Number,
-        required: true,
-    }
 }, {timestamps: true});
 
 const userSchema = new mongoose.Schema({
