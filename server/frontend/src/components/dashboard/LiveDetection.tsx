@@ -9,10 +9,8 @@ import {
   Button,
   Table,
   Td,
-  Th,
   Tr,
   Tbody,
-  Text,
 } from "@chakra-ui/react";
 import getcookie from "../../getcookie";
 import { useHistory } from "react-router-dom";
@@ -190,13 +188,27 @@ const LiveDetection = (props: any) => {
                     mt={2}
                     color={useColorModeValue("gray.600", "gray.300")}
                   >
-                    Temperature: {getcookie("sensors_temperature", true)}
+                    Temperature: {" "}
+                    <chakra.p
+                      display={{ base: "block", lg: "inline" }}
+                      fontWeight="bold"
+                      color={useColorModeValue("brand.500", "brand.500")}
+                    >
+                      {getcookie("sensors_temperature", true)}
+                    </chakra.p>
                   </chakra.p>
                   <chakra.p
                     mt={2}
                     color={useColorModeValue("gray.600", "gray.300")}
                   >
-                    Humidity: {getcookie("sensors_humidity", true)}
+                    Humidity: {" "}
+                    <chakra.p
+                      display={{ base: "block", lg: "inline" }}
+                      fontWeight="bold"
+                      color={useColorModeValue("brand.500", "brand.500")}
+                    >
+                      {getcookie("sensors_humidity", true)}
+                    </chakra.p>
                   </chakra.p>
                   <br />
                 </Td>
@@ -205,13 +217,27 @@ const LiveDetection = (props: any) => {
                     mt={2}
                     color={useColorModeValue("gray.600", "gray.300")}
                   >
-                    Light Level: {getcookie("sensors_light_level", true)}
+                    Light Level: {" "}
+                    <chakra.p
+                      display={{ base: "block", lg: "inline" }}
+                      fontWeight="bold"
+                      color={useColorModeValue("brand.500", "brand.500")}
+                    >
+                      {getcookie("sensors_light_level", true)}
+                    </chakra.p>
                   </chakra.p>
                   <chakra.p
                     mt={2}
                     color={useColorModeValue("gray.600", "gray.300")}
                   >
-                    Moisture: {getcookie("sensors_moisture", true)}
+                    Moisture: {" "}
+                    <chakra.p
+                      display={{ base: "block", lg: "inline" }}
+                      fontWeight="bold"
+                      color={useColorModeValue("brand.500", "brand.500")}
+                    >
+                      {getcookie("sensors_moisture", true)}
+                    </chakra.p>
                   </chakra.p>
                   <br />
                 </Td>
@@ -239,8 +265,9 @@ const LiveDetection = (props: any) => {
               isIndeterminate
               w={10}
               h={10}
-              my={4}
+              my={6}
               color="green.400"
+              size="xxs"
             />
           </Flex>
         </Flex>
@@ -284,17 +311,31 @@ const LiveDetection = (props: any) => {
                     mt={2}
                     color={useColorModeValue("gray.600", "gray.300")}
                   >
-                    {props.alert_level !== "None"
-                      ? `Alert Level: ${props.alert_level}`
-                      : `Alert Level: Loading...`}
+                    Alert Level:{" "}
+                    <chakra.p
+                      display={{ base: "block", lg: "inline" }}
+                      fontWeight="bold"
+                      color={useColorModeValue("brand.500", "brand.500")}
+                    >
+                      {props.alert_level !== "None"
+                        ? `${props.alert_level}`
+                        : `Loading...`}
+                    </chakra.p>
                   </chakra.p>
                   <chakra.p
                     mt={2}
                     color={useColorModeValue("gray.600", "gray.300")}
                   >
-                    {props.detection_level !== ""
-                      ? `Reason: ${props.detection_level}`
-                      : `Reason: Loading...`}
+                    Reason:{" "}
+                    <chakra.p
+                      display={{ base: "block", lg: "inline" }}
+                      fontWeight="bold"
+                      color={useColorModeValue("brand.500", "brand.500")}
+                    >
+                      {props.alert_level !== "None"
+                        ? `${props.detection_level}`
+                        : `Loading...`}
+                    </chakra.p>
                   </chakra.p>
                   <br />
                 </Td>
@@ -322,8 +363,9 @@ const LiveDetection = (props: any) => {
               isIndeterminate
               w={10}
               h={10}
-              my={4}
+              my={6}
               color="green.400"
+              size="xxs"
             />
           </Flex>
         </Flex>
@@ -366,17 +408,29 @@ const LiveDetection = (props: any) => {
                     mt={2}
                     color={useColorModeValue("gray.600", "gray.300")}
                   >
-                    Moisture:{" "}
-                    {PlantModuleData.moisture ||
-                      getcookie("moisture_light_level", true)}
+                    Light Status: {" "}
+                    <chakra.p
+                      display={{ base: "block", lg: "inline" }}
+                      fontWeight="bold"
+                      color={useColorModeValue("brand.500", "brand.500")}
+                    >
+                      {(PlantModuleData.light_on ? "ON" : "OFF") ||
+                        getcookie("plant_light_status", true)}
+                    </chakra.p>
                   </chakra.p>
                   <chakra.p
                     mt={2}
                     color={useColorModeValue("gray.600", "gray.300")}
                   >
-                    Light Status:{" "}
-                    {(PlantModuleData.light_on ? "ON" : "OFF") ||
-                      getcookie("plant_light_status", true)}
+                    Times Watered: {" "}
+                    <chakra.p
+                      display={{ base: "block", lg: "inline" }}
+                      fontWeight="bold"
+                      color={useColorModeValue("brand.500", "brand.500")}
+                    >
+                      {PlantModuleData.num_waters ||
+                        getcookie("plant_num_waters", true)}
+                    </chakra.p>
                   </chakra.p>
                   <br />
                 </Td>
@@ -385,17 +439,28 @@ const LiveDetection = (props: any) => {
                     mt={2}
                     color={useColorModeValue("gray.600", "gray.300")}
                   >
-                    Light Level:{" "}
-                    {PlantModuleData.light_level ||
-                      getcookie("plant_light_level", true)}
+                    Light Level: {" "}
+                    <chakra.p
+                      display={{ base: "block", lg: "inline" }}
+                      fontWeight="bold"
+                      color={useColorModeValue("brand.500", "brand.500")}
+                    >
+                      {PlantModuleData.light_level || getcookie("plant_light_level", true)}
+                    </chakra.p>
                   </chakra.p>
                   <chakra.p
                     mt={2}
                     color={useColorModeValue("gray.600", "gray.300")}
                   >
-                    Times Watered:{" "}
-                    {PlantModuleData.num_waters ||
-                      getcookie("plant_times_watered", true)}
+                    Moisture: {" "}
+                    <chakra.p
+                      display={{ base: "block", lg: "inline" }}
+                      fontWeight="bold"
+                      color={useColorModeValue("brand.500", "brand.500")}
+                    >
+                      {PlantModuleData.moisture ||
+                        getcookie("moisture_light_level", true)}
+                    </chakra.p>
                   </chakra.p>
                   <br />
                 </Td>
@@ -423,8 +488,9 @@ const LiveDetection = (props: any) => {
               isIndeterminate
               w={10}
               h={10}
-              my={4}
+              my={6}
               color="green.400"
+              size="xxs"
             />
           </Flex>
         </Flex>
