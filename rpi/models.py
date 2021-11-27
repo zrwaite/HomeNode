@@ -171,15 +171,15 @@ class Module: #Parent of IntruderModule and SensorModule
             # Logic for detecting anomalies in the sensors
             if sensor.get_most_recent_data():
                 if sensor.name == 'temperature':
-                    if sensor.get_most_recent_data() > 30:
+                    if float(sensor.get_most_recent_data()) > 30:
                         title = "Your house is overheating!"
                         info = "Your house is reaching a temperature of {}! Please check if it is on fire.".format(sensor.get_most_recent_data())
 
                 elif sensor.name == 'humidity':
-                    if sensor.get_most_recent_data() > 70:
+                    if float(sensor.get_most_recent_data()) > 70:
                         title = "High humidity detected!"
                         info = "Your house has reached a humidity above 70%, make sure to lower it"
-                    elif sensor.get_most_recent_data() < 30:
+                    elif float(sensor.get_most_recent_data()) < 30:
                         title = "Low humidity detected!"
                         info = "Your house has reached a humidity below 30%, make sure to increase it!"
 
@@ -330,6 +330,7 @@ class IntruderModule(Module):
             final_object['detection'] = self.create_detection_message()
 
             response = put_intruders_data(final_object, self.auth_token)
+            print(response.json())
             if response.json()['notifications']: # TODO: Change this to relevant
                 return True
 

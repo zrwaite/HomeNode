@@ -24,15 +24,20 @@ class TestCrud(unittest.TestCase):
         self.intruder_module = IntruderModule(self.home.home_id)
         self.plant_module = PlantModule(self.home.home_id)
 
+        if not os.path.isdir('./data'):
+            os.mkdir('./data')
 
-    #Download random image from the internet
-    with open('./images/picture.jpg', 'wb') as handle:
-        response = requests.get("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/640px-Image_created_with_a_mobile_phone.jpg", stream=True)
-        if not response.ok:
-            print(response)
-        for block in response.iter_content(1024):
-            if not block:
-                handle.write(block)
+        if not os.path.isdir('./images'):
+            os.mkdir('./images')
+
+        #Download random image from the internet
+        with open('./images/picture.jpg', 'w') as handle:
+            response = requests.get("https://upload.wikimedia.org/wikipedia/commons/thumb/b/b6/Image_created_with_a_mobile_phone.png/640px-Image_created_with_a_mobile_phone.jpg", stream=True)
+            if not response.ok:
+                print(response)
+            for block in response.iter_content(1024):
+                if not block:
+                    handle.write(block)
 
     def tearDown(self) -> None:
         delete_home_data(self.home.home_id, self.home.auth_token)
@@ -152,12 +157,12 @@ class TestIntegrationMethods(unittest.TestCase):
         self.assertEqual(response.json()['success'], True)
         self.assertEqual(response.json()['response']['notifications'][0]['title'], "Your house is overheating!")
 
-    # def testIntruderSensorPushNotificationToServer(self):
-    #     self.motion_sensor.append_data("1")
-    #     notify = self.intruder_module.upload_data()
-    #     response = self.intruder_module.check_data_and_notify()
-    #     self.assertEqual(response.json()['success'], True)
-    #     self.assertEqual(response.json()['response']['notifications'][0]['title'], "Your house is overheating!")
+    def testIntruderSensorPushNotificationToServer(self):
+        self.motion_sensor.append_data("1")
+        notify = self.intruder_module.upload_data()
+        response = self.intruder_module.check_data_and_notify()
+        self.assertEqual(response.json()['success'], True)
+        self.assertEqual(response.json()['response']['notifications'][0]['title'], "Your house is overheating!")
 
     # def testThreatElimination(self):
 
