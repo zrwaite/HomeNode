@@ -62,9 +62,9 @@ const LiveDetection = (props: any) => {
     let actual_min = "";
     let actual_sec = "";
     if (hours > 12) {
-      let actual_hr = non_24_hour_time.toString();
-      let actual_min = minutes.toString();
-      let actual_sec = seconds.toString();
+      actual_hr = non_24_hour_time.toString();
+      actual_min = minutes.toString();
+      actual_sec = seconds.toString();
       if (hours < 10) {
         actual_hr = "0" + non_24_hour_time;
       }
@@ -80,6 +80,18 @@ const LiveDetection = (props: any) => {
         } ${day}, ${year} ${actual_hr}:${actual_min}:${actual_sec} PM`
       );
     } else {
+      actual_hr = non_24_hour_time.toString();
+      actual_min = minutes.toString();
+      actual_sec = seconds.toString();
+      if (hours < 10) {
+        actual_hr = "0" + non_24_hour_time;
+      }
+      if (minutes < 10) {
+        actual_min = "0" + minutes;
+      }
+      if (seconds < 10) {
+        actual_sec = "0" + seconds;
+      }
       setDateTime(
         `${days[date_obj.getDay()]}, ${
           months[month - 1]
