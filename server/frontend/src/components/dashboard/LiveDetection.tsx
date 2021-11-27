@@ -11,10 +11,24 @@ import {
   Td,
   Tr,
   Tbody,
+  Icon,
 } from "@chakra-ui/react";
 import getcookie from "../../getcookie";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
+import {
+  MdSensors,
+  MdPersonSearch,
+  MdOutlineYard,
+  MdDeviceThermostat,
+  MdOutlineWbSunny,
+  MdOutlineWaterDrop,
+  MdWhatshot,
+  MdLightbulbOutline,
+  MdWater,
+  MdAlarm,
+  MdManageSearch,
+} from "react-icons/md";
 
 interface PlantModuleData {
   response: {
@@ -178,6 +192,14 @@ const LiveDetection = (props: any) => {
               textDecor: undefined,
             }}
           >
+            <Icon
+              mr="2"
+              boxSize="8"
+              _groupHover={{
+                color: useColorModeValue("gray.600", "gray.300"),
+              }}
+              as={MdSensors}
+            ></Icon>
             Sensors Module Live Data
           </Link>
           <Table variant="simple">
@@ -188,7 +210,15 @@ const LiveDetection = (props: any) => {
                     mt={2}
                     color={useColorModeValue("gray.600", "gray.300")}
                   >
-                    Temperature: {" "}
+                    <Icon
+                      mr="1"
+                      boxSize="6"
+                      _groupHover={{
+                        color: useColorModeValue("gray.600", "gray.300"),
+                      }}
+                      as={MdDeviceThermostat}
+                    ></Icon>
+                    Temperature:{" "}
                     <chakra.p
                       display={{ base: "block", lg: "inline" }}
                       fontWeight="bold"
@@ -201,7 +231,15 @@ const LiveDetection = (props: any) => {
                     mt={2}
                     color={useColorModeValue("gray.600", "gray.300")}
                   >
-                    Humidity: {" "}
+                    <Icon
+                      mr="1"
+                      boxSize="6"
+                      _groupHover={{
+                        color: useColorModeValue("gray.600", "gray.300"),
+                      }}
+                      as={MdWhatshot}
+                    ></Icon>
+                    Humidity:{" "}
                     <chakra.p
                       display={{ base: "block", lg: "inline" }}
                       fontWeight="bold"
@@ -217,7 +255,15 @@ const LiveDetection = (props: any) => {
                     mt={2}
                     color={useColorModeValue("gray.600", "gray.300")}
                   >
-                    Light Level: {" "}
+                    <Icon
+                      mr="1"
+                      boxSize="6"
+                      _groupHover={{
+                        color: useColorModeValue("gray.600", "gray.300"),
+                      }}
+                      as={MdOutlineWbSunny}
+                    ></Icon>
+                    Light Level:{" "}
                     <chakra.p
                       display={{ base: "block", lg: "inline" }}
                       fontWeight="bold"
@@ -226,11 +272,11 @@ const LiveDetection = (props: any) => {
                       {getcookie("sensors_light_level", true)}
                     </chakra.p>
                   </chakra.p>
-                  <chakra.p
+                  {/* <chakra.p
                     mt={2}
                     color={useColorModeValue("gray.600", "gray.300")}
                   >
-                    Moisture: {" "}
+                    Moisture:{" "}
                     <chakra.p
                       display={{ base: "block", lg: "inline" }}
                       fontWeight="bold"
@@ -238,7 +284,7 @@ const LiveDetection = (props: any) => {
                     >
                       {getcookie("sensors_moisture", true)}
                     </chakra.p>
-                  </chakra.p>
+                  </chakra.p> */}
                   <br />
                 </Td>
               </Tr>
@@ -265,7 +311,7 @@ const LiveDetection = (props: any) => {
               isIndeterminate
               w={10}
               h={10}
-              my={6}
+              my={5}
               color="green.400"
               size="xxs"
             />
@@ -301,6 +347,14 @@ const LiveDetection = (props: any) => {
               textDecor: undefined,
             }}
           >
+            <Icon
+              mr="2"
+              boxSize="8"
+              _groupHover={{
+                color: useColorModeValue("gray.600", "gray.300"),
+              }}
+              as={MdPersonSearch}
+            ></Icon>
             Intruders Module Live Data
           </Link>
           <Table variant="simple">
@@ -311,6 +365,14 @@ const LiveDetection = (props: any) => {
                     mt={2}
                     color={useColorModeValue("gray.600", "gray.300")}
                   >
+                    <Icon
+                      mr="1"
+                      boxSize="6"
+                      _groupHover={{
+                        color: useColorModeValue("gray.600", "gray.300"),
+                      }}
+                      as={MdAlarm}
+                    ></Icon>
                     Alert Level:{" "}
                     <chakra.p
                       display={{ base: "block", lg: "inline" }}
@@ -319,13 +381,21 @@ const LiveDetection = (props: any) => {
                     >
                       {props.alert_level !== "None"
                         ? `${props.alert_level}`
-                        : `Loading...`}
+                        : `...`}
                     </chakra.p>
                   </chakra.p>
                   <chakra.p
                     mt={2}
                     color={useColorModeValue("gray.600", "gray.300")}
                   >
+                    <Icon
+                      mr="1"
+                      boxSize="6"
+                      _groupHover={{
+                        color: useColorModeValue("gray.600", "gray.300"),
+                      }}
+                      as={MdManageSearch}
+                    ></Icon>
                     Reason:{" "}
                     <chakra.p
                       display={{ base: "block", lg: "inline" }}
@@ -334,7 +404,7 @@ const LiveDetection = (props: any) => {
                     >
                       {props.alert_level !== "None"
                         ? `${props.detection_level}`
-                        : `Loading...`}
+                        : `...`}
                     </chakra.p>
                   </chakra.p>
                   <br />
@@ -363,7 +433,7 @@ const LiveDetection = (props: any) => {
               isIndeterminate
               w={10}
               h={10}
-              my={6}
+              my={5}
               color="green.400"
               size="xxs"
             />
@@ -398,6 +468,14 @@ const LiveDetection = (props: any) => {
               textDecor: undefined,
             }}
           >
+            <Icon
+              mr="2"
+              boxSize="8"
+              _groupHover={{
+                color: useColorModeValue("gray.600", "gray.300"),
+              }}
+              as={MdOutlineYard}
+            ></Icon>
             Plant Module Live Data
           </Link>
           <Table variant="simple">
@@ -408,7 +486,15 @@ const LiveDetection = (props: any) => {
                     mt={2}
                     color={useColorModeValue("gray.600", "gray.300")}
                   >
-                    Light Status: {" "}
+                    <Icon
+                      mr="1"
+                      boxSize="6"
+                      _groupHover={{
+                        color: useColorModeValue("gray.600", "gray.300"),
+                      }}
+                      as={MdLightbulbOutline}
+                    ></Icon>
+                    Light Status:{" "}
                     <chakra.p
                       display={{ base: "block", lg: "inline" }}
                       fontWeight="bold"
@@ -422,7 +508,15 @@ const LiveDetection = (props: any) => {
                     mt={2}
                     color={useColorModeValue("gray.600", "gray.300")}
                   >
-                    Times Watered: {" "}
+                    <Icon
+                      mr="1"
+                      boxSize="6"
+                      _groupHover={{
+                        color: useColorModeValue("gray.600", "gray.300"),
+                      }}
+                      as={MdOutlineWaterDrop}
+                    ></Icon>
+                    Times Watered:{" "}
                     <chakra.p
                       display={{ base: "block", lg: "inline" }}
                       fontWeight="bold"
@@ -439,27 +533,44 @@ const LiveDetection = (props: any) => {
                     mt={2}
                     color={useColorModeValue("gray.600", "gray.300")}
                   >
-                    Light Level: {" "}
+                    <Icon
+                      mr="1"
+                      boxSize="6"
+                      _groupHover={{
+                        color: useColorModeValue("gray.600", "gray.300"),
+                      }}
+                      as={MdOutlineWbSunny}
+                    ></Icon>
+                    Light Level:{" "}
                     <chakra.p
                       display={{ base: "block", lg: "inline" }}
                       fontWeight="bold"
                       color={useColorModeValue("brand.500", "brand.500")}
                     >
-                      {PlantModuleData.light_level || getcookie("plant_light_level", true)}
+                      {PlantModuleData.light_level ||
+                        getcookie("plant_light_level", true)}
                     </chakra.p>
                   </chakra.p>
                   <chakra.p
                     mt={2}
                     color={useColorModeValue("gray.600", "gray.300")}
                   >
-                    Moisture: {" "}
+                    <Icon
+                      mr="1"
+                      boxSize="6"
+                      _groupHover={{
+                        color: useColorModeValue("gray.600", "gray.300"),
+                      }}
+                      as={MdWater}
+                    ></Icon>
+                    Moisture:{" "}
                     <chakra.p
                       display={{ base: "block", lg: "inline" }}
                       fontWeight="bold"
                       color={useColorModeValue("brand.500", "brand.500")}
                     >
                       {PlantModuleData.moisture ||
-                        getcookie("moisture_light_level", true)}
+                        getcookie("plant_moisture", true)}
                     </chakra.p>
                   </chakra.p>
                   <br />
@@ -488,7 +599,7 @@ const LiveDetection = (props: any) => {
               isIndeterminate
               w={10}
               h={10}
-              my={6}
+              my={5}
               color="green.400"
               size="xxs"
             />
