@@ -7,6 +7,12 @@ import {
   Link,
   CircularProgress,
   Button,
+  Table,
+  Td,
+  Th,
+  Tr,
+  Tbody,
+  Text,
 } from "@chakra-ui/react";
 import getcookie from "../../getcookie";
 import { useHistory } from "react-router-dom";
@@ -176,28 +182,48 @@ const LiveDetection = (props: any) => {
           >
             Sensors Module Live Data
           </Link>
-          <chakra.p mt={2} color={useColorModeValue("gray.600", "gray.300")}>
-            Temperature: {getcookie("sensors_temperature", true)}
-            &nbsp;&nbsp;&nbsp; Humidity: {getcookie("sensors_humidity", true)}
-          </chakra.p>
-          <chakra.p
-            mt={2}
-            color={useColorModeValue("gray.600", "gray.300")}
-          ></chakra.p>
-          <chakra.p mt={2} color={useColorModeValue("gray.600", "gray.300")}>
-            Light Level: {getcookie("sensors_light_level", true)}
-            &nbsp;&nbsp;&nbsp; Moisture: {getcookie("sensors_moisture", true)}
-          </chakra.p>
-          <chakra.p
-            mt={2}
-            color={useColorModeValue("gray.600", "gray.300")}
-          ></chakra.p>
+          <Table variant="simple">
+            <Tbody>
+              <Tr>
+                <Td>
+                  <chakra.p
+                    mt={2}
+                    color={useColorModeValue("gray.600", "gray.300")}
+                  >
+                    Temperature: {getcookie("sensors_temperature", true)}
+                  </chakra.p>
+                  <chakra.p
+                    mt={2}
+                    color={useColorModeValue("gray.600", "gray.300")}
+                  >
+                    Humidity: {getcookie("sensors_humidity", true)}
+                  </chakra.p>
+                  <br />
+                </Td>
+                <Td>
+                  <chakra.p
+                    mt={2}
+                    color={useColorModeValue("gray.600", "gray.300")}
+                  >
+                    Light Level: {getcookie("sensors_light_level", true)}
+                  </chakra.p>
+                  <chakra.p
+                    mt={2}
+                    color={useColorModeValue("gray.600", "gray.300")}
+                  >
+                    Moisture: {getcookie("sensors_moisture", true)}
+                  </chakra.p>
+                  <br />
+                </Td>
+              </Tr>
+            </Tbody>
+          </Table>
         </Box>
 
         <Flex
           justifyContent="space-between"
           alignItems="center"
-          mt={6}
+          mt={-4}
           ml={-2}
           onClick={() => history.push("/dashboard/wiki/module/sensors")}
         >
@@ -250,22 +276,37 @@ const LiveDetection = (props: any) => {
           >
             Intruders Module Live Data
           </Link>
-          <chakra.p mt={2} color={useColorModeValue("gray.600", "gray.300")}>
-            {props.alert_level !== "None"
-              ? `Alert Level: ${props.alert_level}`
-              : `Alert Level: Loading...`}
-          </chakra.p>
-          <chakra.p mt={2} color={useColorModeValue("gray.600", "gray.300")}>
-            {props.detection_level !== ""
-              ? `Reason: ${props.detection_level}`
-              : `Reason: Loading...`}
-          </chakra.p>
+          <Table variant="simple">
+            <Tbody>
+              <Tr>
+                <Td>
+                  <chakra.p
+                    mt={2}
+                    color={useColorModeValue("gray.600", "gray.300")}
+                  >
+                    {props.alert_level !== "None"
+                      ? `Alert Level: ${props.alert_level}`
+                      : `Alert Level: Loading...`}
+                  </chakra.p>
+                  <chakra.p
+                    mt={2}
+                    color={useColorModeValue("gray.600", "gray.300")}
+                  >
+                    {props.detection_level !== ""
+                      ? `Reason: ${props.detection_level}`
+                      : `Reason: Loading...`}
+                  </chakra.p>
+                  <br />
+                </Td>
+              </Tr>
+            </Tbody>
+          </Table>
         </Box>
 
         <Flex
           justifyContent="space-between"
           alignItems="center"
-          mt={6}
+          mt={-4}
           ml={-2}
           onClick={() => history.push("/dashboard/wiki/module/intruders")}
         >
@@ -317,22 +358,56 @@ const LiveDetection = (props: any) => {
           >
             Plant Module Live Data
           </Link>
-          <chakra.p mt={2} color={useColorModeValue("gray.600", "gray.300")}>
-            Moisture: {PlantModuleData.moisture || getcookie("moisture_light_level", true)}
-            &nbsp;&nbsp;&nbsp; Light Status:{" "}
-            {(PlantModuleData.light_on ? "ON" : "OFF") || getcookie("plant_light_status", true)}
-          </chakra.p>
-          <chakra.p mt={2} color={useColorModeValue("gray.600", "gray.300")}>
-            Light Level: {PlantModuleData.light_level || getcookie("plant_light_level", true)}
-            &nbsp;&nbsp;&nbsp; Times Watered:{" "}
-            {PlantModuleData.num_waters || getcookie("plant_times_watered", true)}
-          </chakra.p>
+          <Table variant="simple">
+            <Tbody>
+              <Tr>
+                <Td>
+                  <chakra.p
+                    mt={2}
+                    color={useColorModeValue("gray.600", "gray.300")}
+                  >
+                    Moisture:{" "}
+                    {PlantModuleData.moisture ||
+                      getcookie("moisture_light_level", true)}
+                  </chakra.p>
+                  <chakra.p
+                    mt={2}
+                    color={useColorModeValue("gray.600", "gray.300")}
+                  >
+                    Light Status:{" "}
+                    {(PlantModuleData.light_on ? "ON" : "OFF") ||
+                      getcookie("plant_light_status", true)}
+                  </chakra.p>
+                  <br />
+                </Td>
+                <Td>
+                  <chakra.p
+                    mt={2}
+                    color={useColorModeValue("gray.600", "gray.300")}
+                  >
+                    Light Level:{" "}
+                    {PlantModuleData.light_level ||
+                      getcookie("plant_light_level", true)}
+                  </chakra.p>
+                  <chakra.p
+                    mt={2}
+                    color={useColorModeValue("gray.600", "gray.300")}
+                  >
+                    Times Watered:{" "}
+                    {PlantModuleData.num_waters ||
+                      getcookie("plant_times_watered", true)}
+                  </chakra.p>
+                  <br />
+                </Td>
+              </Tr>
+            </Tbody>
+          </Table>
         </Box>
 
         <Flex
           justifyContent="space-between"
           alignItems="center"
-          mt={6}
+          mt={-4}
           ml={-2}
           onClick={() => history.push("/dashboard/wiki/module/plant")}
         >
