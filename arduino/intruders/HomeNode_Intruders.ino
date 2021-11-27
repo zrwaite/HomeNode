@@ -2,7 +2,7 @@
 #define MEASURE_INTERVAL 100  // How long in milliseconds before the module checks sensors again
 #define UPDATE_INTERVAL 5000  // How long in milliseconds before the modules sends a status update
 #define SENSORS_NUM 3         // Number of sensors on the module
-#define ADDRESS 3             // Address of the module
+#define ADDRESS '3'           // Address of the module
 
 // Global data storage variables:
 
