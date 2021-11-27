@@ -1,8 +1,8 @@
 // Hardcoded parameters
-#define MEASURING_DATAPOINTS 3  // The amount of datapoints we take for a measurement
-#define COMPARING_DATAPOINTS 3 // The amount of measurements we use to compare data for significance
-#define MEASURING_INTERVAL 1000  // Milliseconds between individual sensor readings
-#define TOLERANCE 0.1           // Change in data before we deem in significant
+#define MEASURING_DATAPOINTS 5  // The amount of datapoints we take for a measurement
+#define COMPARING_DATAPOINTS 5 // The amount of measurements we use to compare data for significance
+#define MEASURING_INTERVAL 200  // Milliseconds between individual sensor readings
+#define TOLERANCE 1.0           // Change in data before we deem in significant
 #define ADDRESS '2'             // Address of the module
 #define SENSORS_NUM 2           // Number of sensors on the module
 
@@ -58,7 +58,8 @@ float readLight() {
 }
 
 float readMoisture() {
-  return convertData(analogRead(Moisture_sensor.pin));
+  return convertData((analogRead(Moisture_sensor.pin) +
+                      analogRead(Moisture_sensor.pin + 1) ) / 2);
 }
 
 void loop() {
@@ -89,8 +90,6 @@ void loop() {
   
         // Store the average
         sensors[i]->measurements[measurement_counter] = avg;
-        Serial.print("Added measurement: ");
-        Serial.println(avg);
       }
       
       measurement_counter++;
@@ -108,17 +107,13 @@ void loop() {
         // Check all the sensors for significant measurements
         for(int j = 0; j < COMPARING_DATAPOINTS; ++j){
           if(abs(sensors[i]->measurements[current_measurement] - 
-              sensors[i]->measurements[current_measurement-j]) >= TOLERANCE){
+              sensors[i]->measurements[current_measurement-j]) >= TOLERANCE ||
+              sensors[i]->active_data == 0.00){
             // The current datapoint is significant
             sensors[i]->significant_flag = 1;
             break;
           }
         }
-
-        Serial.print("Added active data: ");
-        Serial.print(sensors[i]->active_data);
-        Serial.print(sensors[i]->sent_data);
-        Serial.println(sensors[i]->measurements[current_measurement]);
         
         // Check if there was significant data
         if(sensors[i]->significant_flag == 1){
