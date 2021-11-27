@@ -11,7 +11,7 @@ interface ModuleData {
         temperature: number;
         humidity: number;
         light_level: number;
-        moisture: number;
+        // moisture: number;
         updatedAt: string;
       };
       daily_data: [
@@ -19,7 +19,7 @@ interface ModuleData {
           temperature: number;
           humidity: number;
           light_level: number;
-          moisture: number;
+          // moisture: number;
           updatedAt: string;
         }
       ];
@@ -35,7 +35,7 @@ function SensorGraphs() {
       "live temperature": 0,
       "live humidity": 0,
       "live light level": 0,
-      "live moisture": 0,
+      // "live moisture": 0,
       "updatedAt": "",
     },
   ]);
@@ -45,7 +45,7 @@ function SensorGraphs() {
       temperature: 0,
       humidity: 0,
       light_level: 0,
-      moisture: 0,
+      // moisture: 0,
       updatedAt: "",
     },
   ]);
@@ -62,14 +62,14 @@ function SensorGraphs() {
           "live temperature": current_data.temperature,
           "live humidity": current_data.humidity,
           "live light level": current_data.light_level,
-          "live moisture": current_data.moisture,
+          // "live moisture": current_data.moisture,
           "updatedAt": current_data.updatedAt,
         };
         let daily_data = data.response.result.daily_data;
         cookies.set("sensors_temperature", current_data.temperature);
         cookies.set("sensors_humidity", current_data.humidity);
         cookies.set("sensors_light_level", current_data.light_level);
-        cookies.set("sensors_moisture", current_data.moisture);
+        // cookies.set("sensors_moisture", current_data.moisture);
         console.log("GET SENSORMODULEDATA: ", current_data, daily_data);
         setCurrentData([...CurrentData, updated_data]);
         if (CurrentData.length > 10) {
@@ -130,7 +130,7 @@ function SensorGraphs() {
         // xAxisKey="updatedAt"
         yAxisColours={["#ff9d86"]}
       />
-      <GeneralLineChart
+      {/* <GeneralLineChart
         data={CurrentData}
         lines={[
           {
@@ -140,7 +140,7 @@ function SensorGraphs() {
         ]}
         // xAxisKey="updatedAt"
         yAxisColours={["#ff9d86"]}
-      />
+      /> */}
       <GeneralLineChart
         data={DailyData}
         lines={[
@@ -174,7 +174,7 @@ function SensorGraphs() {
         // xAxisKey="updatedAt"
         yAxisColours={["#ff9600"]}
       />
-      <GeneralLineChart
+      {/* <GeneralLineChart
         data={DailyData}
         lines={[
           {
@@ -184,7 +184,7 @@ function SensorGraphs() {
         ]}
         // xAxisKey="updatedAt"
         yAxisColours={["#ff9d86"]}
-      />
+      /> */}
     </div>
   );
 }

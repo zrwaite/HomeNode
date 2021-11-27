@@ -74,6 +74,7 @@ const SignIn = () => {
               )
               .then((res: any) => {
                 let module_list = res.data.response.result.modules;
+                console.log("MODULE LIST:", module_list);
                 module_list.forEach((module: any) => {
                   if (module.type === "sensors") {
                     cookies.set("sensors_id", module.module_id, { path: "/" });
@@ -81,6 +82,8 @@ const SignIn = () => {
                     cookies.set("intruders_id", module.module_id, {
                       path: "/",
                     });
+                  } else if (module.type === "plants") {
+                    cookies.set("plants_id", module.module_id, { path: "/" });
                   }
                 });
                 toast({
