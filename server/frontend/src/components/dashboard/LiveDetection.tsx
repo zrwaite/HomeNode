@@ -312,7 +312,7 @@ const LiveDetection = (props: any) => {
               w={10}
               h={10}
               my={5}
-              color="green.400"
+              color="brand.500"
               size="xxs"
             />
           </Flex>
@@ -434,7 +434,7 @@ const LiveDetection = (props: any) => {
               w={10}
               h={10}
               my={5}
-              color="green.400"
+              color="brand.500"
               size="xxs"
             />
           </Flex>
@@ -600,7 +600,7 @@ const LiveDetection = (props: any) => {
               w={10}
               h={10}
               my={5}
-              color="green.400"
+              color="brand.500"
               size="xxs"
             />
           </Flex>
