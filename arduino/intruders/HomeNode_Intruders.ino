@@ -44,8 +44,8 @@ void setup() {
 // Functions to read from sensors correctly,
 // true only ever means that the sensor has detected something
 float read_PIR(){ return digitalRead(PIR_sensor.pin); }
-float read_IR(){ return !digitalRead(IR_sensor.pin); }
-float read_reed(){ return digitalRead(reed_sensor.pin); }
+float read_IR(){ return digitalRead(IR_sensor.pin); }
+float read_reed(){ return !digitalRead(reed_sensor.pin); }
 
 void check_sensors(){
   // We save the fact the we detected something,
@@ -95,6 +95,8 @@ void send_locked_alerts(){
     } else {
       message += "0";
     }
+
+    message += "/";
   }
 
   message += "\\\n\r";
@@ -129,7 +131,7 @@ void loop() {
   while(Serial.available()){
     char c = Serial.read();
     switch (c){
-      case address:
+      case address:{
         // Create the message
         String message = "";
 
@@ -142,6 +144,7 @@ void loop() {
         message += "\n\r";
         
         Serial.print(message);
+        }
         break;
       case '~': // Lock character
         locked = true;
