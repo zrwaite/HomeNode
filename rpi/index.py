@@ -54,6 +54,7 @@ def read_alerts(ser, intruder_module):
 	data_dict = process_messages(alerts_buffer)
 
 	if data_dict:
+		print(data_dict)
 		intruder_module.alert_level = 0
 		for key, value in data_dict.items():
 			# Register the sensor type if it has not been registered
@@ -106,6 +107,7 @@ def index_main():
 
 			# Post data from non-empty dicts
 			if data_dict:
+				print(data_dict)
 				for key, value in data_dict.items():
 					if "plant" in key:
 						if not plant_module.registered(key):
@@ -128,7 +130,6 @@ def index_main():
 				plant_module.upload_data()
 				plant_module.check_data_and_notify()
 
-			print(data_buffer)
 			request_timer = perf_counter()
 
 		# Check if there has been any alerts sent
