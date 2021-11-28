@@ -67,10 +67,10 @@ def read_alerts(ser, intruder_module):
 			sensor.append_data(value)
 
 		intruder_module.update_current_data()
-		print('current: '+str(intruder_module.alert_level))
+		print('Alert level: '+str(intruder_module.alert_level))
 		notify = intruder_module.upload_data()
 		if notify:
-			intruder_module.check_data_and_notify()
+			intruder_module.notify()
 
 def index_main():
 

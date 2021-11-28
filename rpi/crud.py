@@ -84,6 +84,7 @@ def post_home_data(python_dict):
   return response
 
 def put_notification_data(python_dict, auth_token):
+  print("Notification has been sent", python_dict)
   response = put_data(python_dict, "/home?put_type=notification", auth_token)
   return response
 
