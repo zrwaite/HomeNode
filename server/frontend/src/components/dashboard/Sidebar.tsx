@@ -221,15 +221,15 @@ function Sidebar() {
           />
         </NavItem>
         <Collapse in={integrations.isOpen}>
-          <NavItem pl="12" py="2" type="wiki/module/sensors">
-            Sensors Module
+        <NavItem pl="12" py="2" type="wiki/module/plant">
+            Plant Module
           </NavItem>
           <NavItem pl="12" py="2" type="wiki/module/intruders">
             Intruders Module
           </NavItem>
-          <NavItem pl="12" py="2" type="wiki/module/plant">
-            Plant Module
-          </NavItem>
+          <NavItem pl="12" py="2" type="wiki/module/sensors">
+            Sensors Module
+          </NavItem>          
         </Collapse>
         {/* <NavItem icon={AiFillGift}>Changelog</NavItem> */}
         <NavItem icon={BsGearFill} type="settings">

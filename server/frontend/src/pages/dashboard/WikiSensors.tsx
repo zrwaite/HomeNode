@@ -39,7 +39,7 @@ function WikiSensors() {
       <Heading size="xl">Image Gallery</Heading>
       <br />
       <SimpleGrid columns={3} spacing={10}>
-        <Image src={imagesensors1} alt="Intruder" height="500px" />
+        <Image src={imagesensors1} alt="Sensor" height="500px" />
       </SimpleGrid>
     </Flex>
   );
