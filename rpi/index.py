@@ -67,6 +67,7 @@ def read_alerts(ser, intruder_module):
 			sensor.append_data(value)
 
 		intruder_module.update_current_data()
+		print('current: '+str(intruder_module.alert_level))
 		notify = intruder_module.upload_data()
 		if notify:
 			intruder_module.check_data_and_notify()
@@ -135,7 +136,6 @@ def index_main():
 		# Alerts are important messages that need to be proccessed right away
 		while ser.in_waiting:
 			read_alerts(ser, intruder_module)
-			print('current: '+str(intruder_module.alert_level))
 
 if __name__ == "__main__":
 	index_main()

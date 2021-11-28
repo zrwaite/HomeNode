@@ -249,6 +249,10 @@ class IntruderModule(Module):
 
         print("Initialized intruder module, with id", self._id)
 
+    def register_sensor(self, sensor_key):
+        new_sensor = IntruderSensor(sensor_key)
+        self.sensors.append(new_sensor)
+
     def get_intruder_module_id(self):
         if os.path.isfile('./data/intruder_module_id.json'):
             self.load_intruder_module_id_from_json()
