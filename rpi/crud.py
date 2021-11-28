@@ -10,7 +10,7 @@ INTRUDERS_URL = "/intruders?put_type=daily_data"
 USER_URL = "/user"
 
 
-IMAGE_URL = "/rpicamera"
+IMAGE_URL = "/images"
 path_img = './images/picture.jpg'
 
 def post_image():

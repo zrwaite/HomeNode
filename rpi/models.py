@@ -2,6 +2,7 @@ import json
 from datetime import datetime
 from crud import *
 import os
+from camera import *
 
 class Home:
     def __init__(self, name):
@@ -244,6 +245,7 @@ class PlantModule(Module):
             final_object['num_water'] = final_object.pop('plants_watering')
 
         response = put_plant_data(final_object, self.auth_token)
+        print(response)
         return response
 
 
@@ -364,6 +366,11 @@ class IntruderModule(Module):
         else:
             title = "Intruder Detection Triggered!"
         response = put_notification_data({'id': self.home_id, 'notification': {'title': title, 'module_id': self._id, 'info': info}}, self.auth_token)
+
+        # Save image and upload image of the intruder
+        capture_image_from_rpi_camera()
+        post_image()
+
         return response
 
 
