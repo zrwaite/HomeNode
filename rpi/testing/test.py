@@ -60,6 +60,10 @@ class TestCrud(unittest.TestCase):
         self.assertIsNotNone(self.intruder_module._id)
         self.assertIsNotNone(self.intruder_module.auth_token)
 
+    def testPlantModuleInitialization(self):
+        self.assertIsNotNone(self.plant_module._id)
+        self.assertIsNotNone(self.plant_module.auth_token)
+
 
 class TestModels(unittest.TestCase):
     def setUp(self):
@@ -110,6 +114,11 @@ class TestModels(unittest.TestCase):
         self.assertEqual(self.intruder_module.alert_level, 6)
         self.assertEqual(self.intruder_module.previous_alert_level, 0)
 
+    def test_plant_sensor(self): # TODO: Fix plant
+        sensor = Sensor('plants_light_level')
+        sensor = Sensor('plants_moisture')
+        self.plant_module.add_sensors(sensor)
+
 
 class TestIntegrationMethods(unittest.TestCase):
     '''
@@ -141,10 +150,11 @@ class TestIntegrationMethods(unittest.TestCase):
 
         # Initialize Plant Module
         self.plant_module = PlantModule(self.home.home_id)
-        self.light_sensor = Sensor('plant_light_level')
-        self.moisture_sensor = Sensor('plant_moisture')
-        self.watering_sensor = Sensor('plant_watering')
-        self.light_switch_sensor = Sensor('plant_light_switch')
+        self.light_sensor = Sensor('plants_light_level')
+        self.moisture_sensor = Sensor('plants_moisture')
+        self.watering_sensor = Sensor('plants_watering')
+        self.light_switch_sensor = Sensor('plants_light_switch')
+        self.plant_module.add_sensors(self.light_sensor, self.moisture_sensor, self.watering_sensor, self.light_switch_sensor)
 
     def tearDown(self):
         delete_home_data(self.home.home_id, self.home.auth_token)
@@ -179,6 +189,15 @@ class TestIntegrationMethods(unittest.TestCase):
         self.assertEqual(response.json()['success'], True)
         self.assertEqual(response.json()['response']['notifications'][-1]['title'], "Intruder Gone")
         self.assertEqual(response.json()['response']['notifications'][-1]['info'], "The threat has been eliminated.")
+
+    def testPlantPutData(self):
+        self.light_sensor.append_data(50)
+        self.moisture_sensor.append_data(20)
+        self.plant_module.update_current_data()
+        response = self.plant_module.upload_data()
+        print(response.json())
+        self.assertEqual(response.json()['success'], True)
+
 
 
 if __name__ == '__main__':

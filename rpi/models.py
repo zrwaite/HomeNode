@@ -233,6 +233,16 @@ class PlantModule(Module):
         final_object = self.current_data
         final_object['id'] = self._id
 
+        # Rename keys because jackass Zac wants different names
+        if 'plants_light_level' in final_object:
+            final_object['light_level'] = final_object.pop('plants_light_level')
+        if 'plants_moisture' in final_object:
+            final_object['moisture'] = final_object.pop('plants_moisture')
+        if 'plants_light_switch' in final_object:
+            final_object['light_on'] = final_object.pop('plants_light_switch')
+        if 'plants_watering' in final_object:
+            final_object['num_water'] = final_object.pop('plants_watering')
+
         response = put_plant_data(final_object, self.auth_token)
         return response
 
