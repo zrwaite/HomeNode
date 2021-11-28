@@ -7,8 +7,8 @@
 #define SENSORS_NUM 2           // Number of sensors on the module
 #define LIGHT_THRESHOLD 15      // At what level of light will the module turn on it's own light
 #define WATER_THRESHOLD 40      // At what level of moisture will the module water the plant
-#define WATERING_DURATION 2000  // Number of milliseconds the module will be watering the plant
-#define WATERING_INTERVAL 30    // Number of seconds before the module can water the plant again
+#define WATERING_DURATION 5000  // Number of milliseconds the module will be watering the plant
+#define WATERING_INTERVAL 15    // Number of seconds before the module can water the plant again
 #define LIGHT_PIN 3
 #define WATERING_PIN 2
 
@@ -36,6 +36,8 @@ float timer = 0;            // Timer used for measruing interval
 char address = ADDRESS;     // Address of the module
 
 int light_state = 0;
+int watering_state = 0;
+float watering_timer = 0;
 
 void init_array(float arr[], int len){
   for(int i = 0; i < len; ++i){
@@ -47,6 +49,7 @@ void init_array(float arr[], int len){
 void setup() {
   Serial.begin(9600);
   timer = millis();
+  watering_timer = timer;
 
   // Initialize all the data arrays
   init_array(Light_sensor.data, MEASURING_DATAPOINTS);
@@ -88,14 +91,33 @@ void checkLight(float light){
     Serial.print("plants_light_switch/1\\\n\r");
     light_state = 1;
     
-  } else if(light_state == 1) {
+  } else if(light >= LIGHT_THRESHOLD && light_state == 1) {
     digitalWrite(LIGHT_PIN, 0);
     Serial.print("plants_light_switch/0\\\n\r");
     light_state = 0;
   }
 }
 
+void checkMoisture(float moisture){
+  if(moisture <= WATER_THRESHOLD &&  
+      millis() - watering_timer >= (WATERING_INTERVAL * 1000)){
+    watering_state = 1;
+    Serial.print("plants_watering/0\\\n\r");
+    watering_timer = millis();
+  }
+}
+
 void loop() {
+
+  // Check if we need to start/stop watering the plant
+  if(watering_state == true){
+    if(millis() - watering_timer <= WATERING_DURATION){
+      digitalWrite(WATERING_PIN, HIGH);
+    } else {
+      digitalWrite(WATERING_PIN, LOW);
+      watering_state = 0;
+    }
+  }
 
   // Check if it is time to read from the sensors
   if(millis() - timer > MEASURING_INTERVAL){
@@ -157,6 +179,8 @@ void loop() {
         // Checking if any actions need to be performed
         if(sensors[i]->tag == "plant_light_level"){
           checkLight(sensors[i]->measurements[current_measurement]);
+        } else if(sensors[i]->tag == "plant_moisture"){
+          checkMoisture(sensors[i]->measurements[current_measurement]);
         }
       }
     }
@@ -187,11 +211,11 @@ void loop() {
       message += "\n\r";
 
       Serial.print(message);
+
+    // Emergency measure for testing
+    } else if(c == 'e'){
+      watering_state = 0;
+      digitalWrite(WATERING_PIN, HIGH);
     }
   }
 }
-
-// "plant_light_level"
-// "plant_moisture"
-// "watering"
-// "light_switch"
