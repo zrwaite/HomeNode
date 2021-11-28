@@ -313,8 +313,17 @@ class IntruderModule(Module):
         elif i[0] and i[2]:
             message = "URGENT! There is a high chance someone broke into your house!"
 
+        elif i[1] and i[2]:
+            message = "URGENT! There is someone at your door!"
+
         elif i[0]:
             message = "Warning! Your window is open."
+
+        elif i[1]:
+            message = "Warning! Your door is open."
+
+        elif i[2]:
+            message = "Warning! There is motion in your house."
 
         else:
             message = "The threat has been eliminated."
