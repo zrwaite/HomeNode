@@ -112,13 +112,12 @@ function Sidebar() {
               isClosable: true,
             });
           }
-          return 0;
         });
         console.log("GET NOTIFS: ", received_notifs);
       })
       .then((res) => {
         axios
-          .put("http://homenode.tech/api/home?put_type=notification", {
+          .put("http://homenode.tech/api/home?put_type=read_notification", {
             id: getcookie("home_id", true),
           })
           .then((res) => {
