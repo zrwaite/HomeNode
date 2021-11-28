@@ -2,7 +2,10 @@ import json
 from datetime import datetime
 from crud import *
 import os
-from camera import *
+
+RASPBERRY_OS = False
+if RASPBERRY_OS:
+    from camera import *
 
 class Home:
     def __init__(self, name):
@@ -368,8 +371,9 @@ class IntruderModule(Module):
         response = put_notification_data({'id': self.home_id, 'notification': {'title': title, 'module_id': self._id, 'info': info}}, self.auth_token)
 
         # Save image and upload image of the intruder
-        capture_image_from_rpi_camera()
-        post_image()
+        if RASPBERRY_OS:
+            capture_image_from_rpi_camera()
+            post_image(self.home_id)
 
         return response
 

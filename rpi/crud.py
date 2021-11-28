@@ -13,10 +13,10 @@ USER_URL = "/user"
 IMAGE_URL = "/images"
 path_img = './images/picture.jpg'
 
-def post_image():
+def post_image(home_id):
   with open(path_img, 'rb') as img:
     name_img= os.path.basename(path_img)
-    files= {'image': (name_img,img,'multipart/form-data',{'Expires': '0'}) }
+    files= {'image': (name_img,img,'multipart/form-data',{'Expires': '0'}), 'home_id': home_id }
     with requests.Session() as s:
       response = s.post(SERVER_ADDRESS + IMAGE_URL,files=files)
       print(response.json())

@@ -64,6 +64,11 @@ class TestCrud(unittest.TestCase):
         self.assertIsNotNone(self.plant_module._id)
         self.assertIsNotNone(self.plant_module.auth_token)
 
+    def testImageUpload(self):
+        response = post_image(self.intruder_module.home_id)
+        print(response.json())
+        self.assertEqual(response.json().status, 200)
+
 
 class TestModels(unittest.TestCase):
     def setUp(self):
