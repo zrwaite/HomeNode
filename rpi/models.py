@@ -329,7 +329,6 @@ class IntruderModule(Module):
             final_object['detection'] = self.create_detection_message()
 
             response = put_intruders_data(final_object, self.auth_token)
-            print(response.json())
             if (self.alert_level == 0 and self.previous_alert_level > 0) or response.json()['response']['notify']: # TODO: Change this to relevant
                 return True
 
@@ -337,7 +336,6 @@ class IntruderModule(Module):
 
     def notify(self):
         info = self.create_detection_message()
-        print(info)
         if info == "The threat has been eliminated.":
             title = "Intruder Gone"
         else:
