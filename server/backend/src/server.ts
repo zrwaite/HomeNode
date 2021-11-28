@@ -19,16 +19,13 @@ app.use(express.static(path.resolve(__dirname, "../../frontend/build"))); //deve
 
 // routes
 import getFile from "./route/files.route";
-import sensorsRoute from "./route/sensors.route";
-import intrudersRoute from "./route/intruders.route";
-import homeRoute from "./route/home.route";
-import userRoute from "./route/user.route";
+import getFrontend from "./route/frontend.route";
+import apiRoute from "./route/api.route";
+import authRoute from "./route/auth.route";
 
 // api
-app.use("/api/sensors", sensorsRoute);
-app.use("/api/intruders", intrudersRoute);
-app.use("/api/home", homeRoute);
-app.use("/api/user", userRoute);
+app.use("/api", apiRoute);
+app.use("/auth", authRoute);
 
 app.get("/test", (req, res) => {
 	let result = new response(200, [], {page: "test"}, true);
@@ -40,10 +37,11 @@ app.get("/backend/*", (req, res) => {
 	res.status(result.status).json(result); //Return 200 result
 });
 
-app.get("/*", getFile);
-
+app.get("/files/*", getFile);
 app.get("/", (req: express.Request, res: express.Response) => {
 	res.sendFile(path.resolve(__dirname, "../../frontend/build", "index.html")); //production
 });
+app.get("/*", getFrontend);
+
 
 export default app; //Export server for use in index.js

@@ -13,13 +13,17 @@ const intrudersUpdateSchema = new mongoose.Schema({
 
 const intrudersDailySchema = new mongoose.Schema({
     date: {
-        type: String,
+        type: Date,
         required: true,
     },
     intrusion_detections : {
         type: Boolean,
         required: false,
     },
+    max_alert_level: {
+        type: Number,
+        required: false,
+    }
 }, {timestamps: true});
 
 const intrudersSchema = new mongoose.Schema({

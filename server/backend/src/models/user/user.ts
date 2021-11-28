@@ -8,7 +8,7 @@ const userSettingsSchema = new mongoose.Schema({
     email_notifications : {
         type: Boolean,
         required: true,
-    }
+    },
 }, {timestamps: true});
 
 const userSchema = new mongoose.Schema({
@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    hash: {
+        type: String,
+        required: true,
+    }, 
     home_id: {
         type: mongoose.Types.ObjectId,
         required: true,

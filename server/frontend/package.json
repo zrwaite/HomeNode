@@ -18,6 +18,7 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/react-router-dom": "^5.3.0",
+    "axios": "^0.24.0",
     "d3": "^7.1.1",
     "framer-motion": "^4.1.17",
     "jwt-decode": "^3.1.2",

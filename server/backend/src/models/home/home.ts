@@ -5,6 +5,10 @@ const homeSettingsSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
     },
+    safety_level : {
+        type: Number,
+        required: true
+    }
 }, {timestamps: true});
 
 const homeModulesSchema = new mongoose.Schema({
@@ -41,6 +45,10 @@ const homeNotificationsSchema = new mongoose.Schema({
 const homeSchema = new mongoose.Schema({
     // define type, required (the most important)
     name: {
+        type: String,
+        required: true,
+    },
+    hash: {
         type: String,
         required: true,
     },

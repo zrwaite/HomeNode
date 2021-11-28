@@ -1,118 +1,227 @@
 import {Request, Response, NextFunction} from "express"; //Typescript types
 import response from "../models/response"; //Created pre-formatted uniform response
 import getResult from "./modules/getResult"; //Creates formatted response
-import Intruders from "../models/intruders"; //Schema for mongodb
+import Intruders from "../models/intruders/intruders"; //Schema for mongodb
 import axios from "axios";
-interface intrudersGetQuery {
-	//Url query interface for get request
-	id?: string;
-	home_id?: string;
+import {verifyToken, getToken} from "../auth/tokenFunctions";
+
+
+/* Import interfaces */
+import {intrudersGetQuery, intrudersPostBody, intrudersDailyPutBody, intrudersPastPutBody, intrudersDeleteBody} from "../models/intruders/intudersInterface";
+
+const compareAuthHomeId = async (headers: any, module_id:string) => {
+	const auth = await verifyToken(headers);
+	if (!auth.authorized) return false;
+	let getLink = "/api/intruders?id="+module_id;
+	let token = await getToken(headers);
+	if (token) {
+		try{
+			const intruderData: any = await axios.get(getLink,
+				{headers: {
+					Authorization: "Bearer "+token
+				}});
+			let home_id = intruderData.data.response.result.home_id;
+			if (home_id == auth.home_id) return true;
+		} catch (e) {
+			return false;
+		}
+	}
+	return false;
 }
-interface intrudersPostBody {
-	//Body query interface for post request
-	name: string;
-	username: string;
-	home_id: string;
-	current_data: object;
-	daily_data: object[];
-	past_data: object[];
-}
-interface intrudersPutBody {
-	//Body query interface for put request
-	detection?: string;
-	alert_level?: number;
-}
-const buildGetQuery = (req: any) => {
+
+/* Build Functions */
+
+const buildGetQuery = async (req: any) => {
 	//Create the get request
-	let exists = false;
-	let query: intrudersGetQuery = {};
-	if (req.query.id !== undefined) {
-		query.id = req.query.id;
-		exists = true;
-	} else if (req.query.home_id !== undefined) {
-		query.home_id = req.query.home_id;
-		exists = true;
+	let queryType = undefined;
+	let query: any = {};
+	let undefinedParams: string[] = [];
+	let auth = await verifyToken(req.headers);
+	if (!auth) return {queryType: queryType, query: query, errors: ["Authorization"]};
+	switch (req.query.get_type){
+		case "all":
+			queryType = "all";
+			break;
+		default:
+			if (req.query.id!== undefined){
+				query = req.query.id;
+				queryType = "id";
+			} else {
+				undefinedParams.push("id");
+			}
 	}
-	return {exists: exists, query: query};
+	return {auth: auth, queryType: queryType, query: query, errors: undefinedParams};
 };
-const buildPostBody = (req: any) => {
+const buildPostBody = async (req: any) => {
 	//Create the post request
-	let exists = true;
-	let list = [req.body.name, req.body.username, req.body.home_id, req.body.current_data];
-	list.forEach((param) => {
-		if (param === undefined) exists = false;
-	});
-	let body: intrudersPostBody = {
-		name: req.body.name,
-		username: req.body.username,
-		home_id: req.body.home_id,
-		current_data: req.body.current_data,
-		daily_data: [],
-		past_data: [],
-	};
-	return {exists: exists, body: body};
-};
-const buildPutBody = (req: any) => {
-	//Create the put request for the daily data array
 	let exists = false;
-	let body: intrudersPutBody = {};
+	let undefinedParams: string[] = [];
+	let body: any = {}; 
+	["name", "home_id", "current_data"].forEach((param) => {
+		if (req.body[param]==undefined) undefinedParams.push(param);
+	});
+	let auth = await verifyToken(req.headers);
+	if (!auth) return {token: "", exists: exists, body: body, errors: ["valid token"]};
+	let token = await getToken(req.headers);
+	if (!token) undefinedParams.push("token");
+	if (undefinedParams.length == 0) { 
+		let postBody: intrudersPostBody = {
+			name: req.body.name,
+			home_id: req.body.home_id,
+			current_data: req.body.current_data,
+			daily_data: [],
+			past_data: [],
+		};
+		body = postBody;
+		exists = true;
+	}
+	return {token: token, exists: exists, body: body, errors: undefinedParams};
+};
+const buildPutBody = async (req: any) => {
+	//Create the put request for the daily data array
+	let putType: string|undefined = req.query.put_type;
 	let id = req.body.id;
-	if (req.body.detection !== undefined) {
-		body.detection = req.body.detection;
-		exists = true;
+	let body: any = {};
+	let undefinedParams: string[] = [];
+	let token = await getToken(req.headers);
+	if (!token) undefinedParams.push("token");
+	let alertLevel = null;
+	if (id === undefined) undefinedParams.push("id");
+	switch (putType) {
+		case "past_data":
+			["date", "intrusion_detections", "max_alert_level"].forEach((param) => {
+				if (req.body[param]==undefined) undefinedParams.push(param);
+			});
+			if (undefinedParams.length == 0) { 
+				let pastBody: intrudersPastPutBody = {
+					date: req.body.date,
+					intrusion_detections: req.body.intrusion_detections,
+					max_alert_level: req.body.max_alert_level,
+				};
+				body = {$push: {past_data: pastBody}};
+			} else {
+				putType = undefined;
+			}
+			break;
+		case "daily_data":
+			["detection", "alert_level"].forEach((param) => {
+				if (req.body[param]==undefined) undefinedParams.push(param);
+			});
+			if (undefinedParams.length == 0) { 
+				let dailyBody: intrudersDailyPutBody = {
+					detection: req.body.detection,
+					alert_level: req.body.alert_level
+				};
+				alertLevel = req.body.alert_level;
+				body = {$push: {daily_data: dailyBody}, current_data: dailyBody};
+			} else {
+				putType = undefined;
+			}
+			break;
+		case "image": 
+			
+			break;
+		default:
+			undefinedParams.push("put_type");
+			break;
 	}
-	if (req.body.alert_level !== undefined) {
-		body.alert_level = req.body.alert_level;
-		exists = true;
+	if (undefinedParams.length == 0 && ! await compareAuthHomeId(req.headers, id)){
+		return {putType: undefined, id: id, body: body, errors: ["valid home_id in the token"]};
 	}
-	return {exists: exists, id: id, body: body};
+	if (id === undefined) putType = undefined;
+	return {putType: putType, id: id, body: body, errors: undefinedParams, alertLevel: alertLevel, token: token};
 };
 
+const buildDeleteBody = async (req: any) =>{
+	let deleteType = undefined;
+	let id = req.body.id;
+	let body: any = {};
+	let undefinedParams: string[] = [];
+	let auth = await verifyToken(req.headers);
+	if (!auth) return {deleteType: undefined, id: id, body: body, errors: ["authorization"]};
+	switch (req.query.delete_type){
+		case "daily_data":
+			["detection", "alert_level"].forEach((param) => {
+				if (req.body[param]==undefined) undefinedParams.push(param);
+			});
+			if (undefinedParams.length == 0) { 
+				let deleteBody: intrudersDeleteBody = {
+					detection: req.body.detection,
+					alert_level: req.body.alert_level,
+				};
+				deleteType = "daily_data";
+				body = deleteBody;
+			} else {
+				deleteType= undefined;
+			}
+			break;
+		case "intruders":
+			deleteType = "intruders";
+			break;
+		default:
+			undefinedParams.push("delete_type");
+			break;
+	}
+	if (id === undefined) {
+		deleteType = undefined;
+		undefinedParams.push("id");
+	} else if (! await compareAuthHomeId(req.headers, id)){
+		deleteType = undefined;
+		undefinedParams.push("Valid home_id in token");
+	}
+	return {deleteType: deleteType, id: id, body: body, errors: undefinedParams};
+}
 /* register controller */
 export default class intrudersController {
 	static async apiGetIntruders(req: Request, res: Response, next: NextFunction) {
 		let result = new response(); //Create new standardized response
-		let intruders;
-		let {exists, query} = buildGetQuery(req);
-		if (query.id) {
-			//Find by id
-			try {
-				intruders = await Intruders.findById(query.id);
-			} catch (e: any) {
-				result.errors.push("Query error", e);
-			}
-		} else if (exists) {
-			//Find by other queries
-			try {
-				intruders = await Intruders.find(query);
-			} catch (e: any) {
-				result.errors.push("Query error", e);
-			}
-		} else {
-			result.errors.push("No queries. Include id or username.");
+		let {auth, queryType, query, errors} = await buildGetQuery(req);
+		let intruders:any;
+		switch (queryType){
+			case "all":
+				try{intruders = await Intruders.find();} 
+				catch (e: any) {result.errors.push("Query error", e);}
+				break;
+			case "id":
+				try {intruders = await Intruders.findById(query);} 
+				catch (e: any) {result.errors.push("Query error", e);}
+				break;
+			case "home_id":
+				try {intruders = await Intruders.findOne(query);}
+				catch (e: any) {result.errors.push("Query error", e);}
+				break;
+			default:
+				errors.forEach((error)=> result.errors.push("missing "+error))
+		}
+		if (queryType !== "all" && intruders && intruders.home_id.toString() !== auth.home_id) {
+			result.errors.push("Not authorized too access these sensors");
+			result.response = {};
 		}
 		result = getResult(intruders, "intruders", result);
 		res.status(result.status).json(result); //Return whatever result remains
 	}
 	static async apiPostIntruders(req: Request, res: Response, next: NextFunction) {
 		let result = new response();
-		let {exists, body} = buildPostBody(req);
+		let {token, exists, body, errors} = await buildPostBody(req);
 		let newIntruders;
 		if (exists) {
 			try {
 				newIntruders = new Intruders(body);
-				try {
-					await newIntruders.save(); //Saves branch to mongodb
-					const homeData: any = await axios.put("/api/home", {
-						id: body.home_id,
-						module : {
-							type: 'intruders',
-							module_id: newIntruders._id 
-						}
-					});
+				await newIntruders.save(); //Saves branch to mongodb
+				let putBody = {
+					id: body.home_id,
+					module : {
+						type: 'intruders',
+						module_id: newIntruders._id.toString()
+					}
+				}
+				try{
+					const homeData: any = await axios.put("/api/home?put_type=module", putBody, 
+					{headers: {
+						Authorization: "Bearer "+token
+					}});
 					let homeResult: any = homeData.data;
 					if (homeResult) {
-						console.log(homeResult);
 						result.success = homeResult.success;
 						result.errors.push(...homeResult.errors);
 						result.status = homeResult.status;
@@ -121,37 +230,98 @@ export default class intrudersController {
 							homeResult: homeResult.response,
 						};
 					} else {
-						result.success = false;
 						result.errors.push("Error adding user to home");
-						result.status = 400;
 						result.response = {intruderResult: newIntruders};
 					}
-				} catch (e: any) {
-					result.errors.push("Error adding to database", e);
+				} catch (e: any){
+					result.errors.push("Error adding to home", e);
 				}
 			} catch (e: any) {
 				result.errors.push("Error creating request", e);
 			}
 		} else {
-			console.log(body);
-			result.errors.push("Body error. Make sure to include name, home_id, current_data, daily_data, past_data");
+			errors.forEach((error)=>result.errors.push("missing "+error));
 		}
 		res.status(result.status).json(result);
 	}
 	static async apiPutIntruders(req: Request, res: Response, next: NextFunction) {
 		let result = new response();
-		let {exists, id, body} = buildPutBody(req);
-		let intruders;
-		if (exists) {
+		let {putType, id, body, errors, alertLevel, token} = await buildPutBody(req);
+		let intruders:any;
+		if (putType) {
 			try {
 				//prettier-ignore
-				intruders = await Intruders.findByIdAndUpdate(id, {$push: {daily_data: body}, current_data: body}, {new:true}); //Saves branch to mongodb
-				result.status = 201;
-				result.response = intruders;
-				result.success = true;
+				intruders = await Intruders.findByIdAndUpdate(id, body, {new:true}); //Saves branch to mongodb
+				try{
+					let home_id = intruders.home_id;
+					console.log("/api/home?id="+home_id.toString());
+					const homeData: any = await axios.get("/api/home?id="+home_id.toString(),
+					{headers: {
+						Authorization: "Bearer "+token
+					}});
+					console.log(homeData);
+					let homeResult: any = homeData.data;
+					if (homeResult) {
+						let notify = false;
+						let safetyLevel = homeResult.response.result.settings.safety_level;
+						console.log(homeResult)
+						result.success = homeResult.success;
+						result.errors.push(...homeResult.errors);
+						result.status = homeResult.status;
+						if (safetyLevel+alertLevel >=10) notify = true;
+						result.response = {
+							intruderResult: intruders,
+							homeResult: homeResult.response,
+							notify: notify
+						};
+					} else {
+						result.errors.push("Error getting home data");
+						result.response = {intruderResult: intruders, notify: false};
+					}
+				} catch (e: any){
+					result.errors.push("Error adding to home", e);
+				}
 			} catch (e: any) {
+				result.status = 404;
 				result.errors.push("Error creating request", e);
 			}
+		} else {
+			errors.forEach((error)=>result.errors.push("Missing "+error));
+		}
+		res.status(result.status).json(result);
+	}
+	static async apiDeleteIntruders(req: Request, res: Response, next: NextFunction){
+		let result = new response();
+		let {deleteType, id, body, errors} = await buildDeleteBody(req);
+		let intruders;
+		switch(deleteType){
+			case "daily_data":
+				try{
+					intruders = await Intruders.findByIdAndUpdate(id, {daily_data: [body]}, {new:true}); //Saves branch to mongodb
+					result.status = 201;
+					result.response = intruders;
+					result.success = true;
+				} catch (e: any) {
+					result.errors.push("Error creating request", e);
+				}
+				break;
+			case "intruders":
+				try	{
+					intruders = await Intruders.findByIdAndDelete(id, {new:true});
+					if (intruders) {
+						result.status = 201;
+						result.response = {deleted: id};
+						result.success = true;
+					} else {
+						result.status = 404;
+						result.errors.push("intruders module not found");
+					}
+				} catch (e:any) {
+					result.errors.push("Error deleting intruders", e);
+				}
+				break;
+			default:
+				errors.forEach((error)=> result.errors.push("missing "+error))
 		}
 		res.status(result.status).json(result);
 	}

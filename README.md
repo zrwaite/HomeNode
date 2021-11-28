@@ -37,3 +37,4 @@ Our idea is to create a smart home system to monitor and control many different 
 * Creating efficient ways to maintain accurate, up to date information without too much electricity or too many online data transfers. 
 * Creating and printing 3d models for discrete, simple, and functional hardware modules
 
+[![DigitalOcean](https://web-platforms.sfo2.cdn.digitaloceanspaces.com/WWW/Badge%201.svg)](https://www.digitalocean.com/?refcode=6d04f92a884b&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge)
