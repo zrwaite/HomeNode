@@ -84,29 +84,29 @@ class TestModels(unittest.TestCase):
 
     def test_intruder_sensor_append_data(self):
         # 'motion', 'door', 'window'
-        sensor = IntruderSensor('motion')
+        sensor = IntruderSensor('intruders_motion')
         sensor.append_data("1")
         sensor.update_json()
         self.assertEqual(sensor.get_most_recent_data(), True)
 
     def test_intruder_sensor_alert_level(self):
-        sensor = IntruderSensor('motion')
+        sensor = IntruderSensor('intruders_motion')
         self.intruder_module.add_sensors(sensor)
         sensor.append_data("1")
-        self.intruder_module.update_alert_level()
+        self.intruder_module.update_current_data()
         self.assertEqual(self.intruder_module.alert_level, 4)
         self.assertEqual(self.intruder_module.previous_alert_level, 0)
 
         sensor.append_data("0")
-        self.intruder_module.update_alert_level()
+        self.intruder_module.update_current_data()
         self.assertEqual(self.intruder_module.alert_level, 0)
         self.assertEqual(self.intruder_module.previous_alert_level, 4)
 
-        window_sensor = IntruderSensor('window')
+        window_sensor = IntruderSensor('intruders_window')
         self.intruder_module.add_sensors(window_sensor)
         sensor.append_data("1")
         window_sensor.append_data("1")
-        self.intruder_module.update_alert_level()
+        self.intruder_module.update_current_data()
         self.assertEqual(self.intruder_module.alert_level, 6)
         self.assertEqual(self.intruder_module.previous_alert_level, 0)
 
@@ -134,9 +134,9 @@ class TestIntegrationMethods(unittest.TestCase):
 
         # Initialize Intruders Module
         self.intruder_module = IntruderModule(self.home.home_id)
-        self.motion_sensor = IntruderSensor('motion')
-        self.window_sensor = IntruderSensor('window')
-        self.door_sensor = IntruderSensor('door')
+        self.motion_sensor = IntruderSensor('intruders_motion')
+        self.window_sensor = IntruderSensor('intruders_window')
+        self.door_sensor = IntruderSensor('intruders_door')
         self.intruder_module.add_sensors(self.motion_sensor, self.window_sensor, self.door_sensor)
 
         # Initialize Plant Module

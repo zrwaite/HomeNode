@@ -55,7 +55,6 @@ def read_alerts(ser, intruder_module):
 
 	if data_dict:
 		print(data_dict)
-		intruder_module.alert_level = 0
 		for key, value in data_dict.items():
 			# Register the sensor type if it has not been registered
 			if not intruder_module.registered(key):
