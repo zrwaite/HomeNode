@@ -36,7 +36,7 @@ function SensorGraphs() {
       "live humidity": 0,
       "live light level": 0,
       // "live moisture": 0,
-      "updatedAt": "",
+      updatedAt: "",
     },
   ]);
 
@@ -63,7 +63,7 @@ function SensorGraphs() {
           "live humidity": current_data.humidity,
           "live light level": current_data.light_level,
           // "live moisture": current_data.moisture,
-          "updatedAt": current_data.updatedAt,
+          updatedAt: current_data.updatedAt,
         };
         let daily_data = data.response.result.daily_data;
         cookies.set("sensors_temperature", current_data.temperature);
@@ -74,6 +74,30 @@ function SensorGraphs() {
         setCurrentData([...CurrentData, updated_data]);
         if (CurrentData.length > 10) {
           setCurrentData([...CurrentData.slice(1), updated_data]);
+        }
+        let last_temperature = 0;
+        let last_humidity = 0;
+        let last_light_level = 0;
+        for (var i = 0; i < daily_data.length; i++) {
+          if (daily_data[i].temperature === undefined) {
+            daily_data[i].temperature = last_temperature;
+          } else {
+            last_temperature = daily_data[i].temperature;
+          }
+        }
+        for (var i = 0; i < daily_data.length; i++) {
+          if (daily_data[i].humidity === undefined) {
+            daily_data[i].humidity = last_humidity;
+          } else {
+            last_humidity = daily_data[i].humidity;
+          }
+        }
+        for (var i = 0; i < daily_data.length; i++) {
+          if (daily_data[i].light_level === undefined) {
+            daily_data[i].light_level = last_light_level;
+          } else {
+            last_light_level = daily_data[i].light_level;
+          }
         }
         setDailyData(daily_data);
       })

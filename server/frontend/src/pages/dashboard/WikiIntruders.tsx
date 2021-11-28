@@ -1,6 +1,8 @@
 import React from "react";
 import { Flex, Heading, Text, SimpleGrid, Image } from "@chakra-ui/react";
 import imageintruders1 from "../../assets/imageintruders1.jpg";
+import doorsensor from "../../assets/doorsensor.jpg";
+import windowsensor from "../../assets/windowsensor.jpg";
 
 function WikiIntruders() {
   return (
@@ -34,6 +36,8 @@ function WikiIntruders() {
       <br />
       <SimpleGrid columns={3} spacing={10}>
         <Image src={imageintruders1} alt="Intruder" height="500px" />
+        <Image src={doorsensor} alt="Intruder" height="500px" />
+        <Image src={windowsensor} alt="Intruder" height="500px" />
       </SimpleGrid>
     </Flex>
   );
