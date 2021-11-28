@@ -56,12 +56,12 @@ function WikiPlant() {
       ></iframe>
       <br />
       <SimpleGrid columns={3} spacing={10}>
-        <Image src={imageplant3} alt="Intruder" height="500px" />
-        <Image src={imageplant1} alt="Intruder" height="500px" />
-        <Image src={imageplant2} alt="Intruder" height="500px" />
-        <Image src={imageplant4} alt="Intruder" height="500px" />
-        <Image src={imageplant5} alt="Intruder" height="500px" />
-        <Image src={imageplant6} alt="Intruder" height="500px" />
+        <Image src={imageplant3} alt="Plant" height="500px" />
+        <Image src={imageplant1} alt="Plant" height="500px" />
+        <Image src={imageplant2} alt="Plant" height="500px" />
+        <Image src={imageplant4} alt="Plant" height="500px" />
+        <Image src={imageplant5} alt="Plant" height="500px" />
+        <Image src={imageplant6} alt="Plant" height="500px" />
       </SimpleGrid>
     </Flex>
   );
