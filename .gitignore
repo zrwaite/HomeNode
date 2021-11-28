@@ -115,7 +115,9 @@ env/
 
 # Custom
 */data
+*/images
 
 #PyCharm
 .idea/
 *.pyc
+
