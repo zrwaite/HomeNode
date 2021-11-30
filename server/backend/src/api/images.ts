@@ -4,8 +4,9 @@ import getResult from "./modules/getResult"; //Creates formatted response
 import IntruderImage from "../models/images/images"; //Schema for mongodb
 import axios from "axios";
 import {verifyToken, getToken} from "../auth/tokenFunctions";
-const multer = require('multer');
-const upload = multer({dest: '../uploads/images'});
+import formidable from "formidable";
+import fs from "fs";
+import path from "path";
 
 import {imageGetQuery, imagePostBody, imageDeleteBody} from "../models/images/imagesInterface"
 
@@ -110,27 +111,35 @@ export default class ImageController {
 		res.status(result.status).json(result); //Return whatever result remains
 	}
 	static async apiPostImage(req: any, res: Response, next: NextFunction) {
-		let result = new response();
-		upload.single('photo')
-		if(req.file) {
-			res.json(req.file);
-		}
-		else throw 'error';
-		/*
-		let {exists, body, errors} = await buildPostBody(req);
+		let result = new response(); //Create new standardized response
+		let fileName;
+		let home_id;
 		let image;
-		if (exists) {
-			try {
-				image = new IntruderImage(body);
-				await image.save(); //Saves branch to mongodb
-			} catch (e: any) {
-				result.errors.push("Error creating request", e);
-			}
-		} else {
-			errors.forEach((error) => result.errors.push("missing " + error));
-		}
+		let success = true;
+		const folder = path.join(__dirname, "../uploads/");
+		var form = formidable({multiples: true, uploadDir: folder});
+		let formParse = await form.parse(req, function (err:any, fields, files:any) {
+			let oldPath = path.join(folder, files.image.newFilename);
+			let newPath = path.join(folder, files.image.newFilename+".png");
+			console.log(oldPath, newPath);
+			fs.rename( oldPath, newPath, function (err) {
+				if (err) {
+					result.errors.push("couldn't parse data or something");
+					success = false;
+					throw err;
+				}
+			});
+		});
+		console.log(formParse);
+		// try {
+		// 	image = new IntruderImage(body);
+		// 	image.save(); //Saves branch to mongodb
+		// 	result.response = image;
+		// 	res.status(result.status).json(result);
+		// } catch (e: any) {
+		// 	result.errors.push("Error creating request", e);
+		// }
 		res.status(result.status).json(result);
-		*/
 	}
 	static async apiDeleteImage(req: Request, res: Response, next: NextFunction) {
 		let result = new response();

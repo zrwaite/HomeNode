@@ -36,4 +36,9 @@ router.route('/plants')
     .put(plantsCtrl.apiPutPlants)
     .delete(plantsCtrl.apiDeletePlants)
 
+router.route('/images')
+    .get(imageCtrl.apiGetImage)
+    .post(imageCtrl.apiPostImage)
+    .delete(imageCtrl.apiDeleteImage)
+
 export default router;

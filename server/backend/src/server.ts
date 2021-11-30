@@ -14,8 +14,8 @@ env.config();
 // utilities
 app.use(cors());
 app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 app.use(express.static(path.resolve(__dirname, "../../frontend/build"))); //development
-
 
 // routes
 import getFile from "./route/files.route";
@@ -24,6 +24,8 @@ import apiRoute from "./route/api.route";
 import authRoute from "./route/auth.route";
 
 // api
+  
+
 app.use("/api", apiRoute);
 app.use("/auth", authRoute);
 
