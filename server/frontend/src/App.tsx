@@ -6,6 +6,7 @@ import getcookie from "./getcookie";
 
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
+import ViewThreat from "./pages/ViewThreat";
 import Dashboard from "./pages/Dashboard";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
@@ -18,7 +19,10 @@ const user = {
 function App() {
   useEffect(() => {
     const interval = setInterval(() => {
-      if (getcookie("token", true) !== "Loading..." && getcookie("token", true) !== "") {
+      if (
+        getcookie("token", true) !== "Loading..." &&
+        getcookie("token", true) !== ""
+      ) {
         axios.defaults.headers.common["authorization"] =
           "bearer " + getcookie("token", true);
       } else {
@@ -36,6 +40,9 @@ function App() {
       <UserContext.Provider value={user}>
         <Router>
           <Switch>
+            <Route path="/dashboard/viewthreats">
+              <ViewThreat />
+            </Route>
             <Route path="/dashboard">
               <Dashboard />
             </Route>

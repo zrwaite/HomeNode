@@ -300,11 +300,11 @@ const LiveDetection = (props: any) => {
           alignItems="center"
           mt={-4}
           ml={-2}
-          onClick={() => history.push("/dashboard/wiki/module/sensors")}
         >
           <Button
             color={useColorModeValue("brand.600", "brand.400")}
             variant="ghost"
+            onClick={() => history.push("/dashboard/wiki/module/sensors")}
           >
             Learn more
           </Button>
@@ -314,7 +314,7 @@ const LiveDetection = (props: any) => {
               isIndeterminate
               w={10}
               h={10}
-              my={5}
+              mt={6}
               color="brand.500"
               size="xxs"
             />
@@ -423,21 +423,31 @@ const LiveDetection = (props: any) => {
           alignItems="center"
           mt={-4}
           ml={-2}
-          onClick={() => history.push("/dashboard/wiki/module/intruders")}
         >
-          <Button
-            color={useColorModeValue("brand.600", "brand.400")}
-            variant="ghost"
-          >
-            Learn more
-          </Button>
+          <div>
+            <Button
+              color={useColorModeValue("brand.600", "brand.400")}
+              variant="ghost"
+              onClick={() => history.push("/dashboard/wiki/module/intruders")}
+            >
+              Learn more
+            </Button>
+
+            <Button
+              color={useColorModeValue("red.600", "red.400")}
+              variant="ghost"
+              onClick={() => history.push("/dashboard/viewthreats")}
+            >
+              View threats
+            </Button>
+          </div>
 
           <Flex alignItems="center">
             <CircularProgress
               isIndeterminate
               w={10}
               h={10}
-              my={5}
+              mt={6}
               color="brand.500"
               size="xxs"
             />
@@ -590,11 +600,11 @@ const LiveDetection = (props: any) => {
           alignItems="center"
           mt={-4}
           ml={-2}
-          onClick={() => history.push("/dashboard/wiki/module/plant")}
         >
           <Button
             color={useColorModeValue("brand.600", "brand.400")}
             variant="ghost"
+            onClick={() => history.push("/dashboard/wiki/module/plant")}
           >
             Learn more
           </Button>
@@ -604,7 +614,7 @@ const LiveDetection = (props: any) => {
               isIndeterminate
               w={10}
               h={10}
-              my={5}
+              mt={6}
               color="brand.500"
               size="xxs"
             />
