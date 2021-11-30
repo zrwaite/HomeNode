@@ -62,11 +62,11 @@ function About() {
           email="hmujral@uwaterloo.ca"
         />
         <AboutCard
-          name="Michael Dennisov"
+          name="Michael Denissov"
           role_emoji={HiOutlineSparkles}
           image={michael}
           emoji_color="yellow"
-          role_description="Hardware & Firmware Developer"
+          role_description="Robotics and AI Enthusiast"
           description="I developed hardware and firmware. (and ex-KGB agent)"
           university="uWaterloo Software Engineering"
           email="mdenissov@uwaterloo.ca"
