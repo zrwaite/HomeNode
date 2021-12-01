@@ -1,17 +1,28 @@
-float update_timer = 0; // Timer for sending data
-float sensors_timer = 0; // Timer for reading sensors
+// Hardcoded parameters
+#define MEASURE_INTERVAL 100  // How long in milliseconds before the module checks sensors again
+#define UPDATE_INTERVAL 5000  // How long in milliseconds before the modules sends a status update
+#define SENSORS_NUM 3         // Number of sensors on the module
+#define ADDRESS '3'           // Address of the module
 
-const char address = '3';
+// Global data storage variables:
 
+// Sensor data struct
 typedef struct {
-  int pin; // Pin number of the sensor
-  bool detected; // If the sensor has detected something
+  int pin;              // Pin number of the sensor
+  String tag;           // Id of the sensor
+  bool detected;        // If the sensor has detected something
   bool locked_detected; // If the sensors has detected something but was locked
 } IntrudersSensor;
 
-IntrudersSensor PIR_sensor = {3, false, false};
-IntrudersSensor IR_sensor = {4, false, false};
-IntrudersSensor reed_sensor = {5, false, false};
+IntrudersSensor PIR_sensor = {3, "intruders_motion", false, false};
+IntrudersSensor IR_sensor = {4, "intruders_door", false, false};
+IntrudersSensor reed_sensor = {5, "intruders_window", false, false};
+
+IntrudersSensor *sensors[] = {&PIR_sensor, &IR_sensor, &reed_sensor};
+
+float update_timer = 0; // Timer for sending data
+float sensors_timer = 0; // Timer for reading sensors
+const char address = ADDRESS; // Address of the module
 
 // Lock character:    ~
 // Unlock character:  &
@@ -24,82 +35,94 @@ void setup() {
   // Reset timers
   update_timer = millis();
   sensors_timer = update_timer;
-  
-  pinMode(PIR_sensor.pin, INPUT);
-  pinMode(IR_sensor.pin, INPUT);
-  pinMode(reed_sensor.pin, INPUT);
+
+  for(int i = 0; i < SENSORS_NUM; ++i){
+    pinMode(sensors[i]->pin, INPUT);
+  }
 }
 
 // Functions to read from sensors correctly,
 // true only ever means that the sensor has detected something
 float read_PIR(){ return digitalRead(PIR_sensor.pin); }
-float read_IR(){ return !digitalRead(IR_sensor.pin); }
-float read_reed(){ return digitalRead(reed_sensor.pin); }
+float read_IR(){ return digitalRead(IR_sensor.pin); }
+float read_reed(){ return !digitalRead(reed_sensor.pin); }
 
 void check_sensors(){
   // We save the fact the we detected something,
   // even if lasted only for a brief moment
-  if(read_PIR()) { PIR_sensor.detected = true; }
-  if(read_IR())  { IR_sensor.detected = true; }
-  if(read_reed()){ reed_sensor.detected = true; } 
+  if(read_PIR()) { sensors[0]->detected = true; }
+  if(read_IR())  { sensors[1]->detected = true; }
+  if(read_reed()){ sensors[2]->detected = true; } 
 }
 
 void send_alerts(){
-  // Send a separate message for every alert
-  if(PIR_sensor.detected){
-    Serial.print("intruders_PIR/1");
-    Serial.print("\\\n\r");
-    PIR_sensor.detected = false;
+  // Construct a single message containing all sensor statuses
+  String message = "";
+
+  // Check all sensors
+  for(int i = 0; i < SENSORS_NUM; ++i){
+    message += sensors[i]->tag + "/"; // Append the sensor tag
+
+    // Add the sensor's status
+    if(sensors[i]->detected == true){
+      message += "1";
+      sensors[i]->detected = false;
+    } else {
+      message += "0";
+    }
+
+     message += "/";
   }
-  if(IR_sensor.detected){
-    Serial.print("intruders_IR/1");
-    Serial.print("\\\n\r");
-    IR_sensor.detected = false;
-  }
-  if(reed_sensor.detected){
-    Serial.print("intruders_reed/1");
-    Serial.print("\\\n\r");
-    reed_sensor.detected = false;
-  }
+
+  message += "\\\n\r";
+
+  // Send the message all at once as the Arduino has a slower clockspeed
+  Serial.print(message);
 }
 
 void send_locked_alerts(){
-  // Send a separate message for every locked alert
-  if(PIR_sensor.locked_detected){
-    Serial.print("intruders_PIR/1");
-    Serial.print("\\\n\r");
-    PIR_sensor.locked_detected = false;
+  // Construct a single message containing all sensor statuses
+  String message = "";
+
+  // Check all sensors
+  for(int i = 0; i < SENSORS_NUM; ++i){
+    message += sensors[i]->tag + "/"; // Append the sensor tag
+
+    // Add the sensor's status
+    if(sensors[i]->locked_detected == true){
+      message += "1";
+      sensors[i]->locked_detected = false;
+    } else {
+      message += "0";
+    }
+
+    message += "/";
   }
-  if(IR_sensor.detected){
-    Serial.print("intruders_IR/1");
-    Serial.print("\\\n\r");
-    IR_sensor.locked_detected = false;
-  }
-  if(reed_sensor.detected){
-    Serial.print("intruders_reed/1");
-    Serial.print("\\\n\r");
-    reed_sensor.locked_detected = false;
-  }
+
+  message += "\\\n\r";
+
+  // Send the message all at once as the Arduino has a slower clockspeed
+  Serial.print(message);
 }
 
 void loop() {
 
   //Check sensors often
-  if(millis() - sensors_timer > 50){
+  if(millis() - sensors_timer > MEASURE_INTERVAL){
     check_sensors();
     sensors_timer = millis();
   }
 
   //Check if the sensors have detected something
-  if(millis() - update_timer > 2000){
+  if(millis() - update_timer > UPDATE_INTERVAL){
     // If the module is not locked, send alerts
     if(!locked){
       send_alerts(); 
     } else {
       // Otherwise save the fact that we need to send an alert
-      if(PIR_sensor.detected) { PIR_sensor.locked_detected = true; }
-      if(IR_sensor.detected) { IR_sensor.locked_detected = true; }
-      if(reed_sensor.detected){ reed_sensor.locked_detected = true; }
+      for(int i = 0; i < SENSORS_NUM; ++i){
+        if(sensors[i]->detected) { sensors[i]->locked_detected = true; }
+      }
     }
     update_timer = millis();
   }
@@ -108,11 +131,20 @@ void loop() {
   while(Serial.available()){
     char c = Serial.read();
     switch (c){
-      case address:
-        Serial.print("intruders_PIR/");
-        Serial.print("/intruders_IR/");
-        Serial.print("/intruders_reed/");
-        Serial.print("\\\n\r");
+      case address:{
+        // Create the message
+        String message = "";
+
+        // Append all sensors tags with no data
+        for(int i = 0; i < SENSORS_NUM; ++i){
+          message += sensors[i]->tag + "//";
+        }
+
+        message[message.length() - 1] = '\\'; // Last character needs to be the end character
+        message += "\n\r";
+        
+        Serial.print(message);
+        }
         break;
       case '~': // Lock character
         locked = true;
