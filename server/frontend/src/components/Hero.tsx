@@ -90,7 +90,7 @@ const Hero = () => {
             size="lg"
             cursor="pointer"
             onClick={() => {
-              window.open("https://youtu.be/dQw4w9WgXcQ", "_blank");
+              window.open("https://youtu.be/ar90-TBzp-8", "_blank");
             }}
           >
             Watch Demo
