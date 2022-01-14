@@ -1,11 +1,12 @@
 import axios from "axios";
+import {baseurl} from "../api/modules/zacserver";
 import {getToken} from "../auth/tokenFunctions"
 
 const putPastData = async (id: string, average_temperature: number, average_humidity: number, average_light_level: number, home_id: string) => {
 	let token:string = await getToken({home_id: home_id, authorized: false})	
 	let date = new Date().toLocaleDateString().toString();
 	try {
-		const pastData: any = await axios.put("/api/sensors?put_type=past_data",{
+		const pastData: any = await axios.put(baseurl + "/api/sensors?put_type=past_data",{
 			id: id,
 			date: date,
 			average_temperature: average_temperature,
@@ -24,7 +25,7 @@ const putPastData = async (id: string, average_temperature: number, average_humi
 const deleteDailyData = async (id: string, temperature: number, humidity: number, light_level: number, home_id: string) => {
 	let token:string = await getToken({home_id: home_id, authorized: false})	
 	try{
-		const deleteData: any = await axios.delete("/api/sensors?delete_type=daily_data",{ 
+		const deleteData: any = await axios.delete(baseurl + "/api/sensors?delete_type=daily_data",{ 
 			data: {
 				id: id,
 				temperature: temperature,
@@ -44,7 +45,7 @@ const deleteDailyData = async (id: string, temperature: number, humidity: number
 }
 const sensorsCompress = async () => {
 	try{
-		let allSensors:any = await axios.get('/api/sensors?get_type=all');
+		let allSensors:any = await axios.get(baseurl + '/api/sensors?get_type=all');
 		let sensorsArray:[any] = allSensors.data.response.result;
 		sensorsArray.forEach(module =>{
 			let id: string = module._id;

@@ -5,5 +5,5 @@ services:
     build: ./
     image: "zrwaite/smarthomeserver"
     ports: 
-      - "80:80"
+      - "8003:8003"
     

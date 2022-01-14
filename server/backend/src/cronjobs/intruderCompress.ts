@@ -1,11 +1,13 @@
 import axios from "axios";
 import {getToken} from "../auth/tokenFunctions"
+import {baseurl} from "../api/modules/zacserver";
+
 
 const putPastData = async (id: string, intrusion_detections: boolean, max_alert_level: number, home_id: string) => {
 	let token:string = await getToken({home_id: home_id, authorized: false})	
 	let date = new Date().toLocaleDateString().toString();
 	try {
-		const pastData: any = await axios.put("/api/intruders?put_type=past_data",{
+		const pastData: any = await axios.put(baseurl + "/api/intruders?put_type=past_data",{
 			id: id,
 			date: date,
 			intrusion_detections: intrusion_detections,
@@ -23,7 +25,7 @@ const putPastData = async (id: string, intrusion_detections: boolean, max_alert_
 const deleteDailyData = async (id: string, detection: string, alert_level: number, home_id: string) => {
 	let token:string = await getToken({home_id: home_id, authorized: false})	
 	try{
-		const deleteData: any = await axios.delete("/api/intruders?delete_type=daily_data",{ 
+		const deleteData: any = await axios.delete(baseurl + "/api/intruders?delete_type=daily_data",{ 
 			data: {
 				id: id,
 				detection: detection,
@@ -43,7 +45,7 @@ const deleteDailyData = async (id: string, detection: string, alert_level: numbe
 }
 const intruderCompress = async () => {
 	try{
-		let allIntruders:any = await axios.get('/api/intruders?get_type=all');
+		let allIntruders:any = await axios.get(baseurl + '/api/intruders?get_type=all');
 		let intrudersArray:[any] = allIntruders.data.response.result;
 		intrudersArray.forEach(module =>{
 			let id: string = module._id;

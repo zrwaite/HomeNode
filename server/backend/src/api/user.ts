@@ -2,6 +2,7 @@ import {Request, Response, NextFunction} from "express"; //Typescript types
 import response from "../models/response"; //Created pre-formatted uniform response
 import getResult from "./modules/getResult"; //Creates formmated response
 import User from "../models/user/user"; //Schema for mongodb
+import {baseurl} from "./modules/zacserver";
 import axios from "axios";
 import bcrypt from "bcrypt";
 import {createToken, verifyToken, getToken} from "../auth/tokenFunctions";
@@ -12,7 +13,7 @@ import {userGetQuery, userPostBody, userPutBody, userSettings} from "../models/u
 const getUsernameFromId = async (headers: any, user_id: string) => {
 	const auth = await verifyToken(headers);
 	if (!auth.authorized) return false;
-	let getLink = "/api/user?id="+user_id;
+	let getLink = baseurl + "/api/user?id="+user_id;
 	let token = await getToken(headers);
 	try{
 		const userData: any = await axios.get(getLink,
@@ -177,7 +178,7 @@ export default class userController {
 				await newUser.save(); //Saves branch to mongodb
 				let token = await createToken({home_id: body.home_id, username: body.username, authorized: true});
 				try{
-					const homeData: any = await axios.put("/api/home?put_type=user", {
+					const homeData: any = await axios.put(baseurl + "/api/home?put_type=user", {
 						id: body.home_id,
 						user: body.username
 					},

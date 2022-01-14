@@ -2,6 +2,7 @@ import {Request, Response, NextFunction} from "express"; //Typescript types
 import response from "../models/response"; //Created pre-formatted uniform response
 import {createToken} from "./tokenFunctions";
 import bcrypt from "bcrypt";
+import {baseurl} from "../api/modules/zacserver";
 import axios from "axios";
 
 const signInController = async (req: Request, res: Response, next: NextFunction) => {
@@ -15,7 +16,7 @@ const signInController = async (req: Request, res: Response, next: NextFunction)
 	else {
 		try{
 			let token = await createToken({username: username, authorized: true})
-			const userData: any = await axios.get("/api/user?username="+username,
+			const userData: any = await axios.get(baseurl + "/api/user?username="+username,
 			{headers: {
 				Authorization: "Bearer "+token
 			}});

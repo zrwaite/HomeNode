@@ -3,6 +3,6 @@ WORKDIR /app
 COPY ["./backend/package.json", "./backend/package-lock.json", "./"]
 RUN npm install
 COPY . .
-ENV PORT=80
-EXPOSE 80
+ENV PORT=8003
+EXPOSE 8003
 CMD ["npm", "start"]

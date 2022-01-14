@@ -5,6 +5,7 @@ import Home from "../models/home/home"; //Schema for mongodb
 import bcrypt from "bcrypt";
 import {getToken, verifyToken} from "../auth/tokenFunctions";
 import axios from "axios";
+import {baseurl} from "./modules/zacserver";
 
 import {homeGetQuery, homePostBody, homePutBody} from "../models/home/homeInterfaces";
 
@@ -216,7 +217,7 @@ export default class homeController {
 		switch(deleteType){
 			case "home":
 				try {
-					const homeData: any = await axios.get("/api/home?id="+id,{
+					const homeData: any = await axios.get(baseurl+"/api/home?id="+id,{
 						headers: {Authorization: "Bearer "+token}
 					}
 					);
@@ -226,16 +227,16 @@ export default class homeController {
 						let modules = homeResult.response.result.modules;
 						let deleteData: any[] = [];
 						modules.forEach((module:any)=> {
-							let deleteLink = "";
+							let deleteLink = baseurl;
 							switch (module.type){
 								case "intruders":
-									deleteLink = "/api/intruders?delete_type=intruders";
+									deleteLink += "/api/intruders?delete_type=intruders";
 									break;
 								case "sensors":
-									deleteLink = "/api/sensors?delete_type=sensors"
+									deleteLink += "/api/sensors?delete_type=sensors"
 									break;
 								case "plants":
-									deleteLink = "/api/plants?delete_type=plants"
+									deleteLink += "/api/plants?delete_type=plants"
 									break;
 							}	
 							if (!!deleteLink) {

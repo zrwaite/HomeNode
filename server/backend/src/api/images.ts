@@ -7,6 +7,7 @@ import {verifyToken, getToken} from "../auth/tokenFunctions";
 import formidable from "formidable";
 import fs from "fs";
 import path from "path";
+import {baseurl} from "./modules/zacserver";
 
 import {imageGetQuery, imagePostBody, imageDeleteBody} from "../models/images/imagesInterface"
 
@@ -15,7 +16,7 @@ import {imageGetQuery, imagePostBody, imageDeleteBody} from "../models/images/im
 const compareAuthHomeId = async (headers: any, module_id: string) => {
 	const auth = await verifyToken(headers);
 	if (!auth.authorized) return false;
-	let getLink = "/api/images?id=" + module_id;
+	let getLink = baseurl + "/api/images?id=" + module_id;
 	let token = await getToken(headers);
 	if (token) {
 		try {

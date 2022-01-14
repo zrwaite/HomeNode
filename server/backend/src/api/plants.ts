@@ -3,6 +3,7 @@ import response from "../models/response"; //Created pre-formatted uniform respo
 import getResult from "./modules/getResult"; //Creates standard response
 import Plants from "../models/plants/plants"; //Schema for mongodb
 import axios from "axios";
+import {baseurl} from "./modules/zacserver";
 import {verifyToken, getToken} from "../auth/tokenFunctions";
 
 
@@ -12,7 +13,7 @@ import {plantsPostBody, plantsDailyPutBody, plantsPastPutBody, plantsDeleteBody}
 const compareAuthHomeId = async (headers: any, module_id:string) => {
 	const auth = await verifyToken(headers);
 	if (!auth.authorized) return false;
-	let getLink = "/api/plants?id="+module_id;
+	let getLink = baseurl + "/api/plants?id="+module_id;
 	let token = await getToken(headers);
 	if (token) {
 		try{
@@ -227,7 +228,7 @@ export default class plantsController {
 					}
 				}
 				try{
-					const homeData: any = await axios.put("/api/home?put_type=module", putBody, 
+					const homeData: any = await axios.put(baseurl + "/api/home?put_type=module", putBody, 
 					{headers: {
 						Authorization: "Bearer "+token
 					}});

@@ -4,7 +4,7 @@ import getResult from "./modules/getResult"; //Creates formatted response
 import Intruders from "../models/intruders/intruders"; //Schema for mongodb
 import axios from "axios";
 import {verifyToken, getToken} from "../auth/tokenFunctions";
-
+import {baseurl} from "./modules/zacserver";
 
 /* Import interfaces */
 import {intrudersGetQuery, intrudersPostBody, intrudersDailyPutBody, intrudersPastPutBody, intrudersDeleteBody} from "../models/intruders/intudersInterface";
@@ -12,7 +12,7 @@ import {intrudersGetQuery, intrudersPostBody, intrudersDailyPutBody, intrudersPa
 const compareAuthHomeId = async (headers: any, module_id:string) => {
 	const auth = await verifyToken(headers);
 	if (!auth.authorized) return false;
-	let getLink = "/api/intruders?id="+module_id;
+	let getLink = baseurl + "/api/intruders?id="+module_id;
 	let token = await getToken(headers);
 	if (token) {
 		try{
@@ -216,7 +216,7 @@ export default class intrudersController {
 					}
 				}
 				try{
-					const homeData: any = await axios.put("/api/home?put_type=module", putBody, 
+					const homeData: any = await axios.put(baseurl + "/api/home?put_type=module", putBody, 
 					{headers: {
 						Authorization: "Bearer "+token
 					}});
@@ -255,7 +255,7 @@ export default class intrudersController {
 				try{
 					let home_id = intruders.home_id;
 					console.log("/api/home?id="+home_id.toString());
-					const homeData: any = await axios.get("/api/home?id="+home_id.toString(),
+					const homeData: any = await axios.get(baseurl+ "/api/home?id="+home_id.toString(),
 					{headers: {
 						Authorization: "Bearer "+token
 					}});

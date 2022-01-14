@@ -2,6 +2,7 @@ import {Request, Response, NextFunction} from "express"; //Typescript types
 import response from "../models/response"; //Created pre-formatted uniform response
 import getResult from "./modules/getResult"; //Creates standard response
 import Sensors from "../models/sensors/sensors"; //Schema for mongodb
+import {baseurl} from "./modules/zacserver";
 import axios from "axios";
 import {verifyToken, getToken} from "../auth/tokenFunctions";
 
@@ -12,7 +13,7 @@ import {sensorsGetQuery, sensorsPostBody, sensorsPastPutBody, sensorsDailyPutBod
 const compareAuthHomeId = async (headers: any, module_id:string) => {
 	const auth = await verifyToken(headers);
 	if (!auth.authorized) return false;
-	let getLink = "/api/sensors?id="+module_id;
+	let getLink = baseurl + "/api/sensors?id="+module_id;
 	let token = await getToken(headers);
 	if (token) {
 		try{
@@ -221,7 +222,7 @@ export default class sensorsController {
 					}
 				}
 				try{
-					const homeData: any = await axios.put("/api/home?put_type=module", putBody, 
+					const homeData: any = await axios.put(baseurl + "/api/home?put_type=module", putBody, 
 					{headers: {
 						Authorization: "Bearer "+token
 					}});

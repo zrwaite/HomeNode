@@ -2,6 +2,7 @@ import {Request, Response, NextFunction} from "express"; //Typescript types
 import response from "../models/response"; //Created pre-formatted uniform response
 import {createToken} from "./tokenFunctions";
 import bcrypt from "bcrypt";
+import {baseurl} from "../api/modules/zacserver";
 import axios from "axios";
 
 const tokenController = async (req: Request, res: Response, next: NextFunction) => {
@@ -14,7 +15,7 @@ const tokenController = async (req: Request, res: Response, next: NextFunction) 
 	else if (password==undefined) result.errors.push("Missing password");
 	else {
 		try{
-			const homeData: any = await axios.get("/api/home?id="+home_id, 
+			const homeData: any = await axios.get(baseurl + "/api/home?id="+home_id, 
 			{headers: {
 				Authorization: "Bearer "+token
 			}});
