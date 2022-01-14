@@ -13,6 +13,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import Navbar from "../components/Navbar";
+import {baseurl} from "../zacserver";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
 import Cookies from "universal-cookie";
@@ -31,7 +32,7 @@ const SignUp = () => {
     e.preventDefault();
     console.log("POST SIGNUP");
     axios
-      .post("http://homenode.tech/api/user", {
+      .post(baseurl+"/api/user", {
         username: Email,
         name: Name,
         password: Password,

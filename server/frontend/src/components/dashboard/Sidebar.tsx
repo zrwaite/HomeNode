@@ -28,6 +28,7 @@ import {
   Tr,
   useToast,
 } from "@chakra-ui/react";
+import {baseurl} from "../../zacserver";
 import { Switch, Route, useRouteMatch, useHistory } from "react-router-dom";
 import { BsGearFill } from "react-icons/bs";
 import { FiMenu, FiSearch } from "react-icons/fi";
@@ -97,7 +98,7 @@ function Sidebar() {
 
   function getNotifications() {
     axios
-      .get("http://homenode.tech/api/home?id=" + getcookie("home_id", true))
+      .get(baseurl+"/api/home?id=" + getcookie("home_id", true))
       .then((res) => {
         const { data } = res;
         let received_notifs = data.response.result.notifications;
@@ -117,7 +118,7 @@ function Sidebar() {
       })
       .then((res) => {
         axios
-          .put("http://homenode.tech/api/home?put_type=read_notification", {
+          .put(baseurl+"/api/home?put_type=read_notification", {
             id: getcookie("home_id", true),
           })
           .then((res) => {

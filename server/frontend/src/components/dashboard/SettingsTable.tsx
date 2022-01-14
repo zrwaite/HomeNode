@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import {baseurl} from "../../zacserver";
 import {
   useColorModeValue,
   ButtonGroup,
@@ -59,7 +60,7 @@ export default function SettingsTable() {
   function forceColorModeUpdate() {
     axios
       .get<UserInfo>(
-        "http://homenode.tech/api/user?username=" + getcookie("email", true)
+        baseurl+"/api/user?username=" + getcookie("email", true)
       )
       .then((res) => {
         const { data } = res;
@@ -79,7 +80,7 @@ export default function SettingsTable() {
   function forceEmailNotificationsUpdate() {
     axios
       .get<UserInfo>(
-        "http://homenode.tech/api/user?username=" + getcookie("email", true)
+        baseurl+"/api/user?username=" + getcookie("email", true)
       )
       .then((res) => {
         const { data } = res;
@@ -95,7 +96,7 @@ export default function SettingsTable() {
 
   function forceIntrusionDetectionUpdate() {
     axios
-      .get("http://homenode.tech/api/home?id=" + getcookie("home_id", true))
+      .get(baseurl+"/api/home?id=" + getcookie("home_id", true))
       .then((res) => {
         const { data } = res;
         let received_intrusion_detection =
@@ -235,7 +236,7 @@ export default function SettingsTable() {
                       onChange={() => {
                         axios
                           .put(
-                            "http://homenode.tech/api/user?put_type=settings.dark_mode",
+                            baseurl+"/api/user?put_type=settings.dark_mode",
                             {
                               username: getcookie("email", true),
                               settings: {
@@ -257,7 +258,7 @@ export default function SettingsTable() {
                       onChange={() => {
                         axios
                           .put(
-                            "http://homenode.tech/api/user?put_type=settings.email_notifications",
+                            baseurl+"/api/user?put_type=settings.email_notifications",
                             {
                               username: getcookie("email", true),
                               settings: {
@@ -279,7 +280,7 @@ export default function SettingsTable() {
                       onChange={() => {
                         axios
                           .put(
-                            "http://homenode.tech/api/home?put_type=settings.intrusion_detection",
+                            baseurl+"/api/home?put_type=settings.intrusion_detection",
                             {
                               id: getcookie("home_id", true),
                               settings: {
@@ -306,7 +307,7 @@ export default function SettingsTable() {
                     onChange={(val) =>
                       // console.log("SAFETY LEVEL: ", val)
                       axios.put(
-                        "http://homenode.tech/api/home?put_type=settings.safety_level",
+                        baseurl+"/api/home?put_type=settings.safety_level",
                         {
                           id: getcookie("home_id", true),
                           settings: {

@@ -16,6 +16,7 @@ import {
 import getcookie from "../../getcookie";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
+import {baseurl} from "../../zacserver";
 import {
   MdSensors,
   MdPersonSearch,
@@ -122,7 +123,7 @@ const LiveDetection = (props: any) => {
   function GetPlantModuleData() {
     axios
       .get<PlantModuleData>(
-        "http://homenode.tech/api/plants?id=" + getcookie("plants_id", true)
+        baseurl+"/api/plants?id=" + getcookie("plants_id", true)
       )
       .then((res) => {
         const { data } = res;

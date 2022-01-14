@@ -12,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import LiveDetection from "./LiveDetection";
 import getcookie from "../../getcookie";
+import {baseurl} from "../../zacserver";
 
 interface ModuleData {
   response: {
@@ -49,7 +50,7 @@ export default function IntrusionDetectionArea() {
   function getData() {
     axios
       .get<ModuleData>(
-        "http://homenode.tech/api/intruders?id=" +
+        baseurl+"/api/intruders?id=" +
           getcookie("intruders_id", true)
       )
       .then((res) => {

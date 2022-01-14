@@ -3,6 +3,8 @@ import axios from "axios";
 import GeneralLineChart from "./GeneralLineChart";
 import getcookie from "../../getcookie";
 import Cookies from "universal-cookie";
+import {baseurl} from "../../zacserver";
+
 
 interface ModuleData {
   response: {
@@ -53,7 +55,7 @@ function SensorGraphs() {
   function getData() {
     axios
       .get<ModuleData>(
-        "http://homenode.tech/api/sensors?id=" + getcookie("sensors_id", true)
+        baseurl+"/api/sensors?id=" + getcookie("sensors_id", true)
       )
       .then((res) => {
         const { data } = res;

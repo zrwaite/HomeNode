@@ -12,6 +12,7 @@ import {
   Input,
   useToast,
 } from "@chakra-ui/react";
+import {baseurl} from "../zacserver";
 import Navbar from "../components/Navbar";
 import { useHistory } from "react-router-dom";
 import axios from "axios";
@@ -35,7 +36,7 @@ const SignIn = () => {
     e.preventDefault();
     console.log("POST SIGNIN");
     axios
-      .post("http://homenode.tech/auth/signin", {
+      .post(baseurl+"/auth/signin", {
         username: Email,
         password: Password,
       })
@@ -62,7 +63,7 @@ const SignIn = () => {
       .then(() => {
         axios
           .get(
-            "http://homenode.tech/api/user?username=" + getcookie("email", true)
+            baseurl+"/api/user?username=" + getcookie("email", true)
           )
           .then((res: any) => {
             cookies.set("name", res.data.response.result.name, { path: "/" });
@@ -70,7 +71,7 @@ const SignIn = () => {
           .then(() => {
             axios
               .get(
-                "http://homenode.tech/api/home?id=" + getcookie("home_id", true)
+                baseurl+"/api/home?id=" + getcookie("home_id", true)
               )
               .then((res: any) => {
                 let module_list = res.data.response.result.modules;
