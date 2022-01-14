@@ -26,7 +26,7 @@
 * George Shao: Frontend Developer
 
 ---
-##Project Description :clipboard:	:house_with_garden:
+## Project Description :clipboard:	:house_with_garden:
 
 Our idea is to create a low-cost smart home system to monitor and control many different factors of home living, automating where possible. We will have a series of hardware modules with arduinos, such as a plant watering module, a motion sensor module, and a module for tracking temperature, humidity, etc. Each module will compile the results, and send them to a central raspberry pi, which will process the data and send it to our API. On the user end, we will have a website that will allow users to monitor the sensors at their home remotely.
 
