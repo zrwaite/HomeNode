@@ -1,5 +1,6 @@
 # Dreem Teem SE101 Project: HomeNode
 *This is the Github Repo for our group's final project in SE101.*
+
 **Link to live website: https://zrwaite.github.io/HomeNode/**
 <p align="left">
 <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-original.svg" alt="typescript" width="10%" height="10%" />
@@ -54,7 +55,7 @@ Our idea is to create a low-cost smart home system to monitor and control many d
 
 --- 
 
-## Challenges 📚 🚀:
+## Challenges 📚 🚀
 * Understanding information from analog and digital sensor data (Parsing what the sensor data means, then reducing large amounts of data)
 * Creating python code to read serial data from arduinos asynchronously 
 * Creating efficient ways to maintain accurate, up to date information without too much electricity or too many online data transfers. 
