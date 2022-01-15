@@ -1,3 +1,3 @@
-const baseurl = "insomnizac.xyz:8003";
+const baseurl = "http://homenode.tech";
 
 export {baseurl}
