@@ -1,7 +1,7 @@
 # Dreem Teem SE101 Project: HomeNode
 *This is the Github Repo for our group's final project in SE101.*
 
-**Link to live website: https://zrwaite.github.io/HomeNode/**
+**Link to live website: http://homenode.tech/**
 <p align="left">
 <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/typescript/typescript-original.svg" alt="typescript" width="10%" height="10%" />
 <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="10%" height="10%" />
